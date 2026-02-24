@@ -6,35 +6,26 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 00:48:52 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/24 12:49:04 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-#include "minishell.h"
-#include "libft.h"
-
-int	count_args(t_token *tokens)
-{
-	int	count;
-
-	count = 0;
-	while (tokens && tokens->type == TOKEN_WORD)
-	{
-		count++;
-		tokens = tokens->next;
-	}
-	return (count);
-}
-
 char	**extract_args(t_token **tokens)
 {
 	char	**args;
 	int		count;
+	t_token	*tmp;
 	int		i;
 
-	count = count_args(*tokens);
+	count = 0;
+	tmp = *tokens;
+	while (tmp && tmp->type == TOKEN_WORD)
+	{
+		count++;
+		tmp = tmp->next;
+	}
 	args = malloc((count + 1) * sizeof(char *));
 	i = 0;
 	while (*tokens && (*tokens)->type == TOKEN_WORD)
@@ -46,18 +37,7 @@ char	**extract_args(t_token **tokens)
 	return (args);
 }
 
-t_node_type	token_to_node(t_token_type type)
-{
-	if (type == TOKEN_REDIR_IN)
-		return (NODE_REDIR_IN);
-	if (type == TOKEN_REDIR_OUT)
-		return (NODE_REDIR_OUT);
-	if (type == TOKEN_APPEND)
-		return (NODE_APPEND);
-	if (type == TOKEN_HEREDOC)
-		return (NODE_HEREDOC);
-	return (NODE_CMD);
-}
+t_ast	*parse_command(t_token **tokens);
 
 t_ast	*parse_redirection(t_token **tokens, t_ast *cmd)
 {
@@ -77,6 +57,7 @@ t_ast	*parse_redirection(t_token **tokens, t_ast *cmd)
 		type = token_to_node(tmp->type);
 		cmd = ast_new_redir(type, (*tokens)->value, cmd);
 		*tokens = (*tokens)->next;
+		cmd->left = parse_command(tokens);
 	}
 	return (cmd);
 }

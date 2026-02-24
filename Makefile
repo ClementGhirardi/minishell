@@ -14,6 +14,8 @@ SRCS_BONUS_DIR = srcs/srcs_bonus
 
 SRCS = $(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer.c \
+	$(SRCS_DIR)/ast.c \
+	$(SRCS_DIR)/parser.c \
 
 SRCS_BONUS = 
 
