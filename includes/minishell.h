@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 00:51:51 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/24 00:22:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,36 @@ typedef struct s_token
     struct s_token	*next;
 }	t_token;
 
+typedef enum e_node_type
+{
+    NODE_CMD,
+    NODE_PIPE,
+    NODE_REDIR_IN,
+    NODE_REDIR_OUT,
+    NODE_APPEND,
+    NODE_HEREDOC
+}	t_node_type;
+
+typedef struct s_ast
+{
+    t_node_type	    type;
+    char		    **args;
+    char            *file;
+
+    struct s_ast    *left;
+    struct s_ast	*right;
+}	t_ast;
 
 t_token	*new_token(t_token_type type, char *value);
 void	add_token(t_token **list, t_token *new);
 
 t_token	*lexer(char *input);
+
+t_ast	*ast_new_node(t_node_type type);
+t_ast	*ast_new_cmd(char **args);
+t_ast	*ast_new_redir(t_node_type type, char *file, t_ast *left);
+t_ast	*ast_new_pipe(t_ast *left, t_ast *right);
+
+t_ast   *parse(t_token *tokens);
 
 #endif
