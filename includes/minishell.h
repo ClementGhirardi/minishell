@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 12:38:36 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:17:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 typedef enum e_token_type
 {
 	TOKEN_WORD,
+	TOKEN_WORD_SQUOTE,
+	TOKEN_WORD_DQUOTE,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
@@ -43,11 +45,19 @@ typedef enum e_node_type
 	NODE_HEREDOC
 }	t_node_type;
 
+typedef enum e_quote
+{
+	NQUOTE,
+	SQUOTE,
+	DQUOTE
+}	t_quote;
+
 typedef struct s_ast
 {
 	t_node_type		type;
 	char			**args;
 	char			*file;
+	t_quote			*quotes;
 
 	struct s_ast	*left;
 	struct s_ast	*right;
@@ -59,8 +69,9 @@ void		add_token(t_token **list, t_token *new);
 t_token		*lexer(char *input);
 
 t_ast		*ast_new_node(t_node_type type);
-t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_node_type type, char *file, t_ast *left);
+t_ast		*ast_new_cmd(char **args, t_quote *quotes);
+t_ast		*ast_new_redir(t_node_type type, char *file,
+				t_token_type token_type, t_ast *left);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_node_type	token_to_node(t_token_type type);
 

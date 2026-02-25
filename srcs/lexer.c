@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 00:11:03 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/25 19:03:27 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 
 static void	handle_quotes(char *input, t_token **tokens, int *i)
 {
-	char	quote;
-	int		start;
-	char	*word;
+	char			quote;
+	int				start;
+	char			*word;
 
 	quote = input[*i];
 	(*i)++;
@@ -58,7 +58,10 @@ static void	handle_quotes(char *input, t_token **tokens, int *i)
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
 	word = ft_substr(input, start, *i - start);
-	add_token(tokens, new_token(TOKEN_WORD, word));
+	if (quote == '\'')
+		add_token(tokens, new_token(TOKEN_WORD_SQUOTE, word));
+	else
+		add_token(tokens, new_token(TOKEN_WORD_DQUOTE, word));
 	free(word);
 	if (input[*i] == quote)
 		(*i)++;

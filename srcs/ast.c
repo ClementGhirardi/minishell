@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 12:38:30 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:58:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,31 @@ t_ast	*ast_new_node(t_node_type type)
 	node->type = type;
 	node->args = NULL;
 	node->file = NULL;
+	node->quotes = NULL;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
 }
 
-t_ast	*ast_new_cmd(char **args)
+t_ast	*ast_new_cmd(char **args, t_quote *quotes)
 {
 	t_ast	*node;
 
 	node = ast_new_node(NODE_CMD);
 	node->args = args;
+	node->quotes = quotes;
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_node_type type, char *file, t_ast *left)
+t_ast	*ast_new_redir(t_node_type type, char *file,
+	t_token_type token_type, t_ast *left)
 {
 	t_ast	*node;
 
 	node = ast_new_node(type);
 	node->file = file;
+	node->quotes = malloc(1 * sizeof(t_quote));
+	node->quotes[0] = token_type - TOKEN_WORD;
 	node->left = left;
 	return (node);
 }

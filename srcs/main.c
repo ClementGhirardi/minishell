@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/24 12:45:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:51:21 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int	main(int ac, char **av)
 	}
 	ft_printf("\n_____________________\n\n");
 	node = parse(lexer(av[1]));
+	ft_printf("coucou");
 	ast_show_type(node);
 	ft_printf("\n_____________________\n\n");
 	node = parse(lexer(av[1]));
