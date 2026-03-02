@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/25 20:17:08 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:09:50 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,12 @@
 # define MINISHELL_H
 
 # include "libft.h"
-# include "stdlib.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <signal.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef enum e_token_type
 {
@@ -76,5 +81,7 @@ t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_node_type	token_to_node(t_token_type type);
 
 t_ast		*parse(t_token *tokens);
+
+void		expander(t_ast *node);
 
 #endif

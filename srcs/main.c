@@ -6,23 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/25 20:51:21 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:10:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-void	ast_show_type(t_ast *node)
-{
-	if (!node)
-		return ;
-	ft_printf("(%d", node->type);
-	ast_show_type(node->left);
-	if (node->right)
-		ft_printf(", ");
-	ast_show_type(node->right);
-	ft_printf(")");
-}
 
 void	ast_show(t_ast *node)
 {
@@ -41,7 +29,7 @@ void	ast_show(t_ast *node)
 		i = 0;
 		while (node->args[i])
 		{
-			ft_printf("%s", node->args[i]);
+			ft_printf("|%s|", node->args[i]);
 			i++;
 			if (node->args[i])
 				ft_printf(", ");
@@ -49,7 +37,7 @@ void	ast_show(t_ast *node)
 	}
 	if (node->file)
 	{
-		ft_printf("\'%s\': ", node->file);
+		ft_printf("-%s-: ", node->file);
 		ast_show(node->left);
 	}
 	else
@@ -62,24 +50,59 @@ void	ast_show(t_ast *node)
 	ft_printf(")");
 }
 
-int	main(int ac, char **av)
+void	sigint_handler(int sig)
 {
-	t_token	*tokens;
-	t_ast	*node;
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+void	init_signals(void)
+{
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+int	main(int ac, char **av, char **env)
+{
+	char	*input;
 
 	(void)ac;
-	tokens = lexer(av[1]);
-	while (tokens)
+	(void)av;
+	(void)env;
+	init_signals();
+	while (1)
 	{
-		ft_printf("%d: %s\n", tokens->type, tokens->value);
-		tokens = tokens->next;
+		input = readline("minishell$ ");
+		if (!input)
+		{
+			printf("exit\n");
+			break ;
+		}
+		if (*input)
+			add_history(input);
+		// Tests begin
+		ft_printf("--TEST LEXER--\n");
+		t_token *tokens = lexer(input);
+		while (tokens)
+		{
+			ft_printf("%d: %s\n", tokens->type, tokens->value);
+			tokens = tokens->next;
+		}
+		ft_printf("\n");
+		ft_printf("--TEST PARSER--\n");
+		t_ast	*node = parse(lexer(input));
+		ast_show(node);
+		ft_printf("\n\n");
+		ft_printf("--TEST EXPANDER--\n");
+		expander(node);
+		ast_show(node);
+		ft_printf("\n\n");
+		// Tests end
+		free(input);
 	}
-	ft_printf("\n_____________________\n\n");
-	node = parse(lexer(av[1]));
-	ft_printf("coucou");
-	ast_show_type(node);
-	ft_printf("\n_____________________\n\n");
-	node = parse(lexer(av[1]));
-	ast_show(node);
+	rl_clear_history();
 	return (0);
 }

@@ -16,6 +16,7 @@ SRCS = $(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/parser.c \
+	$(SRCS_DIR)/expander.c \
 
 SRCS_BONUS = 
 
@@ -35,7 +36,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(LIBFT_DIR)
-	$(CC) $(CFLAGS) -I $(INCLUDES) $^ -Llibft -lft -o $(NAME)
+	$(CC) $(CFLAGS) -I $(INCLUDES)  $^ -Llibft -lft -lreadline -o $(NAME)
 
 bonus: $(OBJS_BONUS)
 	$(MAKE) -C $(LIBFT_DIR)
