@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/02 17:44:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/04 13:51:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void	extract_args(t_token **tokens, char ***args, t_quote **quotes)
 			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
 	{
 		(*args)[i] = ft_strdup((*tokens)->value);
-		(*quotes)[i] = (*tokens)->type - TOKEN_WORD;
+		(*quotes)[i++] = (*tokens)->type - TOKEN_WORD;
 		*tokens = (*tokens)->next;
-		i++;
 	}
+	(*args)[i] = NULL;
 }
 
 t_ast	*parse_command(t_token **tokens);
