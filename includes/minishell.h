@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/04 11:06:19 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/04 15:12:00 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <fcntl.h>
 
 typedef enum e_token_type
 {
@@ -91,5 +92,7 @@ t_node_type	token_to_node(t_token_type type);
 t_ast		*parse(t_token *tokens);
 
 void		expander(t_ast *node);
+
+void		executor(t_ast *node,char **envp);
 
 #endif

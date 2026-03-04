@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/02/25 19:03:27 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/04 15:28:48 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 	else
 	{
-		add_token(tokens, new_token(TOKEN_REDIR_OUT, "<"));
+		add_token(tokens, new_token(TOKEN_REDIR_IN, "<"));
 		(*i)++;
 	}
 }
