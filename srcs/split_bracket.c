@@ -67,16 +67,3 @@ t_token	*split_bracket(t_token **tokens)
 	tmp = tmp->next;
 	return (create_clean_list(&tmp));
 }
-
-// int main(void)
-// {
-// 	 t_token	*new_list;
-
-// 	 new_list = malloc(sizeof(t_token));
-// 	 if (!new_list)
-// 	 	return (1);
-// 	new_list->type = TOKEN_WORD;
-// 	new_list->value = "word";
-// 	new_list->next = NULL;
-
-// }
