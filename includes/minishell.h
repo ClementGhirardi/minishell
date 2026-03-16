@@ -23,7 +23,11 @@ typedef enum e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
-	TOKEN_HEREDOC
+	TOKEN_HEREDOC,
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_O_BRACK,
+	TOKEN_C_BRACK
 }	t_token_type;
 
 typedef struct s_token
@@ -40,7 +44,9 @@ typedef enum e_node_type
 	NODE_REDIR_IN,
 	NODE_REDIR_OUT,
 	NODE_APPEND,
-	NODE_HEREDOC
+	NODE_HEREDOC,
+	NODE_AND,
+	NODE_OR
 }	t_node_type;
 
 typedef struct s_ast
