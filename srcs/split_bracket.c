@@ -52,36 +52,60 @@
 // }
 
 /* Pas termine */
-t_token	**one_pair_of_brackets(t_token **tokens)
-{
-	t_token	*clean_list;
-	t_token	*tmp;
-	int		o_brack;
-	int		c_brack;
+// t_token	**one_pair_of_brackets(t_token **tokens)
+// {
+// 	t_token	*clean_list;
+// 	t_token	*tmp;
+// 	int		o_brack;
+// 	int		c_brack;
 
-	o_brack = 1;
-	c_brack = 0;
-	tmp = *tokens;
-	while (tmp)
+// 	o_brack = 1;
+// 	c_brack = 0;
+// 	tmp = *tokens;
+// 	while (tmp)
+// 	{
+// 		if (tmp->type == TOKEN_O_BRACK)
+// 		{
+// 			tmp = tmp->next;
+// 			clean_list = check_brackets_validity(&tmp);
+// 			tmp->brackets = clean_list;
+// 			while (o_brack != c_brack)
+// 			{
+// 				if (tmp->type == TOKEN_O_BRACK)
+// 					o_brack++;
+// 				if (tmp->type == TOKEN_C_BRACK)
+// 					c_brack++;
+// 				tmp = tmp->next;
+// 			}
+// 		}
+// 		else
+// 			tmp = tmp->next;
+// 	}
+// 	return (tokens);
+// }
+
+void	ft_tokadd_back(t_token **lst, t_token *new)
+{
+	t_token	*current;
+
+	if (!lst || !new)
+		return ;
+	if (!(*lst))
 	{
-		if (tmp->type == TOKEN_O_BRACK)
-		{
-			tmp = tmp->next;
-			clean_list = check_brackets_validity(&tmp);
-			tmp->brackets = clean_list;
-			while (o_brack != c_brack)
-			{
-				if (tmp->type == TOKEN_O_BRACK)
-					o_brack++;
-				if (tmp->type == TOKEN_C_BRACK)
-					c_brack++;
-				tmp = tmp->next;
-			}
-		}
-		else
-			tmp = tmp->next;
+		*lst = new;
+		return ;
 	}
-	return (tokens);
+	current = *lst;
+	while (current)
+	{
+		if (current->next == NULL)
+		{
+			current->next = new;
+			return ;
+		}
+		current = current->next;
+	}
+	return ;
 }
 
 void	add_sublist(t_token **clean_list, t_token *sub_list)
@@ -129,7 +153,7 @@ t_token	*create_clean_list(t_token **tokens)
 			&& (*tokens)->type != TOKEN_C_BRACK)
 		{
 			node = lexer((*tokens)->value);
-			lstadd_back(&clean_list, node);
+			ft_tokadd_back(&clean_list, node);
 			*tokens = (*tokens)->next;
 		}
 		else if ((*tokens)->type == TOKEN_O_BRACK)

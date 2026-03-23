@@ -71,6 +71,8 @@ t_ast		*ast_new_redir(t_node_type type, char *file, t_ast *left);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_node_type	token_to_node(t_token_type type);
 
+t_token		*split_bracket(t_token *tokens);
+
 t_ast		*parse(t_token *tokens);
 
 #endif

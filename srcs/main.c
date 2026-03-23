@@ -62,6 +62,19 @@ void	ast_show(t_ast *node)
 	ft_printf(")");
 }
 
+void show(t_token *tokens)
+{
+	if (tokens->brackets)
+	{
+		ft_printf("((");
+		show(tokens->brackets);
+		ft_printf("))");
+	}
+	else
+		ft_printf("%d: %s\n", tokens->type, tokens->value);
+	tokens = tokens->next;
+}
+
 int	main(int ac, char **av)
 {
 	t_token	*tokens;
@@ -69,11 +82,15 @@ int	main(int ac, char **av)
 
 	(void)ac;
 	tokens = lexer(av[1]);
+	ft_printf("OLD: \n");
 	while (tokens)
 	{
 		ft_printf("%d: %s\n", tokens->type, tokens->value);
 		tokens = tokens->next;
 	}
+	ft_printf("NEW: \n");
+	// tokens = split_bracket(tokens);
+	// show(tokens);
 	ft_printf("\n_____________________\n\n");
 	node = parse(lexer(av[1]));
 	ast_show_type(node);
