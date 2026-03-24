@@ -34,7 +34,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
-	struct s_token	*brackets;
+	struct s_token	*bracket;
 	struct s_token	*next;
 }	t_token;
 
@@ -68,7 +68,7 @@ t_token		*lexer(char *input);
 t_ast		*ast_new_node(t_node_type type);
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_node_type type, char *file, t_ast *left);
-t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
+t_ast		*ast_new_pipe(t_ast *left, t_ast *right, t_token_type type);
 t_node_type	token_to_node(t_token_type type);
 
 t_token		*split_bracket(t_token *tokens);

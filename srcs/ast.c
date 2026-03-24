@@ -46,11 +46,16 @@ t_ast	*ast_new_redir(t_node_type type, char *file, t_ast *left)
 	return (node);
 }
 
-t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
+t_ast	*ast_new_pipe(t_ast *left, t_ast *right, t_token_type type)
 {
 	t_ast	*node;
 
-	node = ast_new_node(NODE_PIPE);
+	if (type == TOKEN_PIPE)
+		node = ast_new_node(NODE_PIPE);
+	else if (type == TOKEN_AND)
+		node = ast_new_node(NODE_AND);
+	else
+		node = ast_new_node(NODE_OR);
 	node->left = left;
 	node->right = right;
 	return (node);

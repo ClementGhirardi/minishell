@@ -77,13 +77,29 @@ t_ast	*parse_pipeline(t_token **tokens)
 {
 	t_ast	*left;
 	t_ast	*right;
+	t_ast	*sub_tree;
+	t_token	*tmp;
 
 	left = parse_command(tokens);
-	while (*tokens && (*tokens)->type == TOKEN_PIPE)
+	/* Il reste a faire en sorte que | soit prioritaire sur && et || */
+	while ((*tokens && (*tokens)->type == TOKEN_PIPE)
+		|| (*tokens && (*tokens)->type == TOKEN_AND)
+		|| (*tokens && (*tokens)->type == TOKEN_OR))
 	{
-		*tokens = (*tokens)->next;
-		right = parse_command(tokens);
-		left = ast_new_pipe(left, right);
+		if ((*tokens)->bracket)
+		{
+			tmp = *tokens;
+			tmp = tmp->bracket;
+			sub_tree = parse_pipeline(&tmp);
+			left = ast_new_pipe(left, sub_tree, (*tokens)->type);
+			*tokens = (*tokens)->next;
+		}
+		else
+		{
+			*tokens = (*tokens)->next;
+			right = parse_command(tokens);
+			left = ast_new_pipe(left, right, (*tokens)->type);
+		}
 	}
 	return (left);
 }
