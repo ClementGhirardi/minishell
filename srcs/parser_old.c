@@ -6,16 +6,14 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 16:22:11 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:26:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_ast	*parse_command(t_token **tokens, t_ast *instr)
+void	extract_args(t_token **tokens, char ***args, t_quote **quotes)
 {
-	char	**args;
-	t_quote	*quotes;
 	int		count;
 	t_token	*tmp;
 	int		i;
@@ -29,64 +27,57 @@ t_ast	*parse_command(t_token **tokens, t_ast *instr)
 		count++;
 		tmp = tmp->next;
 	}
-	if (count == 0)
-		return (NULL);
-	args = malloc((count + 1) * sizeof(char *));
-	quotes = malloc((count) * sizeof(t_quote));
+	*args = malloc((count + 1) * sizeof(char *));
+	*quotes = malloc((count) * sizeof(t_quote));
 	i = 0;
 	while (*tokens && ((*tokens)->type == TOKEN_WORD
 			|| (*tokens)->type == TOKEN_WORD_SQUOTE
 			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
 	{
-		args[i] = ft_strdup((*tokens)->value);
-		quotes[i++] = (*tokens)->type - TOKEN_WORD;
+		(*args)[i] = ft_strdup((*tokens)->value);
+		(*quotes)[i++] = (*tokens)->type - TOKEN_WORD;
 		*tokens = (*tokens)->next;
 	}
-	args[i] = NULL;
-	instr = ast_new_cmd(args, quotes);
-	return (instr);
+	(*args)[i] = NULL;
 }
 
-t_ast	*parse_instructions(t_token **tokens);
+t_ast	*parse_command(t_token **tokens);
 
-t_ast	*parse_redirection(t_token **tokens, t_ast *instr)
+t_ast	*parse_redirection(t_token **tokens, t_ast *cmd)
 {
 	t_token		*tmp;
 	t_node_type	type;
 
-	tmp = *tokens;
-	*tokens = (*tokens)->next;
-	if (!*tokens || !((*tokens)->type == TOKEN_WORD
-			|| (*tokens)->type == TOKEN_WORD_SQUOTE
-			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
-		return (NULL);
-	type = token_to_node(tmp->type);
-	instr = ast_new_redir(type, (*tokens)->value, (*tokens)->type);
-	*tokens = (*tokens)->next;
-	return (instr);
+	while (*tokens
+		&& ((*tokens)->type == TOKEN_REDIR_IN
+			|| (*tokens)->type == TOKEN_REDIR_OUT
+			|| (*tokens)->type == TOKEN_APPEND
+			|| (*tokens)->type == TOKEN_HEREDOC))
+	{
+		tmp = *tokens;
+		*tokens = (*tokens)->next;
+		if (!*tokens || !((*tokens)->type == TOKEN_WORD
+				|| (*tokens)->type == TOKEN_WORD_SQUOTE
+				|| (*tokens)->type == TOKEN_WORD_DQUOTE))
+			return (NULL);
+		type = token_to_node(tmp->type);
+		cmd = ast_new_redir(type, (*tokens)->value, (*tokens)->type, cmd);
+		*tokens = (*tokens)->next;
+		cmd->left = parse_command(tokens);
+	}
+	return (cmd);
 }
 
-t_ast	*parse_instructions(t_token **tokens)
+t_ast	*parse_command(t_token **tokens)
 {
-	t_ast	*instr;
+	char	**args;
+	t_quote	*quotes;
 	t_ast	*cmd;
 
-	instr = NULL;
-	cmd = NULL;
-	if (!(*tokens) || (*tokens)->type == NODE_PIPE)
-		return (NULL);
-	if ((*tokens)->type == NODE_CMD)
-	{
-		cmd = parse_command(tokens, cmd);
-		instr = parse_instructions(tokens);
-		ast_add_end(&instr, cmd);
-	}
-	else
-	{
-		instr = parse_redirection(tokens, instr);
-		instr->left = parse_instructions(tokens);
-	}
-	return (instr);
+	extract_args(tokens, &args, &quotes);
+	cmd = ast_new_cmd(args, quotes);
+	cmd = parse_redirection(tokens, cmd);
+	return (cmd);
 }
 
 t_ast	*parse_pipeline(t_token **tokens)
@@ -94,11 +85,11 @@ t_ast	*parse_pipeline(t_token **tokens)
 	t_ast	*left;
 	t_ast	*right;
 
-	left = parse_instructions(tokens);
+	left = parse_command(tokens);
 	while (*tokens && (*tokens)->type == TOKEN_PIPE)
 	{
 		*tokens = (*tokens)->next;
-		right = parse_instructions(tokens);
+		right = parse_command(tokens);
 		left = ast_new_pipe(left, right);
 	}
 	return (left);

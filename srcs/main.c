@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 12:25:24 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 16:22:30 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
+	// (void)envp;
 	init_signals();
 	while (1)
 	{
@@ -110,6 +111,7 @@ int	main(int ac, char **av, char **envp)
 		ft_printf("\n\n");
 		ft_printf("--TEST EXECUTOR--\n");
 		executor(node, &envp);
+		ft_printf("\n");
 		// Tests end
 		free(input);
 	}

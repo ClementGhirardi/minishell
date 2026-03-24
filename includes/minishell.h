@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 11:06:17 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 16:20:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,12 @@ void		add_token(t_token **list, t_token *new);
 
 t_token		*lexer(char *input);
 
-t_ast		*ast_new_node(t_node_type type);
+t_ast		*ast_new_node(void);
 t_ast		*ast_new_cmd(char **args, t_quote *quotes);
 t_ast		*ast_new_redir(t_node_type type, char *file,
-				t_token_type token_type, t_ast *left);
+				t_token_type token_type);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
+void		ast_add_end(t_ast **ast, t_ast *new);
 t_node_type	token_to_node(t_token_type type);
 
 t_ast		*parse(t_token *tokens);

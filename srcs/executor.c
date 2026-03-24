@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 12:12:01 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 14:12:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,14 +99,15 @@ int	execute_redir(t_ast *node, char ***env)
 			return (1);
 		dup2(fd, STDOUT_FILENO);
 	}
-	close(fd);
 	return (executor(node->left, env));
 }
 
 int	executor(t_ast *ast, char ***env)
 {
 	if (!ast)
+	{
 		return (1);
+	}
 	if (ast->type == NODE_CMD)
 		return (execute_cmd(ast, env));
 	else if (ast->type == NODE_PIPE)
