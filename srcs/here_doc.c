@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 10:51:38 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:06:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	here_doc(char *limiter)
 	write(1, "> ", 2);
 	size = ft_strlen(limiter);
 	buffer = get_next_line(STDIN_FILENO);
-	while (ft_strncmp(buffer, limiter, size) || buffer[size] != '\n')
+	while (ft_strncmp(buffer, limiter, size))
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		write(1, "> ", 2);

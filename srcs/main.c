@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/23 11:18:38 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:25:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ void	ast_show(t_ast *node)
 		ft_printf("PIPE(");
 	else if (node->type == NODE_CMD)
 		ft_printf("CMD(");
+	else if (node->type == NODE_REDIR_IN)
+		ft_printf("REDIR_IN(");
+	else if (node->type == NODE_REDIR_OUT)
+		ft_printf("REDIR_OUT(");
+	else if (node->type == NODE_APPEND)
+		ft_printf("APPEND(");
+	else if (node->type == NODE_HEREDOC)
+		ft_printf("HEREDOC(");
 	else
 		ft_printf("REDIR(");
 	if (node->args)

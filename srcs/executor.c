@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 11:04:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:12:01 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,12 @@ int	execute_redir(t_ast *node, char ***env)
 	int	fd;
 
 	fd = -1;
-	if (node->type == NODE_REDIR_IN)
+	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
-		fd = open(node->file, O_RDONLY);
+		if (node->type == NODE_REDIR_IN)
+			fd = open(node->file, O_RDONLY);
+		else if (node->type == NODE_HEREDOC)
+			fd = here_doc(node->file);
 		if (fd == -1)
 			return (1);
 		dup2(fd, STDIN_FILENO);
@@ -92,8 +95,6 @@ int	execute_redir(t_ast *node, char ***env)
 			fd = open(node->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		else if (node->type == NODE_APPEND)
 			fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else if (node->type == NODE_HEREDOC)
-			fd = here_doc(node->file);
 		if (fd == -1)
 			return (1);
 		dup2(fd, STDOUT_FILENO);

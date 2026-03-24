@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/04 15:28:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:26:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 	if (input[*i + 1] == '<')
 	{
-		add_token(tokens, new_token(TOKEN_APPEND, "<<"));
+		add_token(tokens, new_token(TOKEN_HEREDOC, "<<"));
 		*i += 2;
 	}
 	else
