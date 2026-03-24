@@ -17,6 +17,10 @@ SRCS = $(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/here_doc.c \
+	$(SRCS_DIR)/get_path.c \
+	$(SRCS_DIR)/get_status.c \
+	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
 
 SRCS_BONUS = 

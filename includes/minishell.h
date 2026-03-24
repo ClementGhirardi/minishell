@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/23 11:17:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 11:06:17 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,15 @@ t_node_type	token_to_node(t_token_type type);
 t_ast		*parse(t_token *tokens);
 
 void		expander(t_ast *node);
+
+int			here_doc(char *limiter);
+
+char		*get_path(char *cmd, char **envp);
+
+int			get_status(int status);
+
+int			is_builtin(char *cmd);
+int			run_builtin(char **args, char ***env);
 
 int			executor(t_ast *node, char ***envp);
 
