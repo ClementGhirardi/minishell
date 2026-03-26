@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/04 13:50:28 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 13:36:41 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ char	*extract_var_name(char *str, int *i)
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
+	if (!tmp)
+		return (NULL);
 	var = getenv(tmp);
+	if (!var)
+		return (NULL);
 	var = ft_strdup(var);
 	free(tmp);
 	return (var);
@@ -64,6 +68,8 @@ char	*expand_string(char *str, t_quote quote)
 		return (str);
 	i = 0;
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	while (str[i])
 	{
 		if (str[i] == '$')
