@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 12:06:57 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 13:16:44 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ int	count_word(t_token *tokens)
 	return (count);
 }
 
-t_ast	*parse_command(t_token **tokens, t_ast *instr)
+t_ast	*parse_command(t_token **tokens)
 {
+	t_ast	*instr;
 	char	**args;
 	t_quote	*quotes;
 	int		count;
@@ -55,8 +56,9 @@ t_ast	*parse_command(t_token **tokens, t_ast *instr)
 
 t_ast	*parse_instructions(t_token **tokens);
 
-t_ast	*parse_redirection(t_token **tokens, t_ast *instr)
+t_ast	*parse_redirection(t_token **tokens)
 {
+	t_ast			*instr;
 	t_token_type	redir_type;
 
 	redir_type = (*tokens)->type;
@@ -75,21 +77,19 @@ t_ast	*parse_instructions(t_token **tokens)
 	t_ast	*instr;
 	t_ast	*cmd;
 
-	instr = NULL;
-	cmd = NULL;
 	if (!(*tokens) || (*tokens)->type == TOKEN_PIPE)
 		return (NULL);
 	if ((*tokens)->type == TOKEN_WORD
 		|| (*tokens)->type == TOKEN_WORD_SQUOTE
 		|| (*tokens)->type == TOKEN_WORD_DQUOTE)
 	{
-		cmd = parse_command(tokens, cmd);
+		cmd = parse_command(tokens);
 		instr = parse_instructions(tokens);
 		ast_add_end(&instr, cmd);
 	}
 	else
 	{
-		instr = parse_redirection(tokens, instr);
+		instr = parse_redirection(tokens);
 		instr->left = parse_instructions(tokens);
 	}
 	return (instr);
@@ -100,6 +100,8 @@ t_ast	*parse(t_token *tokens)
 	t_ast	*left;
 	t_ast	*right;
 
+	if (!tokens)
+		return (NULL);
 	left = parse_instructions(&tokens);
 	while (tokens && tokens->type == TOKEN_PIPE)
 	{

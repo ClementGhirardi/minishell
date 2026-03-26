@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 16:22:30 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 13:22:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-int	here_doc(char *limiter);
 int	main(int ac, char **av, char **envp)
 {
 	char	*input;
