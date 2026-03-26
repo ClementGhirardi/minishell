@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 14:12:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/25 11:41:37 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,13 @@ int	execute_pipe(t_ast *node, char ***env)
 int	execute_redir(t_ast *node, char ***env)
 {
 	int	fd;
+	int	status;
+	int	std[2];
 
 	fd = -1;
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
+		std[0] = dup(STDIN_FILENO);
 		if (node->type == NODE_REDIR_IN)
 			fd = open(node->file, O_RDONLY);
 		else if (node->type == NODE_HEREDOC)
@@ -91,6 +94,7 @@ int	execute_redir(t_ast *node, char ***env)
 	}
 	else
 	{
+		std[1] = dup(STDOUT_FILENO);
 		if (node->type == NODE_REDIR_OUT)
 			fd = open(node->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		else if (node->type == NODE_APPEND)
@@ -99,7 +103,12 @@ int	execute_redir(t_ast *node, char ***env)
 			return (1);
 		dup2(fd, STDOUT_FILENO);
 	}
-	return (executor(node->left, env));
+	status = executor(node->left, env);
+	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
+		dup2(std[0], STDIN_FILENO);
+	else
+		dup2(std[1], STDOUT_FILENO);
+	return (status);
 }
 
 int	executor(t_ast *ast, char ***env)

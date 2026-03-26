@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 16:22:11 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/24 20:59:28 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,11 @@ t_ast	*parse_instructions(t_token **tokens)
 
 	instr = NULL;
 	cmd = NULL;
-	if (!(*tokens) || (*tokens)->type == NODE_PIPE)
+	if (!(*tokens) || (*tokens)->type == TOKEN_PIPE)
 		return (NULL);
-	if ((*tokens)->type == NODE_CMD)
+	if ((*tokens)->type == TOKEN_WORD
+		|| (*tokens)->type == TOKEN_WORD_SQUOTE
+		|| (*tokens)->type == TOKEN_WORD_DQUOTE)
 	{
 		cmd = parse_command(tokens, cmd);
 		instr = parse_instructions(tokens);
