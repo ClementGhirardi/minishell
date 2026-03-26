@@ -6,19 +6,19 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 12:26:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 12:52:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	handle_pipe(t_token **tokens, int *i)
+void	handle_pipe(t_token **tokens, int *i)
 {
 	add_token(tokens, new_token(TOKEN_PIPE, "|"));
 	(*i)++;
 }
 
-static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
+void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 {
 	if (dir == 1)
 	{
@@ -46,7 +46,7 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 }
 
-static void	handle_quotes(char *input, t_token **tokens, int *i)
+void	handle_quotes(char *input, t_token **tokens, int *i)
 {
 	char			quote;
 	int				start;
@@ -58,6 +58,8 @@ static void	handle_quotes(char *input, t_token **tokens, int *i)
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
 	word = ft_substr(input, start, *i - start);
+	if (!word)
+		return ;
 	if (quote == '\'')
 		add_token(tokens, new_token(TOKEN_WORD_SQUOTE, word));
 	else
@@ -67,7 +69,7 @@ static void	handle_quotes(char *input, t_token **tokens, int *i)
 		(*i)++;
 }
 
-static void	handle_word(char *input, t_token **tokens, int *i)
+void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
 	char	*word;
@@ -82,6 +84,8 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 		&& input[*i] != '"')
 		(*i)++;
 	word = ft_substr(input, start, *i - start);
+	if (!word)
+		return ;
 	add_token(tokens, new_token(TOKEN_WORD, word));
 	free(word);
 }
@@ -91,6 +95,8 @@ t_token	*lexer(char *input)
 	t_token	*tokens;
 	int		i;
 
+	if (!input)
+		return (NULL);
 	tokens = NULL;
 	i = 0;
 	while (input[i])

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 16:22:30 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 12:53:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,48 +73,55 @@ void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-int	here_doc(char *limiter);
+// int	main(int ac, char **av, char **envp)
+// {
+// 	char	*input;
+
+// 	(void)ac;
+// 	(void)av;
+// 	// (void)envp;
+// 	init_signals();
+// 	while (1)
+// 	{
+// 		input = readline("minishell$ ");
+// 		if (!input)
+// 		{
+// 			printf("exit\n");
+// 			break ;
+// 		}
+// 		if (*input)
+// 			add_history(input);
+// 		// Tests begin
+// 		ft_printf("--TEST LEXER--\n");
+// 		t_token *tokens = lexer(input);
+// 		while (tokens)
+// 		{
+// 			ft_printf("%d: %s\n", tokens->type, tokens->value);
+// 			tokens = tokens->next;
+// 		}
+// 		ft_printf("\n");
+// 		ft_printf("--TEST PARSER--\n");
+// 		t_ast	*node = parse(lexer(input));
+// 		ast_show(node);
+// 		ft_printf("\n\n");
+// 		ft_printf("--TEST EXPANDER--\n");
+// 		expander(node);
+// 		ast_show(node);
+// 		ft_printf("\n\n");
+// 		ft_printf("--TEST EXECUTOR--\n");
+// 		executor(node, &envp);
+// 		ft_printf("\n");
+// 		// Tests end
+// 		free(input);
+// 	}
+// 	rl_clear_history();
+// 	return (0);
+// }
+
 int	main(int ac, char **av, char **envp)
 {
-	char	*input;
-
 	(void)ac;
 	(void)av;
-	// (void)envp;
-	init_signals();
-	while (1)
-	{
-		input = readline("minishell$ ");
-		if (!input)
-		{
-			printf("exit\n");
-			break ;
-		}
-		if (*input)
-			add_history(input);
-		// Tests begin
-		ft_printf("--TEST LEXER--\n");
-		t_token *tokens = lexer(input);
-		while (tokens)
-		{
-			ft_printf("%d: %s\n", tokens->type, tokens->value);
-			tokens = tokens->next;
-		}
-		ft_printf("\n");
-		ft_printf("--TEST PARSER--\n");
-		t_ast	*node = parse(lexer(input));
-		ast_show(node);
-		ft_printf("\n\n");
-		ft_printf("--TEST EXPANDER--\n");
-		expander(node);
-		ast_show(node);
-		ft_printf("\n\n");
-		ft_printf("--TEST EXECUTOR--\n");
-		executor(node, &envp);
-		ft_printf("\n");
-		// Tests end
-		free(input);
-	}
-	rl_clear_history();
+	(void)envp;
 	return (0);
 }
