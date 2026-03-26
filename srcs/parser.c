@@ -6,29 +6,35 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 20:59:28 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 12:06:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	count_word(t_token *tokens)
+{
+	int		count;
+
+	count = 0;
+	while (tokens && (tokens->type == TOKEN_WORD
+			|| tokens->type == TOKEN_WORD_SQUOTE
+			|| tokens->type == TOKEN_WORD_DQUOTE))
+	{
+		count++;
+		tokens = tokens->next;
+	}
+	return (count);
+}
 
 t_ast	*parse_command(t_token **tokens, t_ast *instr)
 {
 	char	**args;
 	t_quote	*quotes;
 	int		count;
-	t_token	*tmp;
 	int		i;
 
-	count = 0;
-	tmp = *tokens;
-	while (tmp && (tmp->type == TOKEN_WORD
-			|| tmp->type == TOKEN_WORD_SQUOTE
-			|| tmp->type == TOKEN_WORD_DQUOTE))
-	{
-		count++;
-		tmp = tmp->next;
-	}
+	count = count_word(*tokens);
 	if (count == 0)
 		return (NULL);
 	args = malloc((count + 1) * sizeof(char *));
@@ -51,17 +57,15 @@ t_ast	*parse_instructions(t_token **tokens);
 
 t_ast	*parse_redirection(t_token **tokens, t_ast *instr)
 {
-	t_token		*tmp;
-	t_node_type	type;
+	t_token_type	redir_type;
 
-	tmp = *tokens;
+	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!*tokens || !((*tokens)->type == TOKEN_WORD
 			|| (*tokens)->type == TOKEN_WORD_SQUOTE
 			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
 		return (NULL);
-	type = token_to_node(tmp->type);
-	instr = ast_new_redir(type, (*tokens)->value, (*tokens)->type);
+	instr = ast_new_redir(redir_type, (*tokens)->value, (*tokens)->type);
 	*tokens = (*tokens)->next;
 	return (instr);
 }
@@ -91,22 +95,17 @@ t_ast	*parse_instructions(t_token **tokens)
 	return (instr);
 }
 
-t_ast	*parse_pipeline(t_token **tokens)
+t_ast	*parse(t_token *tokens)
 {
 	t_ast	*left;
 	t_ast	*right;
 
-	left = parse_instructions(tokens);
-	while (*tokens && (*tokens)->type == TOKEN_PIPE)
+	left = parse_instructions(&tokens);
+	while (tokens && tokens->type == TOKEN_PIPE)
 	{
-		*tokens = (*tokens)->next;
-		right = parse_instructions(tokens);
+		tokens = tokens->next;
+		right = parse_instructions(&tokens);
 		left = ast_new_pipe(left, right);
 	}
 	return (left);
-}
-
-t_ast	*parse(t_token *tokens)
-{
-	return (parse_pipeline(&tokens));
 }

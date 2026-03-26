@@ -6,43 +6,40 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/25 11:41:37 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 11:34:20 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	executor(t_ast *ast, char ***env);
-
 volatile sig_atomic_t	g_signal = 0;
 
-static int	run_cmd(char **args, char **env)
+int	executor(t_ast *ast, char ***env);
+
+int	execute_cmd(t_ast *node, char ***env)
 {
 	pid_t	pid;
 	int		status;
 	char	*path;
 
-	pid = fork();
-	if (pid == 0)
-	{
-		path = get_path(args[0], env);
-		if (!path)
-			exit(127);
-		execve(path, args, env);
-		free(path);
-		perror("execve");
-		exit(126);
-	}
-	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
-}
-
-int	execute_cmd(t_ast *node, char ***env)
-{
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, env));
 	else
-		return (run_cmd(node->args, *env));
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			path = get_path(node->args[0], *env);
+			if (!path)
+				exit(127);
+			execve(path, node->args, *env);
+			free(path);
+			perror("execve");
+			exit(126);
+		}
+		waitpid(pid, &status, 0);
+		return (WEXITSTATUS(status));
+	}
 }
 
 int	execute_pipe(t_ast *node, char ***env)
@@ -74,33 +71,39 @@ int	execute_pipe(t_ast *node, char ***env)
 		get_status(status));
 }
 
+static int	open_fd(t_node_type type, char *file)
+{
+	int	fd;
+
+	fd = -1;
+	if (type == NODE_REDIR_IN)
+		fd = open(file, O_RDONLY);
+	else if (type == NODE_HEREDOC)
+		fd = here_doc(file);
+	else if (type == NODE_REDIR_OUT)
+		fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	else if (type == NODE_APPEND)
+		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	return (fd);
+}
+
 int	execute_redir(t_ast *node, char ***env)
 {
 	int	fd;
 	int	status;
 	int	std[2];
 
-	fd = -1;
+	fd = open_fd(node->type, node->file);
+	if (fd == -1)
+		return (1);
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);
-		if (node->type == NODE_REDIR_IN)
-			fd = open(node->file, O_RDONLY);
-		else if (node->type == NODE_HEREDOC)
-			fd = here_doc(node->file);
-		if (fd == -1)
-			return (1);
 		dup2(fd, STDIN_FILENO);
 	}
 	else
 	{
 		std[1] = dup(STDOUT_FILENO);
-		if (node->type == NODE_REDIR_OUT)
-			fd = open(node->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		else if (node->type == NODE_APPEND)
-			fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (fd == -1)
-			return (1);
 		dup2(fd, STDOUT_FILENO);
 	}
 	status = executor(node->left, env);
@@ -110,6 +113,43 @@ int	execute_redir(t_ast *node, char ***env)
 		dup2(std[1], STDOUT_FILENO);
 	return (status);
 }
+
+// int	execute_redir(t_ast *node, char ***env)
+// {
+// 	int	fd;
+// 	int	status;
+// 	int	std[2];
+
+// 	fd = -1;
+// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
+// 	{
+// 		std[0] = dup(STDIN_FILENO);
+// 		if (node->type == NODE_REDIR_IN)
+// 			fd = open(node->file, O_RDONLY);
+// 		else if (node->type == NODE_HEREDOC)
+// 			fd = here_doc(node->file);
+// 		if (fd == -1)
+// 			return (1);
+// 		dup2(fd, STDIN_FILENO);
+// 	}
+// 	else
+// 	{
+// 		std[1] = dup(STDOUT_FILENO);
+// 		if (node->type == NODE_REDIR_OUT)
+// 			fd = open(node->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+// 		else if (node->type == NODE_APPEND)
+// 			fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 		if (fd == -1)
+// 			return (1);
+// 		dup2(fd, STDOUT_FILENO);
+// 	}
+// 	status = executor(node->left, env);
+// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
+// 		dup2(std[0], STDIN_FILENO);
+// 	else
+// 		dup2(std[1], STDOUT_FILENO);
+// 	return (status);
+// }
 
 int	executor(t_ast *ast, char ***env)
 {

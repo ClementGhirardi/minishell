@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 16:02:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 12:05:11 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,25 @@ t_ast	*ast_new_cmd(char **args, t_quote *quotes)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_node_type type, char *file,
-	t_token_type token_type)
+t_ast	*ast_new_redir(t_token_type redir_type, char *file,
+	t_token_type word_type)
 {
-	t_ast	*node;
+	t_ast		*node;
 
 	node = ast_new_node();
-	node->type = type;
+	if (redir_type == TOKEN_REDIR_IN)
+		node->type = NODE_REDIR_IN;
+	else if (redir_type == TOKEN_REDIR_OUT)
+		node->type = NODE_REDIR_OUT;
+	else if (redir_type == TOKEN_APPEND)
+		node->type = NODE_APPEND;
+	else if (redir_type == TOKEN_HEREDOC)
+		node->type = NODE_HEREDOC;
+	else
+		node->type = NODE_CMD;
 	node->file = file;
 	node->quotes = malloc(1 * sizeof(t_quote));
-	node->quotes[0] = token_type - TOKEN_WORD;
+	node->quotes[0] = word_type - TOKEN_WORD;
 	return (node);
 }
 
@@ -85,17 +94,4 @@ void	ast_add_end(t_ast **ast, t_ast *new)
 		current = current->left;
 	}
 	return ;
-}
-
-t_node_type	token_to_node(t_token_type type)
-{
-	if (type == TOKEN_REDIR_IN)
-		return (NODE_REDIR_IN);
-	if (type == TOKEN_REDIR_OUT)
-		return (NODE_REDIR_OUT);
-	if (type == TOKEN_APPEND)
-		return (NODE_APPEND);
-	if (type == TOKEN_HEREDOC)
-		return (NODE_HEREDOC);
-	return (NODE_CMD);
 }
