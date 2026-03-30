@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 13:36:41 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 13:52:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,19 @@ int	is_var_char(char c)
 	return (0);
 }
 
-char	*extract_var_name(char *str, int *i)
+char	*extract_var_name(char *str, int *i, int status)
 {
 	int		start;
 	char	*tmp;
 	char	*var;
 
 	start = *i;
+	if (str[*i] == '?')
+	{
+		(*i)++;
+		var = ft_strdup(ft_itoa(status));
+		return (var);
+	}
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
@@ -58,7 +64,7 @@ char	*ft_strjoin_and_free(char *s1, char *s2)
 	return (tmp);
 }
 
-char	*expand_string(char *str, t_quote quote)
+char	*expand_string(char *str, t_quote quote, int status)
 {
 	int		i;
 	char	*result;
@@ -69,13 +75,13 @@ char	*expand_string(char *str, t_quote quote)
 	i = 0;
 	result = ft_strdup("");
 	if (!result)
-		return (NULL);
+		return (free(str), NULL);
 	while (str[i])
 	{
 		if (str[i] == '$')
 		{
 			i++;
-			var = extract_var_name(str, &i);
+			var = extract_var_name(str, &i, status);
 		}
 		else
 		{
@@ -86,10 +92,10 @@ char	*expand_string(char *str, t_quote quote)
 		}
 		result = ft_strjoin_and_free(result, var);
 	}
-	return (result);
+	return (free(str), result);
 }
 
-void	expander(t_ast *node)
+void	expander(t_ast *node, int status)
 {
 	int	i;
 
@@ -100,12 +106,11 @@ void	expander(t_ast *node)
 		i = 0;
 		while (node->args[i])
 		{
-			node->args[i] = expand_string(node->args[i], node->quotes[i]);
+			node->args[i] = expand_string(node->args[i],
+					node->quotes[i], status);
 			i++;
 		}
 	}
 	if (node->file)
-		node->file = expand_string(node->file, node->quotes[0]);
-	expander(node->left);
-	expander(node->right);
+		node->file = expand_string(node->file, node->quotes[0], status);
 }

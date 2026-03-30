@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 11:37:16 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 13:55:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	here_doc(char *limiter)
 	write(1, "> ", 2);
 	buffer = get_next_line(STDIN_FILENO);
 	if (!buffer)
-		perror("minishell");
+		perror("gnl");
 	while (ft_strncmp(buffer, limiter, size))
 	{
 		ft_putstr_fd(buffer, fd[1]);
@@ -31,7 +31,7 @@ int	here_doc(char *limiter)
 		write(1, "> ", 2);
 		buffer = get_next_line(STDIN_FILENO);
 		if (!buffer)
-			perror("minishell");
+			perror("gnl");
 	}
 	free(buffer);
 	close(fd[1]);

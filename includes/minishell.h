@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 12:55:34 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 13:08:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void		ast_add_end(t_ast **ast, t_ast *new);
 
 t_ast		*parse(t_token *tokens);
 
-void		expander(t_ast *node);
+void		expander(t_ast *node, int status);
 
 int			here_doc(char *limiter);
 
@@ -105,6 +105,6 @@ int			get_status(int status);
 int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env);
 
-int			executor(t_ast *node, char ***envp);
+int			executor(t_ast *ast, int status, char ***env);
 
 #endif

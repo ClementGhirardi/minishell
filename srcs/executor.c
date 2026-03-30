@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 11:16:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 13:46:34 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 volatile sig_atomic_t	g_signal = 0;
 
-int	executor(t_ast *ast, char ***env);
+int	executor(t_ast *ast, int status, char ***env);
 
-int	execute_cmd(t_ast *node, char ***env)
+int	execute_cmd(t_ast *node, int status, char ***env)
 {
 	pid_t	pid;
-	int		status;
 	char	*path;
 
 	if (is_builtin(node->args[0]))
@@ -31,8 +30,10 @@ int	execute_cmd(t_ast *node, char ***env)
 		{
 			path = get_path(node->args[0], *env);
 			if (!path)
-				return (ft_printf("minishell: %s: command not found\n",
-						node->args[0]), exit(127), 127);
+				return (write(2, "minishell: ", 12),
+					write(2, node->args[0], ft_strlen(node->args[0])),
+					write(2, ": command not found\n", 21),
+					exit(127), 127);
 			execve(path, node->args, *env);
 			free(path);
 			return (perror("execve"), exit(126), 126);
@@ -42,11 +43,10 @@ int	execute_cmd(t_ast *node, char ***env)
 	}
 }
 
-int	execute_pipe(t_ast *node, char ***env)
+int	execute_pipe(t_ast *node, int status, char ***env)
 {
 	int		fd[2];
 	pid_t	pid[2];
-	int		status;
 
 	if (pipe(fd) == -1)
 		return (perror("pipe"), 1);
@@ -56,7 +56,7 @@ int	execute_pipe(t_ast *node, char ***env)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(executor(node->left, env));
+		exit(executor(node->left, status, env));
 	}
 	pid[1] = fork();
 	if (pid[1] == 0)
@@ -64,7 +64,7 @@ int	execute_pipe(t_ast *node, char ***env)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(executor(node->right, env));
+		exit(executor(node->right, status, env));
 	}
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),
@@ -87,10 +87,9 @@ static int	open_fd(t_node_type type, char *file)
 	return (fd);
 }
 
-int	execute_redir(t_ast *node, char ***env)
+int	execute_redir(t_ast *node, int status, char ***env)
 {
 	int	fd;
-	int	status;
 	int	std[2];
 
 	fd = open_fd(node->type, node->file);
@@ -106,7 +105,7 @@ int	execute_redir(t_ast *node, char ***env)
 		std[1] = dup(STDOUT_FILENO);
 		dup2(fd, STDOUT_FILENO);
 	}
-	status = executor(node->left, env);
+	status = executor(node->left, status, env);
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 		dup2(std[0], STDIN_FILENO);
 	else
@@ -114,18 +113,18 @@ int	execute_redir(t_ast *node, char ***env)
 	return (status);
 }
 
-int	executor(t_ast *ast, char ***env)
+int	executor(t_ast *ast, int status, char ***env)
 {
 	if (!ast)
 	{
 		return (1);
 	}
 	if (ast->type == NODE_CMD)
-		return (execute_cmd(ast, env));
+		return (expander(ast, status), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
-		return (execute_pipe(ast, env));
+		return (execute_pipe(ast, status, env));
 	else if (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 		|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC)
-		return (execute_redir(ast, env));
+		return (expander(ast, status), execute_redir(ast, status, env));
 	return (1);
 }
