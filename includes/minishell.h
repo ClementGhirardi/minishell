@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 13:08:51 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:07:00 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,15 +82,16 @@ typedef struct s_instrs
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
+void		free_token(t_token *tokens);
 
 t_token		*lexer(char *input);
 
-t_ast		*ast_new_node(void);
 t_ast		*ast_new_cmd(char **args, t_quote *quotes);
 t_ast		*ast_new_redir(t_token_type redir_type, char *file,
 				t_token_type word_type);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
+void		ast_free(t_ast *ast);
 
 t_ast		*parse(t_token *tokens);
 

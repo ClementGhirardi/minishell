@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:39:28 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 12:43:17 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:09:05 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_token	*new_token(t_token_type type, char *value)
 
 	if (!value)
 		return (NULL);
-	token = malloc(sizeof(t_token));
+	token = malloc(1 * sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->type = type;
@@ -29,19 +29,33 @@ t_token	*new_token(t_token_type type, char *value)
 	return (token);
 }
 
-void	add_token(t_token **list, t_token *new)
+void	add_token(t_token **tokens, t_token *new)
 {
 	t_token	*tmp;
 
-	if (!list)
+	if (!tokens)
 		return ;
-	if (!*list)
+	if (!*tokens)
 	{
-		*list = new;
+		*tokens = new;
 		return ;
 	}
-	tmp = *list;
+	tmp = *tokens;
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new;
+}
+
+void	free_token(t_token *tokens)
+{
+	t_token	*tmp;
+
+	while (tokens)
+	{
+		if (tokens->value)
+			free(tokens->value);
+		tmp = tokens->next;
+		free(tokens);
+		tokens = tmp;
+	}
 }

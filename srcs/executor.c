@@ -6,17 +6,15 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 13:46:34 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:17:10 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-volatile sig_atomic_t	g_signal = 0;
-
 int	executor(t_ast *ast, int status, char ***env);
 
-int	execute_cmd(t_ast *node, int status, char ***env)
+static int	execute_cmd(t_ast *node, int status, char ***env)
 {
 	pid_t	pid;
 	char	*path;
@@ -43,7 +41,7 @@ int	execute_cmd(t_ast *node, int status, char ***env)
 	}
 }
 
-int	execute_pipe(t_ast *node, int status, char ***env)
+static int	execute_pipe(t_ast *node, int status, char ***env)
 {
 	int		fd[2];
 	pid_t	pid[2];
@@ -87,7 +85,7 @@ static int	open_fd(t_node_type type, char *file)
 	return (fd);
 }
 
-int	execute_redir(t_ast *node, int status, char ***env)
+static int	execute_redir(t_ast *node, int status, char ***env)
 {
 	int	fd;
 	int	std[2];

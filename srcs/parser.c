@@ -6,13 +6,13 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 13:16:44 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:17:45 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	count_word(t_token *tokens)
+static int	count_word(t_token *tokens)
 {
 	int		count;
 
@@ -27,7 +27,7 @@ int	count_word(t_token *tokens)
 	return (count);
 }
 
-t_ast	*parse_command(t_token **tokens)
+static t_ast	*parse_command(t_token **tokens)
 {
 	t_ast	*instr;
 	char	**args;
@@ -54,9 +54,9 @@ t_ast	*parse_command(t_token **tokens)
 	return (instr);
 }
 
-t_ast	*parse_instructions(t_token **tokens);
+static t_ast	*parse_instructions(t_token **tokens);
 
-t_ast	*parse_redirection(t_token **tokens)
+static t_ast	*parse_redirection(t_token **tokens)
 {
 	t_ast			*instr;
 	t_token_type	redir_type;
@@ -72,7 +72,7 @@ t_ast	*parse_redirection(t_token **tokens)
 	return (instr);
 }
 
-t_ast	*parse_instructions(t_token **tokens)
+static t_ast	*parse_instructions(t_token **tokens)
 {
 	t_ast	*instr;
 	t_ast	*cmd;

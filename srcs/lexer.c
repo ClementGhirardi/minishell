@@ -6,19 +6,19 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 12:52:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:15:59 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	handle_pipe(t_token **tokens, int *i)
+static void	handle_pipe(t_token **tokens, int *i)
 {
 	add_token(tokens, new_token(TOKEN_PIPE, "|"));
 	(*i)++;
 }
 
-void	handle_redir(char *input, t_token **tokens, int *i, int dir)
+static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 {
 	if (dir == 1)
 	{
@@ -46,7 +46,7 @@ void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 }
 
-void	handle_quotes(char *input, t_token **tokens, int *i)
+static void	handle_quotes(char *input, t_token **tokens, int *i)
 {
 	char			quote;
 	int				start;
@@ -69,7 +69,7 @@ void	handle_quotes(char *input, t_token **tokens, int *i)
 		(*i)++;
 }
 
-void	handle_word(char *input, t_token **tokens, int *i)
+static void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
 	char	*word;

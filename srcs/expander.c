@@ -6,13 +6,13 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 13:52:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:15:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	is_var_char(char c)
+static int	is_var_char(char c)
 {
 	if (('a' <= c && c <= 'z')
 		|| ('A' <= c && c <= 'Z')
@@ -22,12 +22,13 @@ int	is_var_char(char c)
 	return (0);
 }
 
-char	*extract_var_name(char *str, int *i, int status)
+static char	*extract_var_name(char *str, int *i, int status)
 {
 	int		start;
 	char	*tmp;
 	char	*var;
 
+	(*i)++;
 	start = *i;
 	if (str[*i] == '?')
 	{
@@ -48,7 +49,7 @@ char	*extract_var_name(char *str, int *i, int status)
 	return (var);
 }
 
-char	*ft_strjoin_and_free(char *s1, char *s2)
+static char	*ft_strjoin_and_free(char *s1, char *s2)
 {
 	char	*tmp;
 
@@ -64,7 +65,7 @@ char	*ft_strjoin_and_free(char *s1, char *s2)
 	return (tmp);
 }
 
-char	*expand_string(char *str, t_quote quote, int status)
+static char	*expand_string(char *str, t_quote quote, int status)
 {
 	int		i;
 	char	*result;
@@ -79,10 +80,7 @@ char	*expand_string(char *str, t_quote quote, int status)
 	while (str[i])
 	{
 		if (str[i] == '$')
-		{
-			i++;
 			var = extract_var_name(str, &i, status);
-		}
 		else
 		{
 			var = malloc (2 * sizeof(char));
