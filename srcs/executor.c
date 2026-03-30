@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 11:34:20 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 11:16:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ int	execute_cmd(t_ast *node, char ***env)
 		{
 			path = get_path(node->args[0], *env);
 			if (!path)
-				exit(127);
+				return (ft_printf("minishell: %s: command not found\n",
+						node->args[0]), exit(127), 127);
 			execve(path, node->args, *env);
 			free(path);
-			perror("execve");
-			exit(126);
+			return (perror("execve"), exit(126), 126);
 		}
 		waitpid(pid, &status, 0);
-		return (WEXITSTATUS(status));
+		return (get_status(status));
 	}
 }
 
@@ -49,7 +49,7 @@ int	execute_pipe(t_ast *node, char ***env)
 	int		status;
 
 	if (pipe(fd) == -1)
-		return (1);
+		return (perror("pipe"), 1);
 	pid[0] = fork();
 	if (pid[0] == 0)
 	{
@@ -95,7 +95,7 @@ int	execute_redir(t_ast *node, char ***env)
 
 	fd = open_fd(node->type, node->file);
 	if (fd == -1)
-		return (1);
+		return (perror("open"), 1);
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);
@@ -113,43 +113,6 @@ int	execute_redir(t_ast *node, char ***env)
 		dup2(std[1], STDOUT_FILENO);
 	return (status);
 }
-
-// int	execute_redir(t_ast *node, char ***env)
-// {
-// 	int	fd;
-// 	int	status;
-// 	int	std[2];
-
-// 	fd = -1;
-// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
-// 	{
-// 		std[0] = dup(STDIN_FILENO);
-// 		if (node->type == NODE_REDIR_IN)
-// 			fd = open(node->file, O_RDONLY);
-// 		else if (node->type == NODE_HEREDOC)
-// 			fd = here_doc(node->file);
-// 		if (fd == -1)
-// 			return (1);
-// 		dup2(fd, STDIN_FILENO);
-// 	}
-// 	else
-// 	{
-// 		std[1] = dup(STDOUT_FILENO);
-// 		if (node->type == NODE_REDIR_OUT)
-// 			fd = open(node->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-// 		else if (node->type == NODE_APPEND)
-// 			fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-// 		if (fd == -1)
-// 			return (1);
-// 		dup2(fd, STDOUT_FILENO);
-// 	}
-// 	status = executor(node->left, env);
-// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
-// 		dup2(std[0], STDIN_FILENO);
-// 	else
-// 		dup2(std[1], STDOUT_FILENO);
-// 	return (status);
-// }
 
 int	executor(t_ast *ast, char ***env)
 {
