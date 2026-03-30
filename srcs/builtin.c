@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 15:13:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/30 21:20:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	is_builtin(char *cmd)
 {
-	return (!ft_strncmp(cmd, "echo", 4) || !ft_strncmp(cmd, "cd", 2)
+	return (!ft_strncmp(cmd, "echa", 4) || !ft_strncmp(cmd, "cd", 2)
 		|| !ft_strncmp(cmd, "pwd", 3) || !ft_strncmp(cmd, "export", 6)
 		|| !ft_strncmp(cmd, "unset", 5) || !ft_strncmp(cmd, "env", 3)
 		|| !ft_strncmp(cmd, "exit", 4));
@@ -22,7 +22,7 @@ int	is_builtin(char *cmd)
 
 int	run_builtin(char **args, char ***env)
 {
-	(void) args;
-	(void) env;
+	if (!ft_strncmp(args[0], "cd", 2))
+		return (ft_cd(args, env));
 	return (1);
 }
