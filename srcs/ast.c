@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/26 12:05:11 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/26 13:05:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ t_ast	*ast_new_cmd(char **args, t_quote *quotes)
 	t_ast	*node;
 
 	node = ast_new_node();
+	if (!node)
+		return (NULL);
 	node->type = NODE_CMD;
 	node->args = args;
 	node->quotes = quotes;
@@ -45,6 +47,8 @@ t_ast	*ast_new_redir(t_token_type redir_type, char *file,
 	t_ast		*node;
 
 	node = ast_new_node();
+	if (!node)
+		return (NULL);
 	if (redir_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
 	else if (redir_type == TOKEN_REDIR_OUT)
@@ -66,6 +70,8 @@ t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
 	t_ast	*node;
 
 	node = ast_new_node();
+	if (!node)
+		return (NULL);
 	node->type = NODE_PIPE;
 	node->left = left;
 	node->right = right;
