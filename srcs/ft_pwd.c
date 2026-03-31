@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 12:53:07 by cghirard         ###   ########.fr       */
+/*   Created: 2026/03/31 12:48:29 by cghirard          #+#    #+#             */
+/*   Updated: 2026/03/31 12:50:46 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	is_builtin(char *cmd)
+int	ft_pwd(void)
 {
-	return (!ft_strncmp(cmd, "echo", 4) || !ft_strncmp(cmd, "cd", 2)
-		|| !ft_strncmp(cmd, "pwd", 3) || !ft_strncmp(cmd, "export", 6)
-		|| !ft_strncmp(cmd, "unset", 5) || !ft_strncmp(cmd, "env", 3)
-		|| !ft_strncmp(cmd, "exit", 4));
-}
+	char	*path;
 
-int	run_builtin(char **args, char ***env)
-{
-	(void) env;
-	if (!ft_strncmp(args[0], "pwd", 3))
-		return (ft_pwd());
-	return (1);
+	path = getcwd(NULL, 0);
+	if (!path)
+		return (ft_putendl_fd("pwd: error retrieving current directory", 2), 1);
+	ft_putendl_fd(path, 1);
+	free(path);
+	return (0);
 }

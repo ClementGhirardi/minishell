@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 15:07:00 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 12:52:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ int			here_doc(char *limiter);
 char		*get_path(char *cmd, char **envp);
 
 int			get_status(int status);
+
+int			ft_pwd(void);
 
 int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env);
