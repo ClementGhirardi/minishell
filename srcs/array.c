@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 00:25:08 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 00:48:56 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 20:56:23 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,32 @@ char	**dup_array(char **array)
 	}
 	new_array[i] = NULL;
 	return (new_array);
+}
+
+char	**sort_array(char **array)
+{
+	int		i;
+	int		j;
+	int		min;
+	char	*tmp;
+
+	if (!array)
+		return (array);
+	i = 0;
+	while (array[i])
+	{
+		min = i;
+		j = i;
+		while (array[j])
+		{
+			if (ft_strncmp(array[j], array[min], ft_strlen(array[min])) < 0)
+				min = j;
+			j++;
+		}
+		tmp = array[i];
+		array[i] = array[min];
+		array[min] = tmp;
+		i++;
+	}
+	return (array);
 }

@@ -6,11 +6,31 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 23:55:50 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 00:30:50 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 17:08:16 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static char	*get_new_entry(const char *name, const char *value)
+{
+	char	*new_entry;
+	char	*tmp;
+
+	if (!name)
+		return (NULL);
+	if (!value)
+		return (ft_strdup(name));
+	else
+	{
+		tmp = ft_strjoin(name, "=");
+		if (!tmp)
+			return (NULL);
+		new_entry = ft_strjoin(tmp, value);
+		free(tmp);
+	}
+	return (new_entry);
+}
 
 static int	find_env_index(char **env, const char *name)
 {
@@ -58,15 +78,10 @@ static char	**dup_env_with_new_entry(char **env, const char *new_entry)
 int	ft_setenv(char ***env, const char *name, const char *value)
 {
 	char	*new_entry;
-	char	*tmp;
 	int		index;
 	char	**new_env;
 
-	tmp = ft_strjoin(name, "=");
-	if (!tmp)
-		return (1);
-	new_entry = ft_strjoin(tmp, value);
-	free(tmp);
+	new_entry = get_new_entry(name, value);
 	if (!new_entry)
 		return (1);
 	index = find_env_index(*env, name);

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 00:44:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:35:06 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	init_signals(void)
 		// ft_printf("\n");
 		// // Tests end
 
-static void	minishell(int status, char *input, char **env)
+static void	minishell(int status, char *input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
@@ -102,7 +102,7 @@ static void	minishell(int status, char *input, char **env)
 		ast = parse(tokens);
 		if (ast)
 		{
-			status = executor(ast, status, &env);
+			status = executor(ast, status, env);
 			ast_free(ast);
 		}
 		free_token(tokens);
@@ -131,7 +131,7 @@ int	main(int ac, char **av, char **envp)
 		}
 		if (*input)
 			add_history(input);
-		minishell(status, input, env);
+		minishell(status, input, &env);
 	}
 	rl_clear_history();
 	free_array(env);
