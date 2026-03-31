@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 20:56:12 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 23:54:06 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,10 @@ char	*get_value(char *arg)
 	start = 0;
 	while (arg[start] && arg[start] != '=')
 		start++;
+	if (arg[start] != '=')
+		return (NULL);
 	start++;
 	len = ft_strlen(arg);
-	if (start >= len)
-		return (NULL);
 	value = ft_substr(arg, start, len);
 	if (!value)
 		return (NULL);
