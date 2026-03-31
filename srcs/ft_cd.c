@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 20:50:19 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 00:21:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/03/31 12:46:35 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	update_pwd(char ***env)
 {
 	char	*old_pwd;
-	char	cwd[100];
+	char	cwd[4096];
 
 	old_pwd = getenv("PWD");
 	if (old_pwd)
