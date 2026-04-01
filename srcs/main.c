@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:12:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:38:30 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,13 +125,8 @@ int	main(int ac, char **av, char **envp)
 	{
 		input = readline("minishell$ ");
 		if (!input)
-		{
-			printf("exit\n");
-			break ;
-		}
+			ft_exit(&env, status);
 		minishell(status, input, &env);
 	}
-	rl_clear_history();
-	free_array(env);
-	return (status);
+	ft_exit(&env, status);
 }

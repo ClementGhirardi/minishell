@@ -6,9 +6,10 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:22:50 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:41:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../includes/minishell.h"
 
@@ -20,7 +21,7 @@ int	is_builtin(char *cmd)
 		|| !ft_strncmp(cmd, "exit", 4));
 }
 
-int	run_builtin(char **args, char ***env)
+int	run_builtin(char **args, char ***env, int status)
 {
 	if (!ft_strncmp(args[0], "pwd", 3))
 		return (ft_pwd());
@@ -32,5 +33,7 @@ int	run_builtin(char **args, char ***env)
 		return (ft_unset(args, env));
 	if (!ft_strncmp(args[0], "env", 3))
 		return (ft_env(env));
+	if (!ft_strncmp(args[0], "exit", 4))
+		return (ft_exit(env, status));
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:24:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:41:02 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,10 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
+int			ft_exit(char ***env, int status);
+
 int			is_builtin(char *cmd);
-int			run_builtin(char **args, char ***env);
+int			run_builtin(char **args, char ***env, int status);
 
 int			executor(t_ast *ast, int status, char ***env);
 
