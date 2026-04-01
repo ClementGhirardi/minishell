@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:11:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 21:07:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static char	*expand_string(char *str, int status, char ***env)
 		result = ft_strjoin_and_free(result, var);
 	}
 	if (str[0] == '\"')
-		return (free(str), str = ft_substr(result, 1, ft_strlen(result) - 1),
+		return (free(str), str = ft_substr(result, 1, ft_strlen(result) - 2),
 			free(result), str);
 	return (free(str), result);
 }
