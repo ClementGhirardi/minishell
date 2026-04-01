@@ -29,6 +29,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_pwd.c \
 	$(SRCS_DIR)/ft_export.c \
 	$(SRCS_DIR)/ft_unset.c \
+	$(SRCS_DIR)/ft_exit.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
 
