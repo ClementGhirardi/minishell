@@ -25,6 +25,7 @@ SRCS = $(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/ft_cd.c \
 	$(SRCS_DIR)/ft_export.c \
 	$(SRCS_DIR)/ft_unset.c \
+	$(SRCS_DIR)/ft_pwd.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
 
