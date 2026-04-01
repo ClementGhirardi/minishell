@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 10:12:25 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 10:34:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ int	is_builtin(char *cmd)
 
 int	run_builtin(char **args, char ***env)
 {
+	if (!ft_strncmp(args[0], "pwd", 3))
+		return (ft_pwd());
 	if (!ft_strncmp(args[0], "cd", 2))
 		return (ft_cd(args, env));
 	if (!ft_strncmp(args[0], "export", 6))
 		return (ft_export(args, env));
 	if (!ft_strncmp(args[0], "unset", 5))
 		return (ft_unset(args, env));
-	if (!ft_strncmp(args[0], "pwd", 3))
-		return (ft_pwd());
 	return (1);
 }
