@@ -6,13 +6,13 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 23:54:06 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:07:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	is_valid_id(char *arg)
+static int	is_valid_id(char *arg)
 {
 	int	i;
 
@@ -37,7 +37,7 @@ int	is_valid_id(char *arg)
 	return (1);
 }
 
-char	*get_name(char *arg)
+static char	*get_name(char *arg)
 {
 	int		len;
 	char	*name;
@@ -53,7 +53,7 @@ char	*get_name(char *arg)
 	return (name);
 }
 
-char	*get_value(char *arg)
+static char	*get_value(char *arg)
 {
 	int		start;
 	int		len;

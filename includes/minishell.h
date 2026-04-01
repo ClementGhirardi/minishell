@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 10:17:05 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:08:54 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 typedef enum e_token_type
 {
 	TOKEN_WORD,
-	TOKEN_WORD_SQUOTE,
-	TOKEN_WORD_DQUOTE,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
@@ -54,19 +52,11 @@ typedef enum e_node_type
 	NODE_HEREDOC
 }	t_node_type;
 
-typedef enum e_quote
-{
-	NQUOTE,
-	SQUOTE,
-	DQUOTE
-}	t_quote;
-
 typedef struct s_ast
 {
 	t_node_type		type;
 	char			**args;
 	char			*file;
-	t_quote			*quotes;
 
 	struct s_ast	*left;
 	struct s_ast	*right;
@@ -80,22 +70,27 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
+char		*ft_strjoin_and_free(char *s1, char *s2);
+
+char		*here_doc_word(char limiter);
+
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
 t_token		*lexer(char *input);
 
-t_ast		*ast_new_cmd(char **args, t_quote *quotes);
-t_ast		*ast_new_redir(t_token_type redir_type, char *file,
-				t_token_type word_type);
+t_ast		*ast_new_cmd(char **args);
+t_ast		*ast_new_redir(t_token_type redir_type, char *file);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
 t_ast		*parse(t_token *tokens);
 
-void		expander(t_ast *node, int status);
+char		*ft_getenv(char ***env, const char *name);
+
+void		expander(t_ast *node, int status, char ***env);
 
 int			here_doc(char *limiter);
 

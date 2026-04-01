@@ -12,11 +12,14 @@ SRCS_DIR = srcs
 
 SRCS_BONUS_DIR = srcs/srcs_bonus
 
-SRCS = $(SRCS_DIR)/token.c \
+SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
+	$(SRCS_DIR)/here_doc_word.c \
+	$(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/parser.c \
-	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/ft_getenv.c \
+ 	$(SRCS_DIR)/expander.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \

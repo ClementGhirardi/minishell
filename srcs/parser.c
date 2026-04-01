@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 10:31:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:17:14 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@ static int	count_word(t_token *tokens)
 	int		count;
 
 	count = 0;
-	while (tokens && (tokens->type == TOKEN_WORD
-			|| tokens->type == TOKEN_WORD_SQUOTE
-			|| tokens->type == TOKEN_WORD_DQUOTE))
+	while (tokens && tokens->type == TOKEN_WORD)
 	{
 		count++;
 		tokens = tokens->next;
@@ -31,7 +29,6 @@ static t_ast	*parse_command(t_token **tokens)
 {
 	t_ast	*instr;
 	char	**args;
-	t_quote	*quotes;
 	int		count;
 	int		i;
 
@@ -39,18 +36,15 @@ static t_ast	*parse_command(t_token **tokens)
 	if (count == 0)
 		return (NULL);
 	args = malloc((count + 1) * sizeof(char *));
-	quotes = malloc((count) * sizeof(t_quote));
 	i = 0;
-	while (*tokens && ((*tokens)->type == TOKEN_WORD
-			|| (*tokens)->type == TOKEN_WORD_SQUOTE
-			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
+	while (*tokens && (*tokens)->type == TOKEN_WORD)
 	{
 		args[i] = ft_strdup((*tokens)->value);
-		quotes[i++] = (*tokens)->type - TOKEN_WORD;
 		*tokens = (*tokens)->next;
+		i++;
 	}
 	args[i] = NULL;
-	instr = ast_new_cmd(args, quotes);
+	instr = ast_new_cmd(args);
 	return (instr);
 }
 
@@ -64,14 +58,12 @@ static t_ast	*parse_redirection(t_token **tokens)
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (!*tokens || !((*tokens)->type == TOKEN_WORD
-			|| (*tokens)->type == TOKEN_WORD_SQUOTE
-			|| (*tokens)->type == TOKEN_WORD_DQUOTE))
+	if (!*tokens || (*tokens)->type != TOKEN_WORD)
 		return (NULL);
 	file = ft_strdup((*tokens)->value);
 	if (!file)
 		return (NULL);
-	instr = ast_new_redir(redir_type, file, (*tokens)->type);
+	instr = ast_new_redir(redir_type, file);
 	*tokens = (*tokens)->next;
 	return (instr);
 }
@@ -83,9 +75,7 @@ static t_ast	*parse_instructions(t_token **tokens)
 
 	if (!(*tokens) || (*tokens)->type == TOKEN_PIPE)
 		return (NULL);
-	if ((*tokens)->type == TOKEN_WORD
-		|| (*tokens)->type == TOKEN_WORD_SQUOTE
-		|| (*tokens)->type == TOKEN_WORD_DQUOTE)
+	if ((*tokens)->type == TOKEN_WORD)
 	{
 		cmd = parse_command(tokens);
 		instr = parse_instructions(tokens);

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 16:35:06 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:12:10 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,24 @@
 // 	ft_printf(")");
 // }
 
+// // BEGIN TESTS
+// // TEST LEXER
+// t_token *tokens = lexer(input);
+// ft_printf("--TEST LEXER--\n");
+// t_token *current = tokens;
+// while (current)
+// {
+// 	ft_printf("%d: |%s|\n", current->type, current->value);
+// 	current = current->next;
+// }
+// ft_printf("\n");
+// // TEST PARSER
+// ft_printf("--TEST PARSER--\n");
+// t_ast *ast = parse(tokens);
+// ast_show(ast);
+// ft_printf("\n\n");
+// // END TESTS
+
 static void	sigint_handler(int sig)
 {
 	(void)sig;
@@ -73,25 +91,7 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-		// // Tests begin
-		// ft_printf("--TEST LEXER--\n");
-		// tokens = lexer(input);
-		// while (tokens)
-		// {
-		// 	ft_printf("%d: %s\n", tokens->type, tokens->value);
-		// 	tokens = tokens->next;
-		// }
-		// ft_printf("\n");
-		// ft_printf("--TEST PARSER--\n");
-		// ast = parse(lexer(input));
-		// ast_show(ast);
-		// ft_printf("\n\n");
-		// ft_printf("--TEST EXECUTOR--\n");
-		// status = executor(ast, status, &envp);
-		// ft_printf("\n");
-		// // Tests end
-
-static void	minishell(int status, char *input, char ***env)
+void	minishell(int status, char *input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
@@ -129,8 +129,6 @@ int	main(int ac, char **av, char **envp)
 			printf("exit\n");
 			break ;
 		}
-		if (*input)
-			add_history(input);
 		minishell(status, input, &env);
 	}
 	rl_clear_history();

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 10:29:16 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:11:10 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-static char	*extract_var_name(char *str, int *i, int status)
+static char	*extract_var_name(char *str, int *i, int status, char ***env)
 {
 	int		start;
 	char	*tmp;
@@ -41,38 +41,22 @@ static char	*extract_var_name(char *str, int *i, int status)
 	tmp = ft_substr(str, start, *i - start);
 	if (!tmp)
 		return (NULL);
-	var = getenv(tmp);
+	var = ft_getenv(env, tmp);
 	if (!var)
 		return (NULL);
-	var = ft_strdup(var);
 	free(tmp);
 	return (var);
 }
 
-static char	*ft_strjoin_and_free(char *s1, char *s2)
-{
-	char	*tmp;
-
-	if (!s1 && !s2)
-		return (NULL);
-	if (!s1 && s2)
-		return (s2);
-	if (s1 && !s2)
-		return (s1);
-	tmp = ft_strjoin(s1, s2);
-	free(s1);
-	free(s2);
-	return (tmp);
-}
-
-static char	*expand_string(char *str, t_quote quote, int status)
+static char	*expand_string(char *str, int status, char ***env)
 {
 	int		i;
 	char	*result;
 	char	*var;
 
-	if (quote == SQUOTE)
-		return (str);
+	if (str[0] == '\'')
+		return (result = ft_substr(str, 1, ft_strlen(str) - 1),
+			free(str), result);
 	i = 0;
 	result = ft_strdup("");
 	if (!result)
@@ -80,20 +64,18 @@ static char	*expand_string(char *str, t_quote quote, int status)
 	while (str[i])
 	{
 		if (str[i] == '$')
-			var = extract_var_name(str, &i, status);
+			var = extract_var_name(str, &i, status, env);
 		else
-		{
-			var = malloc (2 * sizeof(char));
-			var[0] = str[i];
-			var[1] = '\0';
-			i++;
-		}
+			var = ft_substr(str, i++, 1);
 		result = ft_strjoin_and_free(result, var);
 	}
+	if (str[0] == '\"')
+		return (free(str), str = ft_substr(result, 1, ft_strlen(result) - 1),
+			free(result), str);
 	return (free(str), result);
 }
 
-void	expander(t_ast *node, int status)
+void	expander(t_ast *node, int status, char ***env)
 {
 	int	i;
 
@@ -104,11 +86,10 @@ void	expander(t_ast *node, int status)
 		i = 0;
 		while (node->args[i])
 		{
-			node->args[i] = expand_string(node->args[i],
-					node->quotes[i], status);
+			node->args[i] = expand_string(node->args[i], status, env);
 			i++;
 		}
 	}
 	if (node->file)
-		node->file = expand_string(node->file, node->quotes[0], status);
+		node->file = expand_string(node->file, status, env);
 }

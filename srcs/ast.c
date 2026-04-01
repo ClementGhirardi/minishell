@@ -6,45 +6,34 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 15:06:51 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:23:32 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_ast	*ast_new_cmd(char **args, t_quote *quotes)
+t_ast	*ast_new_cmd(char **args)
 {
 	t_ast	*node;
 
-	node = malloc(sizeof(t_ast));
+	node = malloc(1 * sizeof(t_ast));
 	if (!node)
 		return (NULL);
-	node->type = 0;
-	node->args = NULL;
-	node->file = NULL;
-	node->quotes = NULL;
-	node->left = NULL;
-	node->right = NULL;
 	node->type = NODE_CMD;
 	node->args = args;
-	node->quotes = quotes;
+	node->file = NULL;
+	node->left = NULL;
+	node->right = NULL;
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type redir_type, char *file,
-	t_token_type word_type)
+t_ast	*ast_new_redir(t_token_type redir_type, char *file)
 {
 	t_ast		*node;
 
-	node = malloc(sizeof(t_ast));
+	node = malloc(1 * sizeof(t_ast));
 	if (!node)
 		return (NULL);
-	node->type = 0;
-	node->args = NULL;
-	node->file = NULL;
-	node->quotes = NULL;
-	node->left = NULL;
-	node->right = NULL;
 	if (redir_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
 	else if (redir_type == TOKEN_REDIR_OUT)
@@ -55,9 +44,10 @@ t_ast	*ast_new_redir(t_token_type redir_type, char *file,
 		node->type = NODE_HEREDOC;
 	else
 		node->type = NODE_CMD;
+	node->args = NULL;
 	node->file = file;
-	node->quotes = malloc(1 * sizeof(t_quote));
-	node->quotes[0] = word_type - TOKEN_WORD;
+	node->left = NULL;
+	node->right = NULL;
 	return (node);
 }
 
@@ -68,13 +58,9 @@ t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
 	node = malloc(sizeof(t_ast));
 	if (!node)
 		return (NULL);
-	node->type = 0;
+	node->type = NODE_PIPE;
 	node->args = NULL;
 	node->file = NULL;
-	node->quotes = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	node->type = NODE_PIPE;
 	node->left = left;
 	node->right = right;
 	return (node);
@@ -122,8 +108,6 @@ void	ast_free(t_ast *ast)
 		}
 		if (ast->file)
 			free(ast->file);
-		if (ast->quotes)
-			free(ast->quotes);
 		ast_free(ast->left);
 		ast_free(ast->right);
 		free(ast);

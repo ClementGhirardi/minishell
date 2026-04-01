@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 15:17:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:01:20 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,11 @@ int	executor(t_ast *ast, int status, char ***env)
 		return (1);
 	}
 	if (ast->type == NODE_CMD)
-		return (expander(ast, status), execute_cmd(ast, status, env));
+		return (expander(ast, status, env), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
 		return (execute_pipe(ast, status, env));
 	else if (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 		|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC)
-		return (expander(ast, status), execute_redir(ast, status, env));
+		return (expander(ast, status, env), execute_redir(ast, status, env));
 	return (1);
 }
