@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:07:24 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:20:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,18 @@ static int	is_valid_id(char *arg)
 	if (!(('a' <= arg[i] && arg[i] <= 'z')
 			|| ('A' <= arg[i] && arg[i] <= 'Z')
 			|| (arg[i] == '_')))
-		return (ft_putstr_fd("minishells: export: ", 2),
+		return (ft_putstr_fd("minishells: export: `", 2),
 			ft_putstr_fd(arg, 2),
-			ft_putendl_fd(": not a valid identifier", 2), 0);
+			ft_putendl_fd("': not a valid identifier", 2), 0);
 	while (arg[i])
 	{
 		if (!(('a' <= arg[i] && arg[i] <= 'z')
 				|| ('A' <= arg[i] && arg[i] <= 'Z')
 				|| ('0' <= arg[i] && arg[i] <= '9')
 				|| (arg[i] == '_') || (arg[i] == '=')))
-			return (ft_putstr_fd("minishell: export: ", 2),
+			return (ft_putstr_fd("minishell: export: `", 2),
 				ft_putstr_fd(arg, 2),
-				ft_putendl_fd(": not a valid identifier", 2), 0);
+				ft_putendl_fd("': not a valid identifier", 2), 0);
 		i++;
 	}
 	return (1);

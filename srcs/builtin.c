@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 10:34:56 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:22:50 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@ int	run_builtin(char **args, char ***env)
 		return (ft_export(args, env));
 	if (!ft_strncmp(args[0], "unset", 5))
 		return (ft_unset(args, env));
+	if (!ft_strncmp(args[0], "env", 3))
+		return (ft_env(env));
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 20:50:19 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 12:46:35 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:22:07 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,20 @@ int	ft_cd(char **args, char ***env)
 	{
 		path = getenv("HOME");
 		if (!path)
-			return (ft_putendl_fd("cd: HOME not set", 2), 1);
+			return (ft_putendl_fd("minishell: cd: HOME not set", 2), 1);
 	}
 	else if (!ft_strncmp(args[1], "-", ft_strlen(args[1])))
 	{
 		path = getenv("OLDPWD");
 		if (!path)
-			return (ft_putendl_fd("cd: OLDPWD not set", 2), 1);
+			return (ft_putendl_fd("minishell: cd: OLDPWD not set", 2), 1);
 		ft_putstr_fd(path, 1);
 		ft_putchar_fd('\n', 1);
 	}
 	else
 		path = args[1];
 	if (chdir(path) == -1)
-		return (ft_putstr_fd("cd: ", 2),
+		return (ft_putstr_fd("minishell: cd: ", 2),
 			ft_putstr_fd(path, 2),
 			ft_putendl_fd(": no such file or directory", 2), 1);
 	update_pwd(env);
