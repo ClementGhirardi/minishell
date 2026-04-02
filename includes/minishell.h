@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:41:02 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/02 14:26:49 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct s_ast
 	t_node_type		type;
 	char			**args;
 	char			*file;
+	int				fd;
 
 	struct s_ast	*left;
 	struct s_ast	*right;

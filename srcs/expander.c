@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 21:07:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/02 17:23:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,5 +91,12 @@ void	expander(t_ast *node, int status, char ***env)
 		}
 	}
 	if (node->file)
+	{
 		node->file = expand_string(node->file, status, env);
+		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
+		{
+			free(node->file);
+			node->file = NULL;
+		}
+	}
 }

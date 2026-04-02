@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:35:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/02 17:26:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,18 @@ static int	execute_pipe(t_ast *node, int status, char ***env)
 		get_status(status));
 }
 
-static int	open_fd(t_node_type type, char *file)
+static int	open_fd(t_ast *node, char *file)
 {
-	int	fd;
+	int			fd;
 
 	fd = -1;
-	if (type == NODE_REDIR_IN)
+	if (node->type == NODE_REDIR_IN)
 		fd = open(file, O_RDONLY);
-	else if (type == NODE_HEREDOC)
-		fd = here_doc(file);
-	else if (type == NODE_REDIR_OUT)
+	else if (node->type == NODE_HEREDOC)
+		fd = node->fd;
+	else if (node->type == NODE_REDIR_OUT)
 		fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	else if (type == NODE_APPEND)
+	else if (node->type == NODE_APPEND)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	return (fd);
 }
@@ -90,7 +90,7 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 	int	fd;
 	int	std[2];
 
-	fd = open_fd(node->type, node->file);
+	fd = open_fd(node, node->file);
 	if (fd == -1)
 		return (perror("open"), 1);
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
@@ -113,16 +113,29 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 
 int	executor(t_ast *ast, int status, char ***env)
 {
+	char	*tmp;
+
 	if (!ast)
-	{
 		return (1);
-	}
 	if (ast->type == NODE_CMD)
 		return (expander(ast, status, env), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
 		return (execute_pipe(ast, status, env));
 	else if (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 		|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC)
-		return (expander(ast, status, env), execute_redir(ast, status, env));
+	{
+		if (!ast->file && ast->fd == -1)
+			return (ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
+					"syntax error near unexpected token `newline'", 2), 2);
+		if (ast->file)
+		{
+			tmp = ft_strdup(ast->file);
+			expander(ast, status, env);
+			if (!ast->file && ast->fd == -1)
+				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
+					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
+		}
+		return (execute_redir(ast, status, env));
+	}
 	return (1);
 }

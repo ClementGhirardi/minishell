@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 13:23:32 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/02 14:32:49 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ t_ast	*ast_new_cmd(char **args)
 	node->type = NODE_CMD;
 	node->args = args;
 	node->file = NULL;
+	node->fd = -1;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
@@ -36,14 +37,17 @@ t_ast	*ast_new_redir(t_token_type redir_type, char *file)
 		return (NULL);
 	if (redir_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
-	else if (redir_type == TOKEN_REDIR_OUT)
+	if (redir_type == TOKEN_REDIR_OUT)
 		node->type = NODE_REDIR_OUT;
-	else if (redir_type == TOKEN_APPEND)
+	if (redir_type == TOKEN_APPEND)
 		node->type = NODE_APPEND;
-	else if (redir_type == TOKEN_HEREDOC)
+	if (redir_type == TOKEN_HEREDOC)
+	{
 		node->type = NODE_HEREDOC;
+		node->fd = here_doc(file);
+	}
 	else
-		node->type = NODE_CMD;
+		node->fd = -1;
 	node->args = NULL;
 	node->file = file;
 	node->left = NULL;
@@ -61,6 +65,7 @@ t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
 	node->type = NODE_PIPE;
 	node->args = NULL;
 	node->file = NULL;
+	node->fd = -1;
 	node->left = left;
 	node->right = right;
 	return (node);

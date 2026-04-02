@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 13:17:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/02 15:44:32 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,10 @@ static t_ast	*parse_redirection(t_token **tokens)
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (!*tokens || (*tokens)->type != TOKEN_WORD)
-		return (NULL);
-	file = ft_strdup((*tokens)->value);
-	if (!file)
-		return (NULL);
+	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
+		return (ast_new_redir(redir_type, NULL));
+	else
+		file = ft_strdup((*tokens)->value);
 	instr = ast_new_redir(redir_type, file);
 	*tokens = (*tokens)->next;
 	return (instr);
