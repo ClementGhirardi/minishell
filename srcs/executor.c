@@ -19,6 +19,8 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 	pid_t	pid;
 	char	*path;
 
+	if (!node->args)
+		return (expander(node->left, status, env), execute_cmd(node->left, status, env));
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, env, status));
 	else
@@ -111,6 +113,24 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 	return (status);
 }
 
+static int	execute_operator(t_ast *ast, int status, char ***env)
+{
+	static int	stop;
+
+	stop = executor(ast->left, status, env);
+	if (ast->type == NODE_AND)
+	{
+		if (!stop)
+			stop = executor(ast->right, status, env);
+	}
+	else
+	{
+		if (stop)
+			stop = executor(ast->right, status, env);
+	}
+	return (stop);
+}
+
 int	executor(t_ast *ast, int status, char ***env)
 {
 	char	*tmp;
@@ -137,5 +157,7 @@ int	executor(t_ast *ast, int status, char ***env)
 		}
 		return (execute_redir(ast, status, env));
 	}
+	else
+		return (execute_operator(ast, status, env));
 	return (1);
 }

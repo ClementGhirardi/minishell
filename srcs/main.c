@@ -97,9 +97,10 @@ void	minishell(int status, char *input, char ***env)
 	t_ast	*ast;
 
 	tokens = lexer(input);
+	tokens = split_bracket(&tokens);
 	if (tokens)
 	{
-		ast = parse(tokens);
+		ast = parse(&tokens);
 		if (ast)
 		{
 			status = executor(ast, status, env);

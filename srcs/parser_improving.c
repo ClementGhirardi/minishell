@@ -124,6 +124,13 @@ t_ast	*parse_pipeline(t_token **tokens)
 			right = parse_instructions(tokens);
 			left = ast_new_pipe(left, right);
 		}
+		if (*tokens && (((*tokens)->type == TOKEN_REDIR_IN) || ((*tokens)->type == TOKEN_REDIR_OUT)
+			|| (*tokens)->type == TOKEN_APPEND || (*tokens)->type == TOKEN_HEREDOC))
+		{
+			ft_printf("ok pipeline\n");
+			right = parse_instructions(tokens);
+			ast_add_end(&left, right);
+		}
 		if (brack)
 			left = ast_new_pipe(left, brack);
 		brack = NULL;
@@ -159,6 +166,19 @@ t_ast	*parse(t_token **tokens)
 			*tokens = (*tokens)->next;
 			right = parse_pipeline(tokens);
 			left = ast_new_operator(left, right, type);
+		}
+		//ft_printf("token value redir = %s\n", (*tokens)->value);
+		// if (!*tokens)
+		// 	ft_printf("no more tokens\n");
+		// else
+		// 	ft_printf("tokens left\n");
+		if (*tokens && (((*tokens)->type == TOKEN_REDIR_IN) || ((*tokens)->type == TOKEN_REDIR_OUT)
+			|| (*tokens)->type == TOKEN_APPEND || (*tokens)->type == TOKEN_HEREDOC))
+		{
+			ft_printf("ok operator\n");
+			//tmp = *tokens;
+			//*tokens = (*tokens)->next;
+			right = parse_instructions(tokens);
 		}
 		if (brack)
 			left = ast_new_operator(left, brack, type);

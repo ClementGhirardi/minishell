@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+static void	handle_word(char *input, t_token **tokens, int *i);
+
 static char	*handle_quotes(char *input)
 {
 	int	squote;
@@ -40,10 +42,27 @@ static char	*handle_quotes(char *input)
 	return (handle_quotes(input));
 }
 
-static void	handle_pipe(t_token **tokens, int *i)
+static void	handle_pipe(char *input, t_token **tokens, int *i)
 {
+	if (input[*i + 1] == '|')
+	{
+		add_token(tokens, new_token(TOKEN_OR, "||"));
+		*i += 2;
+		return ;
+	}
 	add_token(tokens, new_token(TOKEN_PIPE, "|"));
 	(*i)++;
+}
+
+static void	handle_and(char *input, t_token **tokens, int *i)
+{
+	if (input[*i + 1] == '&')
+	{
+		add_token(tokens, new_token(TOKEN_AND, "&&"));
+		*i += 2;
+		return ;
+	}
+	handle_word(input, tokens, i);
 }
 
 static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
@@ -74,6 +93,18 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 }
 
+static void	handle_bracket(char *input, t_token **tokens, int *i)
+{
+	if (input[*i] == '(')
+	{
+		add_token(tokens, new_token(TOKEN_O_BRACK, "("));
+		(*i)++;
+		return ;
+	}
+	add_token(tokens, new_token(TOKEN_C_BRACK, ")"));
+	(*i)++;
+}
+
 static void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
@@ -81,6 +112,8 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	char	*word;
 
 	start = *i;
+	if (input[*i] == '&')
+		(*i)++;
 	if (input[*i] == '\'' || input[*i] == '\"')
 	{
 		quote = input[*i];
@@ -90,7 +123,8 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 		quote = ' ';
 	while (input[*i] && input[*i] != '|'
 		&& input[*i] != '<' && input[*i] != '>'
-		&& input[*i] != quote)
+		&& input[*i] != quote && input[*i] != '&'
+		&& input[*i] != '(' && input[*i] != ')')
 		(*i)++;
 	if (input[*i] == quote && quote != ' ')
 		(*i)++;
@@ -116,11 +150,15 @@ t_token	*lexer(char *input)
 		if (input[i] == ' ')
 			i++;
 		else if (input[i] == '|')
-			handle_pipe(&tokens, &i);
+			handle_pipe(input, &tokens, &i);
+		else if (input[i] == '&')
+			handle_and(input, &tokens, &i);
 		else if (input[i] == '>')
 			handle_redir(input, &tokens, &i, 1);
 		else if (input[i] == '<')
 			handle_redir(input, &tokens, &i, 0);
+		else if (input[i] == '(' || input[i] == ')')
+			handle_bracket(input, &tokens, &i);
 		else
 			handle_word(input, &tokens, &i);
 	}

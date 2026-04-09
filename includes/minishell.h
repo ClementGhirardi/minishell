@@ -32,13 +32,18 @@ typedef enum e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
-	TOKEN_HEREDOC
+	TOKEN_HEREDOC,
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_O_BRACK,
+	TOKEN_C_BRACK
 }	t_token_type;
 
 typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
+	struct s_token	*bracket;
 	struct s_token	*next;
 }	t_token;
 
@@ -49,7 +54,9 @@ typedef enum e_node_type
 	NODE_REDIR_IN,
 	NODE_REDIR_OUT,
 	NODE_APPEND,
-	NODE_HEREDOC
+	NODE_HEREDOC,
+	NODE_AND,
+	NODE_OR
 }	t_node_type;
 
 typedef struct s_ast
@@ -81,13 +88,16 @@ void		free_token(t_token *tokens);
 
 t_token		*lexer(char *input);
 
+t_token		*split_bracket(t_token **tokens);
+
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type redir_type, char *file);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
+t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
-t_ast		*parse(t_token *tokens);
+t_ast		*parse(t_token **tokens);
 
 char		*ft_getenv(char ***env, const char *name);
 
