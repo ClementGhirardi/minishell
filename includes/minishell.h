@@ -102,6 +102,7 @@ t_ast		*parse(t_token **tokens);
 char		*ft_getenv(char ***env, const char *name);
 
 void		expander(t_ast *node, int status, char ***env);
+char		*expand_string(char *str, int status, char ***env);
 
 int			here_doc(char *limiter);
 
@@ -112,6 +113,8 @@ int			get_status(int status);
 void		free_array(char **array);
 char		**dup_array(char **array);
 char		**sort_array(char **array);
+
+int			ft_echo(char **args, char ***env);
 
 int			ft_setenv(char ***env, const char *name, const char *value);
 

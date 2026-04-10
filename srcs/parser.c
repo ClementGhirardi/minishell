@@ -36,6 +36,8 @@ static t_ast	*parse_command(t_token **tokens)
 	if (count == 0)
 		return (NULL);
 	args = malloc((count + 1) * sizeof(char *));
+	if (!args)
+		return (NULL);
 	i = 0;
 	while (*tokens && (*tokens)->type == TOKEN_WORD)
 	{
@@ -78,7 +80,7 @@ static t_ast	*parse_instructions(t_token **tokens)
 		return (NULL);
 	if ((*tokens)->type == TOKEN_WORD)
 	{
-		if ((*tokens)->value[0] == '\0')
+		if (!(*tokens)->value[0])
 		{
 			tmp = (*tokens)->bracket;
 			*tokens = (*tokens)->next;
@@ -115,7 +117,7 @@ t_ast	*parse_pipeline(t_token **tokens)
 		if ((*tokens)->bracket)
 		{
 			tmp = (*tokens)->bracket;
-			brack = parse(&tmp);//&tmp tokens
+			brack = parse(&tmp);
 			*tokens = (*tokens)->next;
 		}
 		else
@@ -131,6 +133,34 @@ t_ast	*parse_pipeline(t_token **tokens)
 	return (left);
 }
 
+t_ast	*parse_after_bracket(t_token **tokens, t_ast **left, t_ast *brack)
+{
+	t_ast			*instr;
+	t_token_type	type;
+
+	if (!tokens || !*tokens || !left)
+		return (NULL);
+	if (*tokens)
+	{
+		type = (*tokens)->type;
+		instr = parse_pipeline(tokens);
+		if (type == TOKEN_PIPE)
+		{
+			*left = ast_new_pipe(*left, instr);
+			return (*left);
+		}
+		else
+		{
+			if (brack)
+				instr->left = brack;
+			else
+				instr->left = *left;
+			return (instr);
+		}
+	}
+	return (NULL);
+}
+
 t_ast	*parse(t_token **tokens)
 {
 	t_ast			*left;
@@ -143,6 +173,8 @@ t_ast	*parse(t_token **tokens)
 		return (NULL);
 	brack = NULL;
 	left = parse_pipeline(tokens);
+	if (*tokens && (*tokens)->type != TOKEN_AND && (*tokens)->type != TOKEN_OR)
+		left = parse_after_bracket(tokens, &left, brack);
 	while ((*tokens && (*tokens)->type == TOKEN_AND)
 		|| (*tokens && (*tokens)->type == TOKEN_OR))
 	{
@@ -150,7 +182,7 @@ t_ast	*parse(t_token **tokens)
 		{
 			type = (*tokens)->type;
 			tmp = (*tokens)->bracket;
-			brack = parse(&tmp);//&tmp tokens
+			brack = parse(&tmp);
 			*tokens = (*tokens)->next;
 		}
 		else
@@ -160,9 +192,15 @@ t_ast	*parse(t_token **tokens)
 			right = parse_pipeline(tokens);
 			left = ast_new_operator(left, right, type);
 		}
-		if (brack)
+		if (brack && *tokens && ((*tokens)->type == TOKEN_AND || (*tokens)->type == TOKEN_OR))
+		{
 			left = ast_new_operator(left, brack, type);
-		brack = NULL;
+			brack = NULL;
+		}
+	}
+	if (*tokens)
+	{
+		left = parse_after_bracket(tokens, &left, brack);
 	}
 	return (left);
 }

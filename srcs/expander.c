@@ -48,7 +48,7 @@ static char	*extract_var_name(char *str, int *i, int status, char ***env)
 	return (var);
 }
 
-static char	*expand_string(char *str, int status, char ***env)
+char	*expand_string(char *str, int status, char ***env)
 {
 	int		i;
 	char	*result;

@@ -124,12 +124,12 @@ t_ast	*parse_pipeline(t_token **tokens)
 			right = parse_instructions(tokens);
 			left = ast_new_pipe(left, right);
 		}
-		if (*tokens && (((*tokens)->type == TOKEN_REDIR_IN) || ((*tokens)->type == TOKEN_REDIR_OUT)
-			|| (*tokens)->type == TOKEN_APPEND || (*tokens)->type == TOKEN_HEREDOC))
-		{
-			ft_printf("ok pipeline\n");
-			//right = parse_instructions(tokens);
-		}
+		// if (*tokens && (((*tokens)->type == TOKEN_REDIR_IN) || ((*tokens)->type == TOKEN_REDIR_OUT)
+		// 	|| (*tokens)->type == TOKEN_APPEND || (*tokens)->type == TOKEN_HEREDOC))
+		// {
+		// 	ft_printf("ok pipeline\n");
+		// 	//right = parse_instructions(tokens);
+		// }
 		if (brack)
 			left = ast_new_pipe(left, brack);
 		brack = NULL;
@@ -166,17 +166,25 @@ t_ast	*parse(t_token **tokens)
 			right = parse_pipeline(tokens);
 			left = ast_new_operator(left, right, type);
 		}
+		// if (brack)
+		// 	left = ast_new_operator(left, brack, type);
+		// brack = NULL;
 		if (*tokens && (((*tokens)->type == TOKEN_REDIR_IN) || ((*tokens)->type == TOKEN_REDIR_OUT)
 			|| (*tokens)->type == TOKEN_APPEND || (*tokens)->type == TOKEN_HEREDOC))
 		{
 			ft_printf("ok operator\n");
 			//tmp = *tokens;
 			//*tokens = (*tokens)->next;
-			// right = parse_instructions(tokens);
+			right = parse_pipeline(tokens);
+			//ast_add_end(&left, right);
+			left = ast_new_operator(left, right, type); //virer
 		}
 		if (brack)
-			left = ast_new_operator(left, brack, type);
+			ast_add_end(&left, brack); //virer remplacer
+			//left = ast_new_operator(left, brack, type);
 		brack = NULL;
+		if (*tokens)
+			ft_printf("next token = %s\n", (*tokens)->value);
 	}
 	return (left);
 }
