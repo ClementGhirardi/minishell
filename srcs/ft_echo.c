@@ -22,12 +22,12 @@ int	ft_display(char **args, char ***env)
 	i = -1;
 	while (args[++i])
 	{
-		word = expand_string(args[i], status, env);
+		word = expand_string(ft_strdup(args[i]), status, env);
 		if (word)
 		{
 			ft_printf("%s", word);
-			//free(word);
-			if (args[i + 1])
+			free(word);
+			if (args[i + 1] && args[i][ft_strlen(args[i]) - 1] != '\'' && args[i][ft_strlen(args[i]) - 1] != '"')
 				ft_printf(" ");
 		}
 		else
