@@ -78,47 +78,51 @@ t_token	*create_clean_list(t_token **tokens)
 	return (clean_list);
 }
 
-int	check_brackets(t_token	*tokens)
-{
-	int	o_brack;
-	int	c_brack;
-	int	last_brack;
+// int	check_brackets(t_token	*tokens)
+// {
+// 	int	o_brack;
+// 	int	c_brack;
+// 	int	last_brack;
 
-	o_brack = 0;
-	c_brack = 0;
-	last_brack = 0;
-	while (tokens)
-	{
-		if (tokens->type == TOKEN_O_BRACK)
-			o_brack++;
-		if (tokens->type == TOKEN_C_BRACK)
-			c_brack++;
-		if (c_brack > o_brack)
-		{
-			ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
-				"syntax error near unexpected token `)'", 2);
-			return (0);
-		}
-		last_brack = tokens->type;
-		tokens = tokens->next;
-	}
-	if (o_brack == c_brack)
-		return (1);
-	if (last_brack == TOKEN_C_BRACK)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putendl_fd("syntax error near unexpected token `('", 2);
-	}
-	// else
-	// 	//heredoc
-	return (0);
-}
+// 	o_brack = 0;
+// 	c_brack = 0;
+// 	last_brack = 0;
+// 	while (tokens)
+// 	{
+// 		if (tokens->type == TOKEN_O_BRACK)
+// 			o_brack++;
+// 		if (tokens->type == TOKEN_C_BRACK)
+// 			c_brack++;
+// 		if (c_brack > o_brack)
+// 		{
+// 			ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
+// 				"syntax error near unexpected token `)'", 2);
+// 			return (0);
+// 		}
+// 		if (tokens->type == TOKEN_O_BRACK || tokens->type == TOKEN_C_BRACK)
+// 			last_brack = tokens->type;
+// 		tokens = tokens->next;
+// 	}
+// 	if (o_brack == c_brack)
+// 		return (1);
+// 	if (last_brack == TOKEN_C_BRACK)
+// 	{
+// 		ft_putstr_fd("minishell: ", 2);
+// 		ft_putendl_fd("syntax error near unexpected token `('", 2);
+// 	}
+// 	else
+// 		input = ft_strjoin_and_free(input, here_doc_word('('));
+// 	return (check_brackets());
+// 	return (0);
+// }
 
 t_token	*split_bracket(t_token **tokens)
 {
 	t_token	*clean_list;
 
-	if (!check_brackets(*tokens))
+	// if (!check_brackets(*tokens))
+	// 	return (NULL);
+	if (!tokens || !*tokens)
 		return (NULL);
 	clean_list = create_clean_list(tokens);
 	return (clean_list);

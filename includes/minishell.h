@@ -87,6 +87,7 @@ void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
 t_token		*lexer(char *input);
+void		*syntax_error(char *c);
 
 t_token		*split_bracket(t_token **tokens);
 

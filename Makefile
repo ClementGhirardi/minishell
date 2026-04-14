@@ -35,6 +35,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/executor.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/ft_echo.c \
+	$(SRCS_DIR)/error.c \
 
 SRCS_BONUS = 
 

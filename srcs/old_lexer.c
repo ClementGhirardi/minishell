@@ -134,34 +134,49 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
-static t_token	*check_brackets(t_token	*tokens)
-{
-	t_token	*tmp;
-	int		o_brack;
-	int		c_brack;
-	//int		last_brack;
+// static t_token	*check_brackets(t_token	*tokens)
+// {
+// 	t_token	*tmp;
+// 	char	*new_input;
+// 	int		o_brack;
+// 	int		c_brack;
+// 	int		last_brack;
 
-	o_brack = 0;
-	c_brack = 0;
-	//last_brack = 0;
-	tmp = tokens;
-	while (tmp)
-	{
-		if (tmp->type == TOKEN_O_BRACK)
-			o_brack++;
-		if (tmp->type == TOKEN_C_BRACK)
-			c_brack++;
-		if (c_brack > o_brack)
-			return (syntax_error(")"));
-	//	if (tmp->type == TOKEN_O_BRACK || tmp->type == TOKEN_C_BRACK)
-			//last_brack = tmp->type;
-		tmp = tmp->next;
-	}
-	if (o_brack == c_brack)
-		return (tokens);
-	else /* (last_brack == TOKEN_O_BRACK) */
-		return (syntax_error("("));
-}
+// 	o_brack = 0;
+// 	c_brack = 0;
+// 	last_brack = 0;
+// 	tmp = tokens;
+// 	new_input = ft_strdup("");
+// 	while (tmp)
+// 	{
+// 		if (tmp->type == TOKEN_O_BRACK)
+// 			o_brack++;
+// 		if (tmp->type == TOKEN_C_BRACK)
+// 			c_brack++;
+// 		if (c_brack > o_brack)
+// 		{
+// 			ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
+// 				"syntax error near unexpected token `)'", 2);
+// 			return (NULL);
+// 		}
+// 		if (tmp->type == TOKEN_O_BRACK || tmp->type == TOKEN_C_BRACK)
+// 			last_brack = tmp->type;
+// 		new_input = ft_strjoin_and_free(new_input, tmp->value);
+// 		ft_printf("new_input = %s\n", new_input);
+// 		tmp = tmp->next;
+// 	}
+// 	if (o_brack == c_brack)
+// 		return (tokens);
+// 	if (last_brack == TOKEN_O_BRACK)
+// 	{
+// 		ft_putstr_fd("minishell: ", 2);
+// 		ft_putendl_fd("syntax error near unexpected token `('", 2);
+// 		return (NULL);
+// 	}
+// 	else
+// 		new_input = ft_strjoin_and_free(new_input, here_doc_word(')'));
+// 	return (lexer(new_input));
+// }
 
 t_token	*lexer(char *input)
 {
@@ -191,5 +206,6 @@ t_token	*lexer(char *input)
 		else
 			handle_word(input, &tokens, &i);
 	}
-	return (check_brackets(tokens));
+	return (tokens);
+	//return (check_brackets(tokens));
 }
