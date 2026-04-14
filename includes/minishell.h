@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 14:26:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/14 13:58:08 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-t_token		*lexer(char *input);
+t_token		*lexer(char **input);
 
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type redir_type, char *file);

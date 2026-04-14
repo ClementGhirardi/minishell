@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 15:43:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/14 14:39:41 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(int status, char *input, char ***env)
+void	minishell(int status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
@@ -107,7 +107,6 @@ void	minishell(int status, char *input, char ***env)
 		}
 		free_token(tokens);
 	}
-	free(input);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -126,7 +125,8 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env, status);
-		minishell(status, input, &env);
+		minishell(status, &input, &env);
+		free(input);
 	}
 	ft_exit(&env, status);
 }

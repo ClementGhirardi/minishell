@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 15:44:32 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/14 13:51:34 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,16 @@ t_ast	*parse(t_token *tokens)
 	if (!tokens)
 		return (NULL);
 	left = parse_instructions(&tokens);
+	if (!left)
+		return (ft_putstr_fd("minishell: syntax error ", 2),
+			ft_putendl_fd("near unexpected token `|'", 2), NULL);
 	while (tokens && tokens->type == TOKEN_PIPE)
 	{
 		tokens = tokens->next;
 		right = parse_instructions(&tokens);
+		if (left && !right)
+			return (ft_putstr_fd("minishell: syntax error ", 2),
+				ft_putendl_fd("near unexpected token `|'", 2), NULL);
 		left = ast_new_pipe(left, right);
 	}
 	return (left);

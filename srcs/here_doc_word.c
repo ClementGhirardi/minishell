@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_word.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 12:26:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 12:50:01 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/14 14:40:11 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*here_doc_word(char limiter)
 	char	*word;
 	char	*buffer;
 
-	word = ft_strdup("\n");
+	word = ft_strdup("");
 	if (!word)
 		return (perror("malloc"), NULL);
 	write(1, "> ", 2);

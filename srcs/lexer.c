@@ -3,47 +3,59 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 13:18:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/14 14:54:48 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static char	*handle_quotes(char *input)
+static void	handle_last_pipe(char **input)
 {
-	int	squote;
-	int	dquote;
 	int	i;
 
-	if (!input)
-		return (NULL);
-	squote = 0;
-	dquote = 0;
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] == '\'')
-			squote = (squote + 1) % 2;
-		if (input[i] == '\"')
-			dquote = (dquote + 1) % 2;
-		i++;
-	}
-	if (squote)
-		input = ft_strjoin_and_free(input, here_doc_word('\''));
-	else if (dquote)
-		input = ft_strjoin_and_free(input, here_doc_word('\"'));
+	if (!(*input))
+		return ;
+	i = ft_strlen(*input) - 1;
+	while ((*input)[i] && (*input)[i] == ' ')
+		i--;
+	if (i >= 0 && (*input)[i] == '|')
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup(" "), here_doc_word('\n')));
 	else
-		return (input);
-	return (handle_quotes(input));
+		return ;
+	lexer(input);
 }
 
-static void	handle_pipe(t_token **tokens, int *i)
+static void	handle_quotes(char **input)
 {
-	add_token(tokens, new_token(TOKEN_PIPE, "|"));
-	(*i)++;
+	int	quote[2];
+	int	i;
+
+	if (!(*input))
+		return ;
+	quote[0] = 0;
+	quote[1] = 0;
+	i = 0;
+	while ((*input)[i])
+	{
+		if ((*input)[i] == '\'')
+			quote[0] = (quote[0] + 1) % 2;
+		if ((*input)[i] == '\"')
+			quote[1] = (quote[1] + 1) % 2;
+		i++;
+	}
+	if (quote[0])
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\'')));
+	else if (quote[1])
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
+	else
+		return ;
+	lexer(input);
 }
 
 static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
@@ -100,29 +112,31 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
-t_token	*lexer(char *input)
+t_token	*lexer(char **input)
 {
 	t_token	*tokens;
 	int		i;
 
-	input = handle_quotes(input);
-	if (!input)
-		return (NULL);
-	add_history(input);
+	handle_last_pipe(input);
+	handle_quotes(input);
+	add_history(*input);
 	tokens = NULL;
 	i = 0;
-	while (input[i])
+	while ((*input)[i])
 	{
-		if (input[i] == ' ')
+		if ((*input)[i] == ' ')
 			i++;
-		else if (input[i] == '|')
-			handle_pipe(&tokens, &i);
-		else if (input[i] == '>')
-			handle_redir(input, &tokens, &i, 1);
-		else if (input[i] == '<')
-			handle_redir(input, &tokens, &i, 0);
+		else if ((*input)[i] == '|')
+		{
+			add_token(&tokens, new_token(TOKEN_PIPE, "|"));
+			i++;
+		}
+		else if ((*input)[i] == '>')
+			handle_redir(*input, &tokens, &i, 1);
+		else if ((*input)[i] == '<')
+			handle_redir(*input, &tokens, &i, 0);
 		else
-			handle_word(input, &tokens, &i);
+			handle_word(*input, &tokens, &i);
 	}
 	return (tokens);
 }
