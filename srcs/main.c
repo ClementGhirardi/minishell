@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 15:44:07 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:39:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	minishell(int status, char **input, char ***env)
 	tokens = lexer(input);
 	if (tokens)
 	{
-		ast = parse(tokens, status, *env);
+		ast = parse(tokens, status, *env, input);
 		if (ast)
 		{
 			status = executor(ast, status, env);
@@ -126,6 +126,7 @@ int	main(int ac, char **av, char **envp)
 		if (!input)
 			ft_exit(&env, status);
 		minishell(status, &input, &env);
+		add_history(input);
 		free(input);
 	}
 	ft_exit(&env, status);

@@ -17,6 +17,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer.c \
 	$(SRCS_DIR)/ast.c \
+	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ft_getenv.c \
  	$(SRCS_DIR)/expander.c \

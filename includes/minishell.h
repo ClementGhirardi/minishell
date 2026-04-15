@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 11:18:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:36:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,9 @@ t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
-t_ast		*parse(t_token *tokens, int status, char **env);
+char		*ft_gethole_fd(int fd);
+
+t_ast		*parse(t_token *tokens, int status, char **env, char **input);
 
 char		*ft_getenv(char **env, const char *name);
 

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 15:43:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:27:45 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,6 @@ t_token	*lexer(char **input)
 
 	handle_last_pipe(input);
 	handle_quotes(input);
-	add_history(*input);
 	tokens = NULL;
 	i = 0;
 	while ((*input)[i])
