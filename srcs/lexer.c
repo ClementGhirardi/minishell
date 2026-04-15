@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 11:01:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 15:43:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,36 @@ static void	handle_quotes(char **input)
 	lexer(input);
 }
 
+// static void	handle_empty_quotes(char **input)
+// {
+// 	char	*result;
+// 	size_t	i;
+
+// 	if (!(*input) && ft_strncmp(*input, "", ft_strlen(*input)))
+// 		return ;
+// 	result = NULL;
+// 	i = 0;
+// 	while ((*input)[i] && (*input)[i + 1])
+// 	{
+// 		if (((*input)[i] == '\'' || (*input)[i] == '"')
+// 			&& ((*input)[i] == (*input)[i + 1]))
+// 		{
+// 			if (i == 0)
+// 				result = ft_substr(*input, i + 2, ft_strlen(*input));
+// 			else if (i + 3 < ft_strlen(*input))
+// 				result = ft_substr(*input, 0, i);
+// 			else
+// 				result = ft_strjoin_and_free(ft_substr(*input, 0, i),
+// 						ft_substr(*input, i + 2, ft_strlen(*input)));
+// 			ft_printf("%s\n", result);
+// 			free(*input);
+// 			*input = result;
+// 			i++;
+// 		}
+// 		i++;
+// 	}
+// }
+
 static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 {
 	if (dir == 1)
@@ -93,19 +123,21 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	char	*word;
 
 	start = *i;
-	if (input[*i] == '\'' || input[*i] == '\"')
+	while (input[*i] && input[*i] != ' ')
 	{
-		quote = input[*i];
-		(*i)++;
-	}
-	else
 		quote = ' ';
-	while (input[*i] && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>'
-		&& input[*i] != quote)
-		(*i)++;
-	if (input[*i] == quote && quote != ' ')
-		(*i)++;
+		if (input[*i] == '\'' || input[*i] == '\"')
+		{
+			quote = input[*i];
+			(*i)++;
+		}
+		while (input[*i] && input[*i] != '|'
+			&& input[*i] != '<' && input[*i] != '>'
+			&& input[*i] != quote)
+			(*i)++;
+		if (input[*i] == quote && quote != ' ')
+			(*i)++;
+	}
 	word = ft_substr(input, start, *i - start);
 	if (!word)
 		return ;
@@ -119,7 +151,6 @@ t_token	*lexer(char **input)
 
 	handle_last_pipe(input);
 	handle_quotes(input);
-	// handle_empty_quotes(*input);
 	add_history(*input);
 	tokens = NULL;
 	i = 0;
