@@ -55,7 +55,7 @@ char	*expand_string(char *str, int status, char ***env)
 	char	*var;
 
 	if (str[0] == '\'')
-		return (result = ft_substr(str, 1, ft_strlen(str) - 1),
+		return (result = ft_substr(str, 1, ft_strlen(str) - 2),
 			free(str), result);
 	i = 0;
 	result = ft_strdup("");

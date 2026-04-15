@@ -14,32 +14,83 @@
 
 static void	handle_word(char *input, t_token **tokens, int *i);
 
-static char	*handle_quotes(char *input)
+static void	handle_last_pipe(char **input)
 {
-	int	squote;
-	int	dquote;
 	int	i;
 
-	if (!input)
-		return (NULL);
-	squote = 0;
-	dquote = 0;
+	if (!(*input))
+		return ;
+	i = ft_strlen(*input) - 1;
+	while ((*input)[i] && (*input)[i] == ' ')
+		i--;
+	if (i >= 0 && (*input)[i] == '|')
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup(" "), here_doc_word('\n')));
+	else
+		return ;
+	lexer(input);
+}
+
+static void	handle_quotes(char **input)
+{
+	int	quote[2];
+	int	i;
+
+	if (!(*input))
+		return ;
+	quote[0] = 0;
+	quote[1] = 0;
 	i = 0;
-	while (input[i])
+	while ((*input)[i])
 	{
-		if (input[i] == '\'')
-			squote = (squote + 1) % 2;
-		if (input[i] == '\"')
-			dquote = (dquote + 1) % 2;
+		if ((*input)[i] == '\'')
+			quote[0] = (quote[0] + 1) % 2;
+		if ((*input)[i] == '\"')
+			quote[1] = (quote[1] + 1) % 2;
 		i++;
 	}
-	if (squote)
-		input = ft_strjoin_and_free(input, here_doc_word('\''));
-	else if (dquote)
-		input = ft_strjoin_and_free(input, here_doc_word('\"'));
+	if (quote[0])
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\'')));
+	else if (quote[1])
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
 	else
-		return (input);
-	return (handle_quotes(input));
+		return ;
+	lexer(input);
+}
+
+static char	*handle_empty_quotes(char *input)
+{
+	char	*result;
+	int		i;
+	char	quote;
+
+	result = NULL;
+	i = 0;
+	if (!input)
+		return (NULL);
+	// if (!input[i])
+	// 	return (ft_printf("ok\n"), ft_strdup(""));
+	ft_printf("%s\n", input);
+	while (input[i])
+	{
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			quote = input[i];
+			if (input[i + 1] == quote)
+				i += 2;
+		}
+		else
+		{
+			result = ft_strjoin_char_free(result, input[i]);
+			i++;
+		}
+	}
+	if (!result)
+		return (ft_strdup(""));
+	//free_array(input);
+	return (result);
 }
 
 static void	handle_pipe(char *input, t_token **tokens, int *i)
@@ -129,8 +180,10 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	if (input[*i] == quote && quote != ' ')
 		(*i)++;
 	word = ft_substr(input, start, *i - start);
+	word = handle_empty_quotes(word);
 	if (!word)
 		return ;
+	// ft_printf("hw: %s\n", word);
 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
@@ -163,33 +216,65 @@ static t_token	*check_brackets(t_token	*tokens)
 		return (syntax_error("("));
 }
 
-t_token	*lexer(char *input)
+t_token	*lexer2(char **input)
 {
 	t_token	*tokens;
 	int		i;
 
-	input = handle_quotes(input);
-	if (!input)
-		return (NULL);
-	add_history(input);
+	handle_quotes(input);
+	//*input = handle_empty_quotes(input);
+	add_history(*input);
 	tokens = NULL;
+	if (input && !input[0])
+		add_token(&tokens, new_token(TOKEN_WORD, ft_strdup("")));
 	i = 0;
-	while (input[i])
+	while ((*input)[i])
 	{
-		if (input[i] == ' ')
+		if ((*input)[i] == ' ')
 			i++;
-		else if (input[i] == '|')
-			handle_pipe(input, &tokens, &i);
-		else if (input[i] == '&')
-			handle_and(input, &tokens, &i);
-		else if (input[i] == '>')
-			handle_redir(input, &tokens, &i, 1);
-		else if (input[i] == '<')
-			handle_redir(input, &tokens, &i, 0);
-		else if (input[i] == '(' || input[i] == ')')
-			handle_bracket(input, &tokens, &i);
+		else if ((*input)[i] == '&')
+			handle_and(*input, &tokens, &i);
+		else if ((*input)[i] == '|')
+			handle_pipe(*input, &tokens, &i);
+		else if ((*input)[i] == '>')
+			handle_redir(*input, &tokens, &i, 1);
+		else if ((*input)[i] == '<')
+			handle_redir(*input, &tokens, &i, 0);
+		else if ((*input)[i] == '(' || (*input)[i] == ')')
+			handle_bracket(*input, &tokens, &i);
 		else
-			handle_word(input, &tokens, &i);
+			handle_word(*input, &tokens, &i);
 	}
 	return (check_brackets(tokens));
+}
+
+t_token	*lexer(char **input)
+{
+	// t_token	*tokens;
+	// int		i;
+
+	handle_last_pipe(input);
+	return (lexer2(input));
+	// handle_quotes(input);
+	// add_history(*input);
+	// tokens = NULL;
+	// i = 0;
+	// while ((*input)[i])
+	// {
+	// 	if ((*input)[i] == ' ')
+	// 		i++;
+	// 	else if ((*input)[i] == '&')
+	// 		handle_and(*input, &tokens, &i);
+	// 	else if ((*input)[i] == '|')
+	// 		handle_pipe(*input, &tokens, &i);
+	// 	else if ((*input)[i] == '>')
+	// 		handle_redir(*input, &tokens, &i, 1);
+	// 	else if ((*input)[i] == '<')
+	// 		handle_redir(*input, &tokens, &i, 0);
+	// 	else if ((*input)[i] == '(' || (*input)[i] == ')')
+	// 		handle_bracket(*input, &tokens, &i);
+	// 	else
+	// 		handle_word(*input, &tokens, &i);
+	// }
+	// return (check_brackets(tokens));
 }

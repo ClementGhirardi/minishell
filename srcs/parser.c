@@ -58,6 +58,7 @@ static t_ast	*parse_redirection(t_token **tokens)
 	t_token_type	redir_type;
 	char			*file;
 
+	// ft_printf("predir: %s\n", (*tokens)->value);
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)

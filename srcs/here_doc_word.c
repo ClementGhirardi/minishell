@@ -33,7 +33,7 @@ char	*here_doc_word(char limiter)
 	char	*word;
 	char	*buffer;
 
-	word = ft_strdup("\n");
+	word = ft_strdup("");
 	if (!word)
 		return (perror("malloc"), NULL);
 	write(1, "> ", 2);

@@ -79,6 +79,7 @@ typedef struct s_instrs
 }	t_instrs;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
+char		*ft_strjoin_char_free(char *s1, char c);
 
 char		*here_doc_word(char limiter);
 
@@ -86,7 +87,8 @@ t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-t_token		*lexer(char *input);
+t_token		*lexer(char **input);
+t_token		*lexer2(char **input);
 void		*syntax_error(char *c);
 
 t_token		*split_bracket(t_token **tokens);

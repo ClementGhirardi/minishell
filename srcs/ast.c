@@ -49,6 +49,7 @@ t_ast	*ast_new_redir(t_token_type redir_type, char *file)
 	else
 		node->fd = -1;
 	node->args = NULL;
+	ft_printf("%d: %s\n", redir_type, file);
 	node->file = file;
 	node->left = NULL;
 	node->right = NULL;
