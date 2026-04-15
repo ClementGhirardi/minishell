@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/14 13:58:08 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/04/15 11:18:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,18 +82,20 @@ void		free_token(t_token *tokens);
 t_token		*lexer(char **input);
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type redir_type, char *file);
+t_ast		*ast_new_redir(t_token_type r_type, char *file,
+				int status, char **env);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
-t_ast		*parse(t_token *tokens);
+t_ast		*parse(t_token *tokens, int status, char **env);
 
-char		*ft_getenv(char ***env, const char *name);
+char		*ft_getenv(char **env, const char *name);
 
-void		expander(t_ast *node, int status, char ***env);
+char		*extract_var_name(char *str, int *i, int status, char **env);
+void		expander(t_ast *node, int status, char **env);
 
-int			here_doc(char *limiter);
+int			here_doc(char *limiter, int status, char **env);
 
 char		*get_path(char *cmd, char **envp);
 

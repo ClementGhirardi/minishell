@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/14 14:39:41 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/04/15 11:17:11 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	minishell(int status, char **input, char ***env)
 	tokens = lexer(input);
 	if (tokens)
 	{
-		ast = parse(tokens);
+		ast = parse(tokens, status, *env);
 		if (ast)
 		{
 			status = executor(ast, status, env);

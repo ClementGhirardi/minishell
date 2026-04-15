@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 17:23:29 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 11:18:27 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-static char	*extract_var_name(char *str, int *i, int status, char ***env)
+char	*extract_var_name(char *str, int *i, int status, char **env)
 {
 	int		start;
 	char	*tmp;
@@ -48,7 +48,7 @@ static char	*extract_var_name(char *str, int *i, int status, char ***env)
 	return (var);
 }
 
-static char	*expand_string(char *str, int status, char ***env)
+static char	*expand_string(char *str, int status, char **env)
 {
 	int		i;
 	char	*result;
@@ -75,7 +75,7 @@ static char	*expand_string(char *str, int status, char ***env)
 	return (free(str), result);
 }
 
-void	expander(t_ast *node, int status, char ***env)
+void	expander(t_ast *node, int status, char **env)
 {
 	int	i;
 
