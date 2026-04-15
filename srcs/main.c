@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 15:43:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 13:30:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	minishell(int status, char **input, char ***env)
 	t_ast	*ast;
 
 	tokens = lexer(input);
+	ft_printf("lexer\n");
 	t_token *current = tokens;
 	while (current)
 	{
@@ -104,6 +105,7 @@ void	minishell(int status, char **input, char ***env)
 		current = current->next;
 	}
 	tokens = split_bracket(&tokens);
+	ft_printf("split_bracket\n");
 	current = tokens;
 	while (current)
 	{

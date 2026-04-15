@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 13:18:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/15 13:33:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ static char	*handle_empty_quotes(char *input)
 		return (NULL);
 	// if (!input[i])
 	// 	return (ft_printf("ok\n"), ft_strdup(""));
-	ft_printf("%s\n", input);
 	while (input[i])
 	{
 		if (input[i] == '\'' || input[i] == '"')
@@ -221,12 +220,11 @@ t_token	*lexer2(char **input)
 	t_token	*tokens;
 	int		i;
 
+	
 	handle_quotes(input);
 	//*input = handle_empty_quotes(input);
 	add_history(*input);
 	tokens = NULL;
-	if (input && !input[0])
-		add_token(&tokens, new_token(TOKEN_WORD, ft_strdup("")));
 	i = 0;
 	while ((*input)[i])
 	{
