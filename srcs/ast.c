@@ -28,28 +28,28 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type redir_type, char *file)
+t_ast	*ast_new_redir(t_token_type r_type, char *file, int status, char **env)
 {
 	t_ast		*node;
 
 	node = malloc(1 * sizeof(t_ast));
 	if (!node)
 		return (NULL);
-	if (redir_type == TOKEN_REDIR_IN)
+	if (r_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
-	if (redir_type == TOKEN_REDIR_OUT)
+	if (r_type == TOKEN_REDIR_OUT)
 		node->type = NODE_REDIR_OUT;
-	if (redir_type == TOKEN_APPEND)
+	if (r_type == TOKEN_APPEND)
 		node->type = NODE_APPEND;
-	if (redir_type == TOKEN_HEREDOC)
+	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		node->fd = here_doc(file);
+		node->fd = here_doc(file, status, env);
 	}
 	else
 		node->fd = -1;
 	node->args = NULL;
-	ft_printf("%d: %s\n", redir_type, file);
+	// ft_printf("%d: %s\n", r_type, file);
 	node->file = file;
 	node->left = NULL;
 	node->right = NULL;

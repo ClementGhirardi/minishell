@@ -78,6 +78,13 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
+typedef struct s_infos
+{
+	int		status;
+	char	**env;
+	char	**input;
+}	t_infos;
+
 char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
 
@@ -94,20 +101,23 @@ void		*syntax_error(char *c);
 t_token		*split_bracket(t_token **tokens);
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type redir_type, char *file);
+t_ast		*ast_new_redir(t_token_type r_type, char *file,
+				int status, char **env);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
-t_ast		*parse(t_token **tokens);
+char		*ft_gethole_fd(int fd);
 
-char		*ft_getenv(char ***env, const char *name);
+t_ast		*parse(t_token **tokens, int status, char **env, char **input);
 
-void		expander(t_ast *node, int status, char ***env);
-char		*expand_string(char *str, int status, char ***env);
+char		*ft_getenv(char **env, const char *name);
 
-int			here_doc(char *limiter);
+char		*extract_var_name(char *str, int *i, int status, char **env);
+void		expander(t_ast *node, int status, char **env);
+
+int			here_doc(char *limiter, int status, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
@@ -117,7 +127,7 @@ void		free_array(char **array);
 char		**dup_array(char **array);
 char		**sort_array(char **array);
 
-int			ft_echo(char **args, char ***env);
+int			ft_echo(char **args);
 
 int			ft_setenv(char ***env, const char *name, const char *value);
 

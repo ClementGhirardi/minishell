@@ -97,22 +97,22 @@ void	minishell(int status, char **input, char ***env)
 	t_ast	*ast;
 
 	tokens = lexer(input);
-	t_token *current = tokens;
-	while (current)
-	{
-		ft_printf("%d: |%s|\n", current->type, current->value);
-		current = current->next;
-	}
+	// t_token *current = tokens;
+	// while (current)
+	// {
+		// ft_printf("%d: |%s|\n", current->type, current->value);
+		// current = current->next;
+	// }
 	tokens = split_bracket(&tokens);
-	current = tokens;
-	while (current)
-	{
-		ft_printf("%d: |%s|\n", current->type, current->value);
-		current = current->next;
-	}
+	// current = tokens;
+	// while (current)
+	// {
+		// ft_printf("%d: |%s|\n", current->type, current->value);
+		// current = current->next;
+	// }
 	if (tokens)
 	{
-		ast = parse(&tokens);
+		ast = parse(&tokens, status, *env, input);
 		if (ast)
 		{
 			status = executor(ast, status, env);
@@ -139,6 +139,7 @@ int	main(int ac, char **av, char **envp)
 		if (!input)
 			ft_exit(&env, status);
 		minishell(status, &input, &env);
+		add_history(input);
 		free(input);
 	}
 	ft_exit(&env, status);

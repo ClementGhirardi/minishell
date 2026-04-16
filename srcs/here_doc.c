@@ -12,7 +12,28 @@
 
 #include "../includes/minishell.h"
 
-int	here_doc(char *limiter)
+static char	*expand_string(char *str, int status, char **env)
+{
+	int		i;
+	char	*result;
+	char	*var;
+
+	i = 0;
+	result = ft_strdup("");
+	if (!result)
+		return (free(str), NULL);
+	while (str[i])
+	{
+		if (str[i] == '$')
+			var = extract_var_name(str, &i, status, env);
+		else
+			var = ft_substr(str, i++, 1);
+		result = ft_strjoin_and_free(result, var);
+	}
+	return (free(str), result);
+}
+
+int	here_doc(char *limiter, int status, char **env)
 {
 	char	*buffer;
 	int		size;
@@ -21,7 +42,7 @@ int	here_doc(char *limiter)
 	pipe(fd);
 	size = ft_strlen(limiter);
 	write(1, "> ", 2);
-	buffer = get_next_line(STDIN_FILENO);
+	buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
 	if (!buffer)
 		perror("gnl");
 	while (ft_strncmp(buffer, limiter, size))
@@ -29,7 +50,7 @@ int	here_doc(char *limiter)
 		ft_putstr_fd(buffer, fd[1]);
 		free(buffer);
 		write(1, "> ", 2);
-		buffer = get_next_line(STDIN_FILENO);
+		buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
 		if (!buffer)
 			perror("gnl");
 	}

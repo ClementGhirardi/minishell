@@ -35,6 +35,6 @@ int	run_builtin(char **args, char ***env, int status)
 	if (!ft_strncmp(args[0], "exit", 4))
 		return (ft_exit(env, status));
 	if (!ft_strncmp(args[0], "echo", 4))
-		return (ft_echo(args, env));
+		return (ft_echo(args));
 	return (1);
 }

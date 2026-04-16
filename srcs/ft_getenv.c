@@ -31,19 +31,19 @@ static char	*get_value(char *arg)
 	return (value);
 }
 
-char	*ft_getenv(char ***env, const char *name)
+char	*ft_getenv(char **env, const char *name)
 {
 	size_t	name_len;
 	int		i;
 
 	name_len = ft_strlen(name);
 	i = 0;
-	while ((*env)[i])
+	while (env[i])
 	{
-		if (!ft_strncmp((*env)[i], name, name_len)
-			&& ((*env)[i][name_len] == '='
-			|| ft_strlen((*env)[i]) == ft_strlen(name)))
-			return (get_value((*env)[i]));
+		if (!ft_strncmp(env[i], name, name_len)
+			&& (env[i][name_len] == '='
+			|| ft_strlen(env[i]) == ft_strlen(name)))
+			return (get_value(env[i]));
 		i++;
 	}
 	return (NULL);

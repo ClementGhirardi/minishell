@@ -19,8 +19,8 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 	pid_t	pid;
 	char	*path;
 
-	if (!node->args)
-		return (expander(node->left, status, env), execute_cmd(node->left, status, env));
+	// if (!node->args)
+	// 	return (expander(node->left, status, env), execute_cmd(node->left, status, env));
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, env, status));
 	else
@@ -138,7 +138,7 @@ int	executor(t_ast *ast, int status, char ***env)
 	if (!ast)
 		return (1);
 	if (ast->type == NODE_CMD)
-		return (expander(ast, status, env), execute_cmd(ast, status, env));
+		return (expander(ast, status, *env), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
 		return (execute_pipe(ast, status, env));
 	else if (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
@@ -150,7 +150,7 @@ int	executor(t_ast *ast, int status, char ***env)
 		if (ast->file)
 		{
 			tmp = ft_strdup(ast->file);
-			expander(ast, status, env);
+			expander(ast, status, *env);
 			if (!ast->file && ast->fd == -1)
 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
 					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);

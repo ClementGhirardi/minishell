@@ -31,67 +31,106 @@ static void	handle_last_pipe(char **input)
 	lexer(input);
 }
 
+// static void	handle_quotes(char **input)
+// {
+// 	int	quote[2];
+// 	int	i;
+
+// 	if (!(*input))
+// 		return ;
+// 	quote[0] = 0;
+// 	quote[1] = 0;
+// 	i = 0;
+// 	while ((*input)[i])
+// 	{
+// 		if ((*input)[i] == '\'')
+// 			quote[0] = (quote[0] + 1) % 2;
+// 		if ((*input)[i] == '\"')
+// 			quote[1] = (quote[1] + 1) % 2;
+// 		i++;
+// 	}
+// 	if (quote[0])
+// 		*input = ft_strjoin_and_free(*input,
+// 				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\'')));
+// 	else if (quote[1])
+// 		*input = ft_strjoin_and_free(*input,
+// 				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
+// 	else
+// 		return ;
+// 	lexer(input);
+// }
+
+
 static void	handle_quotes(char **input)
 {
-	int	quote[2];
-	int	i;
+	//int	quote[2];
+	int		i;
+	char	q;
 
 	if (!(*input))
 		return ;
-	quote[0] = 0;
-	quote[1] = 0;
+	//quote[0] = 0;
+	//quote[1] = 0;
 	i = 0;
 	while ((*input)[i])
 	{
-		if ((*input)[i] == '\'')
-			quote[0] = (quote[0] + 1) % 2;
-		if ((*input)[i] == '\"')
-			quote[1] = (quote[1] + 1) % 2;
+		if ((*input)[i] == '\'' || (*input)[i] == '\"')
+		{
+			q = (*input)[i++];
+			//ft_printf("q = %c\n", q);
+			while ((*input)[i] && (*input)[i] != q)
+				i++;
+			if (!(*input)[i])
+				break ;
+		}
 		i++;
+		q = '\0';
 	}
-	if (quote[0])
+	if (q)
+	//if (quote[0])
 		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\'')));
-	else if (quote[1])
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
+				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word(q)));
+	// else if (quote[1])
+	// 	*input = ft_strjoin_and_free(*input,
+	// 			ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
 	else
 		return ;
 	lexer(input);
 }
 
-static char	*handle_empty_quotes(char *input)
-{
-	char	*result;
-	int		i;
-	char	quote;
 
-	result = NULL;
-	i = 0;
-	if (!input)
-		return (NULL);
-	// if (!input[i])
-	// 	return (ft_printf("ok\n"), ft_strdup(""));
-	ft_printf("%s\n", input);
-	while (input[i])
-	{
-		if (input[i] == '\'' || input[i] == '"')
-		{
-			quote = input[i];
-			if (input[i + 1] == quote)
-				i += 2;
-		}
-		else
-		{
-			result = ft_strjoin_char_free(result, input[i]);
-			i++;
-		}
-	}
-	if (!result)
-		return (ft_strdup(""));
-	//free_array(input);
-	return (result);
-}
+// static char	*handle_empty_quotes(char *input)
+// {
+// 	char	*result;
+// 	int		i;
+// 	char	quote;
+
+// 	result = NULL;
+// 	i = 0;
+// 	if (!input)
+// 		return (NULL);
+// 	// if (!input[i])
+// 	// 	return (ft_printf("ok\n"), ft_strdup(""));
+// 	ft_printf("%s\n", input);
+// 	while (input[i])
+// 	{
+// 		if (input[i] == '\'' || input[i] == '"')
+// 		{
+// 			quote = input[i];
+// 			if (input[i + 1] == quote)
+// 				i += 2;
+// 		}
+// 		else
+// 		{
+// 			result = ft_strjoin_char_free(result, input[i]);
+// 			i++;
+// 		}
+// 	}
+// 	if (!result)
+// 		return (ft_strdup(""));
+// 	//free_array(input);
+// 	return (result);
+// }
 
 static void	handle_pipe(char *input, t_token **tokens, int *i)
 {
@@ -159,31 +198,35 @@ static void	handle_bracket(char *input, t_token **tokens, int *i)
 static void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
+	//int		end; //
 	char	quote;
 	char	*word;
 
 	start = *i;
 	if (input[*i] == '&')
 		(*i)++;
-	if (input[*i] == '\'' || input[*i] == '\"')
-	{
-		quote = input[*i];
-		(*i)++;
-	}
-	else
-		quote = ' ';
-	while (input[*i] && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>'
-		&& input[*i] != quote && input[*i] != '&'
+	while (input[*i] && input[*i] != ' ' && input[*i] != '|'
+		&& input[*i] != '<' && input[*i] != '>' && input[*i] != '&'
 		&& input[*i] != '(' && input[*i] != ')')
-		(*i)++;
-	if (input[*i] == quote && quote != ' ')
-		(*i)++;
-	word = ft_substr(input, start, *i - start);
-	word = handle_empty_quotes(word);
+	{
+		quote = ' ';
+		if (input[*i] == '\'' || input[*i] == '\"')
+		{
+			quote = input[*i];
+			(*i)++;
+			//start
+		}
+		while (input[*i] && input[*i] != '|'
+			&& input[*i] != '<' && input[*i] != '>'
+			&& input[*i] != '&' && input[*i] != '('
+			&& input[*i] != ')' && input[*i] != quote)
+			(*i)++;
+		if (input[*i] == quote && quote != ' ')
+			(*i)++;
+	}
+	word = ft_substr(input, start, *i - start); //*i pas end
 	if (!word)
 		return ;
-	// ft_printf("hw: %s\n", word);
 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
@@ -210,6 +253,7 @@ static t_token	*check_brackets(t_token	*tokens)
 			//last_brack = tmp->type;
 		tmp = tmp->next;
 	}
+	//ft_printf("o = %d et c = %d\n", o_brack, c_brack);
 	if (o_brack == c_brack)
 		return (tokens);
 	else /* (last_brack == TOKEN_O_BRACK) */
@@ -223,10 +267,9 @@ t_token	*lexer2(char **input)
 
 	handle_quotes(input);
 	//*input = handle_empty_quotes(input);
-	add_history(*input);
 	tokens = NULL;
-	if (input && !input[0])
-		add_token(&tokens, new_token(TOKEN_WORD, ft_strdup("")));
+	// if (input && !input[0])
+	// 	add_token(&tokens, new_token(TOKEN_WORD, ft_strdup("")));
 	i = 0;
 	while ((*input)[i])
 	{
