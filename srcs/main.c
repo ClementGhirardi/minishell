@@ -12,51 +12,51 @@
 
 #include "../includes/minishell.h"
 
-void	ast_show(t_ast *ast)
-{
-	int	i;
+// void	ast_show(t_ast *ast)
+// {
+// 	int	i;
 
-	if (!ast)
-		return ;
-	if (ast->type == NODE_PIPE)
-		ft_printf("PIPE(");
-	else if (ast->type == NODE_CMD)
-		ft_printf("CMD(");
-	else if (ast->type == NODE_REDIR_IN)
-		ft_printf("REDIR_IN(");
-	else if (ast->type == NODE_REDIR_OUT)
-		ft_printf("REDIR_OUT(");
-	else if (ast->type == NODE_APPEND)
-		ft_printf("APPEND(");
-	else if (ast->type == NODE_HEREDOC)
-		ft_printf("HEREDOC(");
-	else
-		ft_printf("REDIR(");
-	if (ast->args)
-	{
-		i = 0;
-		while (ast->args[i])
-		{
-			ft_printf("|%s|", ast->args[i]);
-			i++;
-			if (ast->args[i])
-				ft_printf(", ");
-		}
-	}
-	if (ast->type == NODE_REDIR_IN)
-	{
-		ft_printf("-%s-: ", ast->file);
-		ast_show(ast->left);
-	}
-	else
-	{
-		ast_show(ast->left);
-		if (ast->right)
-			ft_printf(", ");
-		ast_show(ast->right);
-	}
-	ft_printf(")");
-}
+// 	if (!ast)
+// 		return ;
+// 	if (ast->type == NODE_PIPE)
+// 		ft_printf("PIPE(");
+// 	else if (ast->type == NODE_CMD)
+// 		ft_printf("CMD(");
+// 	else if (ast->type == NODE_REDIR_IN)
+// 		ft_printf("REDIR_IN(");
+// 	else if (ast->type == NODE_REDIR_OUT)
+// 		ft_printf("REDIR_OUT(");
+// 	else if (ast->type == NODE_APPEND)
+// 		ft_printf("APPEND(");
+// 	else if (ast->type == NODE_HEREDOC)
+// 		ft_printf("HEREDOC(");
+// 	else
+// 		ft_printf("REDIR(");
+// 	if (ast->args)
+// 	{
+// 		i = 0;
+// 		while (ast->args[i])
+// 		{
+// 			ft_printf("|%s|", ast->args[i]);
+// 			i++;
+// 			if (ast->args[i])
+// 				ft_printf(", ");
+// 		}
+// 	}
+// 	if (ast->type == NODE_REDIR_IN)
+// 	{
+// 		ft_printf("-%s-: ", ast->file);
+// 		ast_show(ast->left);
+// 	}
+// 	else
+// 	{
+// 		ast_show(ast->left);
+// 		if (ast->right)
+// 			ft_printf(", ");
+// 		ast_show(ast->right);
+// 	}
+// 	ft_printf(")");
+// }
 
 // // BEGIN TESTS
 // // TEST LEXER
@@ -139,7 +139,6 @@ int	main(int ac, char **av, char **envp)
 		if (!input)
 			ft_exit(&env, status);
 		minishell(status, &input, &env);
-		add_history(input);
 		free(input);
 	}
 	ft_exit(&env, status);

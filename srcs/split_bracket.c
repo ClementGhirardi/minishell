@@ -55,7 +55,7 @@ t_token	*create_clean_list(t_token **tokens)
 		if ((*tokens)->type != TOKEN_O_BRACK
 			&& (*tokens)->type != TOKEN_C_BRACK)
 		{
-			node = lexer2(&(*tokens)->value);
+			node = new_token((*tokens)->type, (*tokens)->value);
 			ft_tokadd_back(&clean_list, node);
 			*tokens = (*tokens)->next;
 		}
