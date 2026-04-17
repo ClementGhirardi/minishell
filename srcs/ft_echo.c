@@ -12,23 +12,20 @@
 
 #include "../includes/minishell.h"
 
-int	safe_strcmp(char *s1, char *s2)
+int	check_first_arg(char *s)
 {
 	int	i;
 
-	if (!s1 && !s2)
+	i = 2;
+	if (s[0] != '-' || s[1] != 'n')
 		return (0);
-	if (s1 && !s2)
-		return (*s1);
-	if (!s1 && s2)
-		return (-(*s2));
-	i = -1;
-	while (s1[++i])
+	while (s[i])
 	{
-		if (s1[i] - s2[i])
-			return (s1[i] - s2[i]);
+		if (s[i] != 'n')
+			return (0);
+		i++;
 	}
-	return (s1[i] - s2[i]);
+	return (1);
 }
 
 void	ft_display(char **args)
@@ -51,13 +48,18 @@ void	ft_display(char **args)
 
 int	ft_echo(char **args)
 {
+	int	i;
+
+	i = 2;
 	if (!args[1])
 		return (ft_printf("\n"), 0);
-	if (!safe_strcmp(args[1], "-n"))
+	if (check_first_arg(args[1]))
 	{
 		if (!args[2])
 			return (0);
-		ft_display(&args[2]);
+		while (check_first_arg(args[i]))
+			i++;
+		ft_display(&args[i]);
 	}
 	else
 	{
