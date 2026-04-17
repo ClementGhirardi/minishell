@@ -94,6 +94,7 @@ static void	init_signals(void)
 void	minishell(int status, char **input, char ***env)
 {
 	t_token	*tokens;
+	t_token	*tmp;
 	t_ast	*ast;
 
 	tokens = lexer(input);
@@ -104,6 +105,7 @@ void	minishell(int status, char **input, char ***env)
 		// current = current->next;
 	// }
 	tokens = split_bracket(&tokens);
+	tmp = tokens;
 	// current = tokens;
 	// while (current)
 	// {
@@ -118,7 +120,7 @@ void	minishell(int status, char **input, char ***env)
 			status = executor(ast, status, env);
 			ast_free(ast);
 		}
-		free_token(tokens);
+		free_token(tmp);
 	}
 }
 

@@ -96,6 +96,12 @@ void		free_token(t_token *tokens);
 
 t_token		*lexer(char **input);
 t_token		*lexer2(char **input);
+void		handle_quotes(char **input);
+void		handle_last_pipe(char **input);
+void		handle_pipe(char *input, t_token **tokens, int *i);
+void		handle_and(char *input, t_token **tokens, int *i);
+void		handle_redir(char *input, t_token **tokens, int *i, int dir);
+
 void		*syntax_error(char *c);
 
 t_token		*split_bracket(t_token **tokens);
@@ -107,10 +113,13 @@ t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
+t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
 
 char		*ft_gethole_fd(int fd);
 
 t_ast		*parse(t_token **tokens, int status, char **env, char **input);
+t_ast		*parse_command(t_token **tokens);
+t_ast		*parse_redirection(t_token **tokens, t_infos *infos);
 
 char		*ft_getenv(char **env, const char *name);
 
@@ -147,5 +156,9 @@ int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env, int status);
 
 int			executor(t_ast *ast, int status, char ***env);
+int			execute_operator(t_ast *ast, int status, char ***env);
+int			execute_redir(t_ast *node, int status, char ***env);
+int			execute_pipe(t_ast *node, int status, char ***env);
+int			execute_cmd(t_ast *node, int status, char ***env);
 
 #endif

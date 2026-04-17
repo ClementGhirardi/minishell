@@ -16,8 +16,10 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/here_doc_word.c \
 	$(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer.c \
+	$(SRCS_DIR)/lexer_red_op_q.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/parser.c \
+	$(SRCS_DIR)/parser_cmd_redir.c \
 	$(SRCS_DIR)/ft_getenv.c \
  	$(SRCS_DIR)/expander.c \
 	$(SRCS_DIR)/here_doc.c \
@@ -33,9 +35,11 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_exit.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
+	$(SRCS_DIR)/execute_ast.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/ft_echo.c \
 	$(SRCS_DIR)/error.c \
+	$(SRCS_DIR)/ft_gethole_fd.c \
 
 SRCS_BONUS = 
 
