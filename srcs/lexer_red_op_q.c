@@ -66,7 +66,7 @@ void	handle_quotes(char **input)
 	int		i;
 	char	quote;
 
-	if (!(*input))
+	if (!input || !(*input))
 		return ;
 	i = 0;
 	while ((*input)[i])

@@ -33,10 +33,10 @@ int	executor(t_ast *ast, int status, char ***env)
 			if (!ast->file && ast->fd == -1)
 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
 					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
+			free(tmp);
 		}
 		return (execute_redir(ast, status, env));
 	}
-	else if (ast)
+	else
 		return (execute_operator(ast, status, env));
-	return (1);
 }

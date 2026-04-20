@@ -73,11 +73,11 @@ t_ast	*parse_after_bracket(t_token **tokens, t_ast *left, t_ast *brack,
 	t_infos *infos)
 {
 	t_ast			*instr;
-	t_token_type	type;
+	//t_token_type	type;
 
 	if (!tokens || !*tokens)
 		return (NULL);
-	type = (*tokens)->type;
+	//type = (*tokens)->type;
 	instr = parse_pipeline(tokens, infos);
 	left->right = instr;
 	instr->left = brack;
@@ -118,7 +118,6 @@ t_ast	*parse(t_token **tokens, int status, char **env,
 {
 	t_ast		*left;
 	t_ast		*brack;
-	t_token		*tmp;
 	t_infos		infos;
 
 	if (!tokens || !*tokens)
@@ -127,7 +126,6 @@ t_ast	*parse(t_token **tokens, int status, char **env,
 	infos.env = env;
 	infos.input = input;
 	brack = NULL;
-	tmp = *tokens;
 	left = parse_pipeline(tokens, &infos);
 	while (*tokens)
 	{

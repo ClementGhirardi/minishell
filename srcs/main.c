@@ -91,13 +91,14 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(int status, char **input, char ***env)
+void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_token	*tmp;
 	t_ast	*ast;
 
 	tokens = lexer(input);
+	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)
 	// {
@@ -105,6 +106,7 @@ void	minishell(int status, char **input, char ***env)
 		// current = current->next;
 	// }
 	tokens = split_bracket(&tokens);
+	// free_token(tmp);
 	tmp = tokens;
 	// current = tokens;
 	// while (current)
@@ -114,10 +116,10 @@ void	minishell(int status, char **input, char ***env)
 	// }
 	if (tokens)
 	{
-		ast = parse(&tokens, status, *env, input);
+		ast = parse(&tokens, *status, *env, input);
 		if (ast)
 		{
-			status = executor(ast, status, env);
+			*status = executor(ast, *status, env);
 			ast_free(ast);
 		}
 		free_token(tmp);
@@ -140,7 +142,7 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env, status);
-		minishell(status, &input, &env);
+		minishell(&status, &input, &env); //&
 		free(input);
 	}
 	ft_exit(&env, status);

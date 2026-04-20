@@ -87,6 +87,38 @@ static int	open_fd(t_ast *node, char *file)
 	return (fd);
 }
 
+// int	execute_redir(t_ast *node, int status, char ***env)
+// {
+// 	int	fd;
+// 	int	std[2];
+
+// 	fd = open_fd(node, node->file);
+// 	if (fd == -1)
+// 		return (perror("open"), 1);
+// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
+// 	{
+// 		std[0] = dup(STDIN_FILENO);
+// 		dup2(fd, STDIN_FILENO);
+// 	}
+// 	else
+// 	{
+// 		std[1] = dup(STDOUT_FILENO);
+// 		dup2(fd, STDOUT_FILENO);
+// 	}
+// 	status = executor(node->left, status, env);
+// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
+// 	{
+// 		dup2(std[0], STDIN_FILENO);
+// 		//close(std[0]);
+// 	}
+// 	else
+// 	{
+// 		dup2(std[1], STDOUT_FILENO);
+// 		//close(std[1]);
+// 	}
+// 	return (status);
+// }
+
 int	execute_redir(t_ast *node, int status, char ***env)
 {
 	int	fd;
@@ -99,17 +131,19 @@ int	execute_redir(t_ast *node, int status, char ***env)
 	{
 		std[0] = dup(STDIN_FILENO);
 		dup2(fd, STDIN_FILENO);
+		status = executor(node->left, status, env);
+		dup2(std[0], STDIN_FILENO);
+		close(std[0]);
 	}
 	else
 	{
 		std[1] = dup(STDOUT_FILENO);
 		dup2(fd, STDOUT_FILENO);
-	}
-	status = executor(node->left, status, env);
-	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
-		dup2(std[0], STDIN_FILENO);
-	else
+		status = executor(node->left, status, env);
 		dup2(std[1], STDOUT_FILENO);
+		close(std[1]);
+	}
+	close(fd);
 	return (status);
 }
 
@@ -117,6 +151,11 @@ int	execute_operator(t_ast *ast, int status, char ***env)
 {
 	static int	stop;
 
+	if (!ast)
+	{
+		stop = 1;
+		return (stop);
+	}
 	stop = executor(ast->left, status, env);
 	if (ast->type == NODE_AND)
 	{
