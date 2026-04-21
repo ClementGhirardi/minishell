@@ -33,11 +33,38 @@ static char	*expand_string(char *str, int status, char **env)
 	return (free(str), result);
 }
 
+// int	here_doc(char *limiter, int status, char **env)
+// {
+// 	char	*buffer;
+// 	int		size;
+// 	int		fd[2];
+
+// 	pipe(fd);
+// 	size = ft_strlen(limiter);
+// 	write(1, "> ", 2);
+// 	buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
+// 	if (!buffer)
+// 		perror("gnl");
+// 	while (ft_strncmp(buffer, limiter, size))
+// 	{
+// 		ft_putstr_fd(buffer, fd[1]);
+// 		free(buffer);
+// 		write(1, "> ", 2);
+// 		buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
+// 		if (!buffer)
+// 			perror("gnl");
+// 	}
+// 	free(buffer);
+// 	close(fd[1]);
+// 	return (fd[0]);
+// }
+
 int	here_doc(char *limiter, int status, char **env)
 {
 	char	*buffer;
 	int		size;
 	int		fd[2];
+	int		i;
 
 	pipe(fd);
 	size = ft_strlen(limiter);
@@ -45,16 +72,19 @@ int	here_doc(char *limiter, int status, char **env)
 	buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
 	if (!buffer)
 		perror("gnl");
-	while (ft_strncmp(buffer, limiter, size))
+	i = 0;
+	while (ft_strncmp(buffer, limiter, size) && ++i)
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		free(buffer);
 		write(1, "> ", 2);
 		buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
 		if (!buffer)
-			perror("gnl");
+			return (ft_putstr_fd("bash: warning: here-document at line ", 2),
+				ft_putstr_fd(i), 2), 
 	}
 	free(buffer);
 	close(fd[1]);
 	return (fd[0]);
 }
+
