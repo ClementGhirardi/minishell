@@ -65,28 +65,24 @@ void	handle_non_brackets(t_token **tokens, t_token **clean_list)
 	}
 }
 
-t_token	*create_clean_list(t_token **tokens, int brack)
+t_token	*create_clean_list(t_token **tokens)
 {
 	t_token	*clean_list;
 	t_token	*sub_list;
 
 	clean_list = NULL;
-	brack = 0;
 	while (*tokens)
 	{
 		if ((*tokens)->type == TOKEN_O_BRACK)
 		{
-			brack++;
 			*tokens = (*tokens)->next;
-			sub_list = create_clean_list(tokens, brack);
+			sub_list = create_clean_list(tokens);
 			add_sublist(&clean_list, sub_list);
 		}
 		else if ((*tokens)->type == TOKEN_C_BRACK)
 		{
-			brack--;
 			*tokens = (*tokens)->next;
-			if (brack)
-				return (clean_list);
+			return (clean_list);
 		}
 		else
 			handle_non_brackets(tokens, &clean_list);
@@ -102,7 +98,7 @@ t_token	*split_bracket(t_token **tokens)
 	if (!tokens || !*tokens)
 		return (NULL);
 	tmp = *tokens;
-	clean_list = create_clean_list(tokens, 0);
+	clean_list = create_clean_list(tokens);
 	free_token(tmp);
 	return (clean_list);
 }

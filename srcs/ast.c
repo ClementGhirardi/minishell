@@ -111,6 +111,14 @@ t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
 // 	return (node);
 // }
 
+// void	ast_any_type(t_ast *brack, t_ast *right, t_token_type type, t_infos infos)
+// {
+// 	if (type == TOKEN_OR || type == TOKEN_AND || type == TOKEN_PIPE)
+// 		ast_new_pipe_op(brack, right, type);
+// 	else
+// 		ast_new_redir(type, infos.status, infos.env);
+// }
+
 void	ast_add_end(t_ast **ast, t_ast *new)
 {
 	t_ast	*current;

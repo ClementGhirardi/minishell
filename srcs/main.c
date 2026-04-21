@@ -20,6 +20,10 @@
 // 		return ;
 // 	if (ast->type == NODE_PIPE)
 // 		ft_printf("PIPE(");
+// 	else if (ast->type == NODE_OR)
+// 		ft_printf("OR(");
+// 	else if (ast->type == NODE_AND)
+// 		ft_printf("AND(");
 // 	else if (ast->type == NODE_CMD)
 // 		ft_printf("CMD(");
 // 	else if (ast->type == NODE_REDIR_IN)
@@ -76,7 +80,7 @@
 // ft_printf("\n\n");
 // // END TESTS
 
-static void	sigint_handler(int sig)
+void	sigint_handler(int sig) //STATIC
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -97,7 +101,7 @@ void	minishell(int *status, char **input, char ***env)
 	t_token	*tmp;
 	t_ast	*ast;
 
-	tokens = lexer(input);
+	tokens = lexer(input, *env, *status);
 	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)
@@ -106,6 +110,16 @@ void	minishell(int *status, char **input, char ***env)
 		// current = current->next;
 	// }
 	tokens = split_bracket(&tokens);
+
+	// tmp = tokens;
+	// while (tmp)
+	// {
+	// 	if (tmp->bracket)
+	// 		ft_printf("((");
+	//  	ft_printf("%d: |%s|\n", tmp->type, tmp->value);
+	// 	tmp = tmp->next;
+	// }
+
 	// free_token(tmp);
 	tmp = tokens;
 	// current = tokens;

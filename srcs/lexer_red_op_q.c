@@ -14,7 +14,7 @@
 
 void	handle_word(char *input, t_token **tokens, int *i);
 
-void	handle_last_pipe(char **input)
+void	handle_last_pipe(char **input, char **env, int status)
 {
 	int	i;
 
@@ -25,10 +25,11 @@ void	handle_last_pipe(char **input)
 		i--;
 	if (i >= 0 && (*input)[i] == '|')
 		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup(" "), here_doc_word('\n')));
+				ft_strjoin_and_free(ft_strdup(" "),
+					here_doc_pipe('\n', env, status)));
 	else
 		return ;
-	lexer(input);
+	lexer(input, env, status);
 }
 
 // static void	handle_quotes(char **input)
@@ -61,15 +62,15 @@ void	handle_last_pipe(char **input)
 // }
 
 
-void	handle_quotes(char **input)
+void	handle_quotes(char **input, char **env, int status)
 {
 	int		i;
 	char	quote;
 
 	if (!input || !(*input))
 		return ;
-	i = 0;
-	while ((*input)[i])
+	i = -1;
+	while ((*input)[++i])
 	{
 		if ((*input)[i] == '\'' || (*input)[i] == '\"')
 		{
@@ -79,15 +80,15 @@ void	handle_quotes(char **input)
 			if (!(*input)[i])
 				break ;
 		}
-		i++;
 		quote = '\0';
 	}
 	if (quote)
 		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word(quote)));
+				ft_strjoin_and_free(ft_strdup("\n"), // \n
+					here_doc_word(quote, env, status)));
 	else
 		return ;
-	lexer(input);
+	lexer(input, env, status);
 }
 
 

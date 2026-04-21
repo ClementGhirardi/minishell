@@ -12,6 +12,42 @@
 
 #include "../includes/minishell.h"
 
+char	*ft_strjoin_sep(char *s1, char *s2, char c)
+{
+	char	*result;
+	int		i;
+	int		j;
+
+	if (!*s1)
+		return (ft_strdup(s2));
+	result = malloc(sizeof(char)
+			+ (ft_safe_strlen(s1) + ft_safe_strlen(s2) + 1));
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (s1 && s1[i])
+	{
+		result[i] = s1[i];
+		i++;
+	}
+	result[i++] = c;
+	j = 0;
+	while (s2 && s2[j])
+		result[i++] = s2[j++];
+	result[i] = '\0';
+	return (result);
+}
+
+char	*ft_strjoinsep_free(char *s1, char *s2, char c)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin_sep(s1, s2, c);
+	free(s1);
+	free(s2);
+	return (tmp);
+}
+
 char	*ft_strjoin_char(char *s1, char c)
 {
 	char	*result;

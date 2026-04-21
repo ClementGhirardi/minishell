@@ -12,6 +12,26 @@
 
 #include "../includes/minishell.h"
 
+char	*here_doc_pipe(char limiter, char **env, int status)
+{
+	char	*input;
+	char	*word;
+
+	input = ft_strdup("");
+	word = ft_strdup("");
+	if (!input || !word)
+		return (perror("malloc"), NULL);
+	input = readline("> ");
+	if (!input)
+	{
+		error_heredocword(limiter, env, status);
+		free(word);
+	}
+	//word = ft_strjoinsep_free(word, input, '\n');
+	//return (word);
+	return (input);
+}
+
 static char	*expand_string(char *str, int status, char **env)
 {
 	int		i;
@@ -61,29 +81,28 @@ static char	*expand_string(char *str, int status, char **env)
 
 int	here_doc(char *limiter, int status, char **env)
 {
-	char	*buffer;
+	char	*input;
 	int		size;
 	int		fd[2];
-	int		i;
+	static int	i;
 
 	pipe(fd);
 	size = ft_strlen(limiter);
-	write(1, "> ", 2);
-	buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
-	if (!buffer)
-		perror("gnl");
-	i = 0;
-	while (ft_strncmp(buffer, limiter, size) && ++i)
+	input = ft_strdup("");
+	while (ft_strncmp(input, limiter, size) && ++i)
 	{
-		ft_putstr_fd(buffer, fd[1]);
-		free(buffer);
-		write(1, "> ", 2);
-		buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
-		if (!buffer)
-			return (ft_putstr_fd("bash: warning: here-document at line ", 2),
-				ft_putstr_fd(i), 2), 
+		ft_putstr_fd(input, fd[1]);
+		free(input);
+		input = readline("> ");
+		if (!input)
+		{
+			error_heredoc(i, limiter);
+			close(fd[1]);
+			break ;
+		}
+		input = expand_string(input, status, env);
 	}
-	free(buffer);
+	free(input);
 	close(fd[1]);
 	return (fd[0]);
 }

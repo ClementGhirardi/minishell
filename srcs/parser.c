@@ -21,7 +21,7 @@ static t_ast	*parse_instructions(t_token **tokens, t_infos *infos)
 	if (!tokens || !(*tokens) || (*tokens)->type == TOKEN_PIPE
 		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
 		return (NULL);
-	if ((*tokens)->type == TOKEN_WORD && !(*tokens)->value[0])
+	if ((*tokens)->type == TOKEN_WORD && (*tokens)->bracket)
 	{
 		tmp = (*tokens)->bracket;
 		*tokens = (*tokens)->next;
@@ -73,12 +73,18 @@ t_ast	*parse_after_bracket(t_token **tokens, t_ast *left, t_ast *brack,
 	t_infos *infos)
 {
 	t_ast			*instr;
-	//t_token_type	type;
+	t_token_type	type;
 
 	if (!tokens || !*tokens)
 		return (NULL);
-	//type = (*tokens)->type;
+	type = (*tokens)->type;
 	instr = parse_pipeline(tokens, infos);
+	if (!brack && (type == TOKEN_APPEND || type == TOKEN_HEREDOC
+			|| type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT))
+	{
+		instr->left = left;
+		return (instr);
+	}
 	left->right = instr;
 	instr->left = brack;
 	return (left);

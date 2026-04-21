@@ -87,17 +87,19 @@ typedef struct s_infos
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
+char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 
-char		*here_doc_word(char limiter);
+char		*here_doc_word(char limiter, char **env, int status);
+size_t		ft_safe_strlen(char *s);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-t_token		*lexer(char **input);
-t_token		*lexer2(char **input);
-void		handle_quotes(char **input);
-void		handle_last_pipe(char **input);
+t_token		*lexer(char **input, char **env, int status);
+t_token		*lexer2(char **input, char **env, int status);
+void		handle_quotes(char **input, char **env, int status);
+void		handle_last_pipe(char **input, char **env, int status);
 void		handle_pipe(char *input, t_token **tokens, int *i);
 void		handle_and(char *input, t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
@@ -127,6 +129,7 @@ char		*extract_var_name(char *str, int *i, int status, char **env);
 void		expander(t_ast *node, int status, char **env);
 
 int			here_doc(char *limiter, int status, char **env);
+char		*here_doc_pipe(char limiter, char **env, int status);
 
 char		*get_path(char *cmd, char **envp);
 
@@ -160,5 +163,8 @@ int			execute_operator(t_ast *ast, int status, char ***env);
 int			execute_redir(t_ast *node, int status, char ***env);
 int			execute_pipe(t_ast *node, int status, char ***env);
 int			execute_cmd(t_ast *node, int status, char ***env);
+
+void		error_heredoc(int i, char *limiter);
+void		error_heredocword(char limiter, char **env, int status);
 
 #endif
