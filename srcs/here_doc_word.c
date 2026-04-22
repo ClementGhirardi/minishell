@@ -88,6 +88,7 @@ char	*here_doc_word(char limiter, char **env, int status)
 		}
 		// ligne dessous inclut la quote
 		word = ft_strjoin_and_free(word, input);
+		// word = ft_strjoinsep_free(word, input, '\n');
 	}
 	return (word);
 }

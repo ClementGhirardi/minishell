@@ -83,6 +83,7 @@
 void	sigint_handler(int sig) //STATIC
 {
 	(void)sig;
+	status = 130;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -142,17 +143,19 @@ void	minishell(int *status, char **input, char ***env)
 
 int	main(int ac, char **av, char **envp)
 {
-	int		status;
+	//int		status;
 	char	*input;
 	char	**env;
 
 	(void)ac;
 	(void)av;
 	env = dup_array(envp);
-	status = 0;
+	//status = 0;
 	init_signals();
 	while (1)
 	{
+		if (status == 130)
+			status = 130;
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env, status);

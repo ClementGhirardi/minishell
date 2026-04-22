@@ -25,6 +25,8 @@
 # include <string.h>
 # include <errno.h>
 
+int	status = 0;
+
 typedef enum e_token_type
 {
 	TOKEN_WORD,

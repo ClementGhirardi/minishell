@@ -126,7 +126,8 @@ int	execute_redir(t_ast *node, int status, char ***env)
 
 	fd = open_fd(node, node->file);
 	if (fd == -1)
-		return (perror("open"), 1);
+		return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(node->file, 2),
+			ft_putendl_fd(": Permission denied", 2), 1); //perror("open")
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);
