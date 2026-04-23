@@ -105,6 +105,11 @@ void	minishell(char **input, char ***env)
 	t_ast	*ast;
 
 	tokens = lexer(input, *env);
+	if (!syntax_error(tokens))
+	{
+		token_free(tokens);
+		return ;
+	}
 	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)

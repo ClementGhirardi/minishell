@@ -1,0 +1,65 @@
+#include "../includes/minishell.h"
+
+int	syntax_after_token(t_token *tokens)
+{
+	if (!tokens)
+		return (1);
+	if (tokens->type == TOKEN_AND
+		|| tokens->type == TOKEN_OR
+		|| tokens->type == TOKEN_PIPE)
+		return (0);
+	return (1);
+}
+
+int	dispatch(t_token *tokens)
+{
+	if (tokens->type != TOKEN_WORD
+		&& tokens->type != TOKEN_O_BRACK
+		&& tokens->type != TOKEN_C_BRACK)
+		return (syntax_after_token(tokens->next));
+	if (tokens->type == TOKEN_REDIR_IN
+		|| tokens->type == TOKEN_REDIR_OUT
+		|| tokens->type == TOKEN_HEREDOC
+		|| tokens->type == TOKEN_APPEND)
+	{
+		if (!tokens->next)
+		{
+			syntax_error("newline");
+			return (0);
+		}
+	}
+	return (1);
+}
+
+int	syntax_first_token(t_token *tokens)
+{
+	if (!tokens)
+		return (0);
+	if (tokens->type == TOKEN_AND
+		|| tokens->type == TOKEN_OR
+		|| tokens->type == TOKEN_PIPE)
+	{
+		syntax_error(tokens->value);
+		return (0);
+	}
+	return (1);
+}
+
+int	syntax_analyzer(t_token *tokens)
+{
+	if (!syntax_first_token(tokens))
+		return (0);
+	while (tokens)
+	{
+		if (!dispatch(tokens))
+		{
+			if (tokens->next)
+				syntax_error(tokens->next->value);
+			else
+				syntax_error("newline");
+			return (0);
+		}
+		tokens = tokens->next;
+	}
+	return (1);
+}
