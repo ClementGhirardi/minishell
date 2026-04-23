@@ -21,7 +21,6 @@ void	error_heredocword(char limiter, char **env)
 		ft_putchar_fd(limiter, 2);
 		ft_putchar_fd('\'', 2);
 		ft_putendl_fd("", 2);
-		//ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
 		ft_exit(&env);
 	}
 	else

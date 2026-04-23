@@ -29,7 +29,7 @@ void	handle_last_pipe(char **input, char **env)
 					here_doc_pipe('\n', env)));
 	else
 		return ;
-	lexer(input, env);
+	//lexer(input, env);
 }
 
 // static void	handle_quotes(char **input)
@@ -84,11 +84,11 @@ void	handle_quotes(char **input, char **env)
 	}
 	if (quote)
 		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), // \n
+				ft_strjoin_and_free(ft_strdup("\n"),
 					here_doc_word(quote, env)));
 	else
 		return ;
-	lexer(input, env);
+	//lexer(input, env);
 }
 
 

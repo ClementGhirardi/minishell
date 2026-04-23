@@ -4,6 +4,9 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror
 
+#ASAN_FLAGS = -fsanitize=address \
+			-fno-sanitize-recover=all -g
+
 NAME = minishell
 
 NAME_BONUS = 
@@ -59,7 +62,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(LIBFT_DIR)
-	$(CC) $(CFLAGS) -I $(INCLUDES)  $^ -Llibft -lft -lreadline -o $(NAME)
+	$(CC) $(CFLAGS) $(ASAN_FLAGS) -I $(INCLUDES)  $^ -Llibft -lft -lreadline -o $(NAME)
 
 bonus: $(OBJS_BONUS)
 	$(MAKE) -C $(LIBFT_DIR)

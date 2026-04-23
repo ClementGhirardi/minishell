@@ -15,17 +15,17 @@
 char	*here_doc_pipe(char limiter, char **env)
 {
 	char	*input;
-	char	*word;
+	//char	*word;
 
-	input = ft_strdup("");
-	word = ft_strdup("");
-	if (!input || !word)
-		return (perror("malloc"), NULL);
+	//input = ft_strdup("");
+	//word = ft_strdup("");
+	//if (!word)
+	//	return (perror("malloc"), NULL);
 	input = readline("> ");
 	if (!input)
 	{
 		error_heredocword(limiter, env);
-		free(word);
+	//	free(word);
 	}
 	//word = ft_strjoinsep_free(word, input, '\n');
 	//return (word);
@@ -97,25 +97,30 @@ int	ft_strcmp(char *s1, char *s2)
 
 int	here_doc(char *limiter, char **env)
 {
-	char	*input;
-	int		fd[2];
+	char		*input;
+	int			fd[2];
 	static int	i;
+	int			first_line;
 
+	first_line = ++i;
 	pipe(fd);
 	input = ft_strdup("");
-	while (ft_strcmp(input, limiter) && ++i)
+	while (ft_strcmp(input, limiter))
 	{
 		ft_putstr_fd(input, fd[1]);
 		free(input);
 		input = readline("> ");
 		if (!input)
 		{
-			error_heredoc(i, limiter);
+			error_heredoc(first_line, limiter);
 			close(fd[1]);
+			//i--;
 			break ;
 		}
 		input = expand_string(input, env);
+		i++;
 	}
+	i++;
 	free(input);
 	close(fd[1]);
 	status = 0;
