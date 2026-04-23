@@ -70,7 +70,7 @@ char	*get_path(char *cmd, char **envp)
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
-		if (!cmd)
+		if (!cmd || !*cmd)
 			return (free(tmp), free_strs(paths), NULL);
 		full = ft_strjoin(tmp, cmd);
 		free(tmp);
