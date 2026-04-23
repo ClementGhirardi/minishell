@@ -22,7 +22,7 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-char	*extract_var_name(char *str, int *i, int status, char **env)
+char	*extract_var_name(char *str, int *i, char **env)
 {
 	int		start;
 	char	*tmp;
@@ -48,7 +48,7 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 	return (var);
 }
 
-static char	*coucou(char *str, int *i, int status, char **env)
+static char	*coucou(char *str, int *i, char **env)
 {
 	char	quote;
 	char	*tmp;
@@ -59,7 +59,7 @@ static char	*coucou(char *str, int *i, int status, char **env)
 	while (str[*i] && str[*i] != quote)
 	{
 		if (quote != '\'' && str[*i] == '$')
-			var = extract_var_name(str, i, status, env);
+			var = extract_var_name(str, i, env);
 		else
 			var = ft_substr(str, (*i)++, 1);
 		tmp = ft_strjoin_and_free(tmp, var);
@@ -68,7 +68,7 @@ static char	*coucou(char *str, int *i, int status, char **env)
 	return (tmp);
 }
 
-static char	*expand_string(char *str, int status, char **env)
+static char	*expand_string(char *str, char **env)
 {
 	int		i;
 	char	*result;
@@ -79,9 +79,9 @@ static char	*expand_string(char *str, int status, char **env)
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '\"')
-			tmp = coucou(str, &i, status, env);
+			tmp = coucou(str, &i, env);
 		else if (str[i] == '$')
-			tmp = extract_var_name(str, &i, status, env);
+			tmp = extract_var_name(str, &i, env);
 		else
 			tmp = ft_substr(str, i++, 1);
 		result = ft_strjoin_and_free(result, tmp);
@@ -89,7 +89,7 @@ static char	*expand_string(char *str, int status, char **env)
 	return (free(str), result);
 }
 
-void	expander(t_ast *node, int status, char **env)
+void	expander(t_ast *node, char **env)
 {
 	int	i;
 
@@ -100,13 +100,13 @@ void	expander(t_ast *node, int status, char **env)
 		i = 0;
 		while (node->args[i])
 		{
-			node->args[i] = expand_string(node->args[i], status, env);
+			node->args[i] = expand_string(node->args[i], env);
 			i++;
 		}
 	}
 	if (node->file)
 	{
-		node->file = expand_string(node->file, status, env);
+		node->file = expand_string(node->file, env);
 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
 		{
 			free(node->file);

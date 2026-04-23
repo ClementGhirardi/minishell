@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	ft_exit(char ***env, int status)
+int	ft_exit(char ***env)
 {
 	printf("exit\n");
 	rl_clear_history();

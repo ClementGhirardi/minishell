@@ -25,7 +25,7 @@ static t_ast	*parse_instructions(t_token **tokens, t_infos *infos)
 	{
 		tmp = (*tokens)->bracket;
 		*tokens = (*tokens)->next;
-		instr = parse(&tmp, infos->status, infos->env, infos->input);
+		instr = parse(&tmp, infos->env, infos->input);
 	}
 	else if ((*tokens)->type == TOKEN_WORD)
 	{
@@ -55,7 +55,7 @@ t_ast	*parse_pipeline(t_token **tokens, t_infos *infos)
 		if ((*tokens)->bracket)
 		{
 			tmp = (*tokens)->bracket;
-			brack = parse(&tmp, infos->status, infos->env, infos->input);
+			brack = parse(&tmp, infos->env, infos->input);
 			left = ast_new_pipe_op(left, brack, TOKEN_PIPE);
 			*tokens = (*tokens)->next;
 		}
@@ -105,7 +105,7 @@ t_ast	*parsing_loop(t_token **tokens, t_ast *left, t_ast **brack,
 		if ((*tokens)->bracket)
 		{
 			tmp = (*tokens)->bracket;
-			*brack = parse(&tmp, infos->status, infos->env, infos->input);
+			*brack = parse(&tmp, infos->env, infos->input);
 			left = ast_new_pipe_op(left, *brack, type);
 			*tokens = (*tokens)->next;
 		}
@@ -119,7 +119,7 @@ t_ast	*parsing_loop(t_token **tokens, t_ast *left, t_ast **brack,
 	return (left);
 }
 
-t_ast	*parse(t_token **tokens, int status, char **env,
+t_ast	*parse(t_token **tokens, char **env,
 	char **input)
 {
 	t_ast		*left;
@@ -128,7 +128,6 @@ t_ast	*parse(t_token **tokens, int status, char **env,
 
 	if (!tokens || !*tokens)
 		return (NULL);
-	infos.status = status;
 	infos.env = env;
 	infos.input = input;
 	brack = NULL;

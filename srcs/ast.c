@@ -28,7 +28,7 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type r_type, char *file, int status, char **env)
+t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env)
 {
 	t_ast		*node;
 
@@ -44,7 +44,7 @@ t_ast	*ast_new_redir(t_token_type r_type, char *file, int status, char **env)
 	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		node->fd = here_doc(file, status, env);
+		node->fd = here_doc(file, env);
 	}
 	else
 		node->fd = -1;

@@ -42,6 +42,8 @@ t_ast	*parse_command(t_token **tokens)
 	while (*tokens && (*tokens)->type == TOKEN_WORD)
 	{
 		args[i] = ft_strdup((*tokens)->value);
+		if (!args[i])
+			return (NULL);
 		*tokens = (*tokens)->next;
 		i++;
 	}
@@ -59,10 +61,10 @@ t_ast	*parse_redirection(t_token **tokens, t_infos *infos)
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
-		return (ast_new_redir(redir_type, NULL, infos->status, infos->env));
+		return (ast_new_redir(redir_type, NULL, infos->env));
 	else
 		file = ft_strdup((*tokens)->value);
-	instr = ast_new_redir(redir_type, file, infos->status, infos->env);
+	instr = ast_new_redir(redir_type, file, infos->env);
 	*tokens = (*tokens)->next;
 	return (instr);
 }

@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-char	*here_doc_pipe(char limiter, char **env, int status)
+char	*here_doc_pipe(char limiter, char **env)
 {
 	char	*input;
 	char	*word;
@@ -24,7 +24,7 @@ char	*here_doc_pipe(char limiter, char **env, int status)
 	input = readline("> ");
 	if (!input)
 	{
-		error_heredocword(limiter, env, status);
+		error_heredocword(limiter, env);
 		free(word);
 	}
 	//word = ft_strjoinsep_free(word, input, '\n');
@@ -32,7 +32,7 @@ char	*here_doc_pipe(char limiter, char **env, int status)
 	return (input);
 }
 
-static char	*expand_string(char *str, int status, char **env)
+static char	*expand_string(char *str, char **env)
 {
 	int		i;
 	char	*result;
@@ -45,7 +45,7 @@ static char	*expand_string(char *str, int status, char **env)
 	while (str[i])
 	{
 		if (str[i] == '$')
-			var = extract_var_name(str, &i, status, env);
+			var = extract_var_name(str, &i, env);
 		else
 			var = ft_substr(str, i++, 1);
 		result = ft_strjoin_and_free(result, var);
@@ -79,17 +79,31 @@ static char	*expand_string(char *str, int status, char **env)
 // 	return (fd[0]);
 // }
 
-int	here_doc(char *limiter, int status, char **env)
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	if (!s1 || !s2)
+		return (300);
+	while (s1[i] && s2[i])
+	{
+		if (s1[i] - s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (s1[i] - s2[i]);
+}
+
+int	here_doc(char *limiter, char **env)
 {
 	char	*input;
-	int		size;
 	int		fd[2];
 	static int	i;
 
 	pipe(fd);
-	size = ft_strlen(limiter);
 	input = ft_strdup("");
-	while (ft_strncmp(input, limiter, size) && ++i)
+	while (ft_strcmp(input, limiter) && ++i)
 	{
 		ft_putstr_fd(input, fd[1]);
 		free(input);
@@ -100,10 +114,11 @@ int	here_doc(char *limiter, int status, char **env)
 			close(fd[1]);
 			break ;
 		}
-		input = expand_string(input, status, env);
+		input = expand_string(input, env);
 	}
 	free(input);
 	close(fd[1]);
+	status = 0;
 	return (fd[0]);
 }
 

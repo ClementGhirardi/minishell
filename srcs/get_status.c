@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	get_status(int status)
+int	get_status(void)
 {
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));

@@ -23,7 +23,7 @@ int	is_builtin(char *cmd)
 		|| !ft_strncmp(cmd, "exit", ft_strlen(cmd)));
 }
 
-int	run_builtin(char **args, char ***env, int status)
+int	run_builtin(char **args, char ***env)
 {
 	if (!ft_strncmp(args[0], "pwd", ft_strlen(args[0])))
 		return (ft_pwd());
@@ -36,7 +36,7 @@ int	run_builtin(char **args, char ***env, int status)
 	if (!ft_strncmp(args[0], "env", ft_strlen(args[0])))
 		return (ft_env(env));
 	if (!ft_strncmp(args[0], "exit", ft_strlen(args[0])))
-		return (ft_exit(env, status));
+		return (ft_exit(env));
 	if (!ft_strncmp(args[0], "echo", ft_strlen(args[0])))
 		return (ft_echo(args));
 	return (1);

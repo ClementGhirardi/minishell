@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void	error_heredocword(char limiter, char **env, int status)
+void	error_heredocword(char limiter, char **env)
 {
 	if (limiter == '\'' || limiter == '"')
 	{
@@ -21,10 +21,14 @@ void	error_heredocword(char limiter, char **env, int status)
 		ft_putchar_fd(limiter, 2);
 		ft_putchar_fd('\'', 2);
 		ft_putendl_fd("", 2);
-		ft_exit(&env, status);
+		//ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+		ft_exit(&env);
 	}
-	ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
-	ft_exit(&env, status);
+	else
+	{
+		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+		ft_exit(&env);
+	}
 }
 
 void	error_heredoc(int i, char *limiter)

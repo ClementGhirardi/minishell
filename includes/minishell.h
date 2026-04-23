@@ -25,7 +25,7 @@
 # include <string.h>
 # include <errno.h>
 
-int	status = 0;
+extern int	status;
 
 typedef enum e_token_type
 {
@@ -82,7 +82,6 @@ typedef struct s_instrs
 
 typedef struct s_infos
 {
-	int		status;
 	char	**env;
 	char	**input;
 }	t_infos;
@@ -91,17 +90,17 @@ char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
 char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 
-char		*here_doc_word(char limiter, char **env, int status);
+char		*here_doc_word(char limiter, char **env);
 size_t		ft_safe_strlen(char *s);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-t_token		*lexer(char **input, char **env, int status);
-t_token		*lexer2(char **input, char **env, int status);
-void		handle_quotes(char **input, char **env, int status);
-void		handle_last_pipe(char **input, char **env, int status);
+t_token		*lexer(char **input, char **env);
+t_token		*lexer2(char **input, char **env);
+void		handle_quotes(char **input, char **env);
+void		handle_last_pipe(char **input, char **env);
 void		handle_pipe(char *input, t_token **tokens, int *i);
 void		handle_and(char *input, t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
@@ -111,8 +110,7 @@ void		*syntax_error(char *c);
 t_token		*split_bracket(t_token **tokens);
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type r_type, char *file,
-				int status, char **env);
+t_ast		*ast_new_redir(t_token_type r_type, char *file, char **env);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
@@ -121,21 +119,21 @@ t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
 
 char		*ft_gethole_fd(int fd);
 
-t_ast		*parse(t_token **tokens, int status, char **env, char **input);
+t_ast		*parse(t_token **tokens, char **env, char **input);
 t_ast		*parse_command(t_token **tokens);
 t_ast		*parse_redirection(t_token **tokens, t_infos *infos);
 
 char		*ft_getenv(char **env, const char *name);
 
-char		*extract_var_name(char *str, int *i, int status, char **env);
-void		expander(t_ast *node, int status, char **env);
+char		*extract_var_name(char *str, int *i, char **env);
+void		expander(t_ast *node, char **env);
 
-int			here_doc(char *limiter, int status, char **env);
-char		*here_doc_pipe(char limiter, char **env, int status);
+int			here_doc(char *limiter, char **env);
+char		*here_doc_pipe(char limiter, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
-int			get_status(int status);
+int			get_status(void);
 
 void		free_array(char **array);
 char		**dup_array(char **array);
@@ -155,18 +153,18 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
-int			ft_exit(char ***env, int status);
+int			ft_exit(char ***env);
 
 int			is_builtin(char *cmd);
-int			run_builtin(char **args, char ***env, int status);
+int			run_builtin(char **args, char ***env);
 
-int			executor(t_ast *ast, int status, char ***env);
-int			execute_operator(t_ast *ast, int status, char ***env);
-int			execute_redir(t_ast *node, int status, char ***env);
-int			execute_pipe(t_ast *node, int status, char ***env);
-int			execute_cmd(t_ast *node, int status, char ***env);
+int			executor(t_ast *ast, char ***env);
+int			execute_operator(t_ast *ast, char ***env);
+int			execute_redir(t_ast *node, char ***env);
+int			execute_pipe(t_ast *node, char ***env);
+int			execute_cmd(t_ast *node, char ***env);
 
 void		error_heredoc(int i, char *limiter);
-void		error_heredocword(char limiter, char **env, int status);
+void		error_heredocword(char limiter, char **env);
 
 #endif

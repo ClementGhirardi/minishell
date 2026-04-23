@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+int	status = 0;
+
 // void	ast_show(t_ast *ast)
 // {
 // 	int	i;
@@ -96,13 +98,13 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(int *status, char **input, char ***env)
+void	minishell(char **input, char ***env)
 {
 	t_token	*tokens;
 	t_token	*tmp;
 	t_ast	*ast;
 
-	tokens = lexer(input, *env, *status);
+	tokens = lexer(input, *env);
 	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)
@@ -131,10 +133,10 @@ void	minishell(int *status, char **input, char ***env)
 	// }
 	if (tokens)
 	{
-		ast = parse(&tokens, *status, *env, input);
+		ast = parse(&tokens, *env, input);
 		if (ast)
 		{
-			*status = executor(ast, *status, env);
+			status = executor(ast, env);
 			ast_free(ast);
 		}
 		free_token(tmp);
@@ -143,14 +145,14 @@ void	minishell(int *status, char **input, char ***env)
 
 int	main(int ac, char **av, char **envp)
 {
-	//int		status;
 	char	*input;
 	char	**env;
 
 	(void)ac;
 	(void)av;
 	env = dup_array(envp);
-	//status = 0;
+	if (!env)
+		return (1);
 	init_signals();
 	while (1)
 	{
@@ -158,9 +160,9 @@ int	main(int ac, char **av, char **envp)
 			status = 130;
 		input = readline("minishell$ ");
 		if (!input)
-			ft_exit(&env, status);
-		minishell(&status, &input, &env); //&
+			ft_exit(&env);
+		minishell(&input, &env); //&
 		free(input);
 	}
-	ft_exit(&env, status);
+	ft_exit(&env);
 }

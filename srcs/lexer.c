@@ -78,12 +78,12 @@ static t_token	*check_brackets(t_token	*tokens)
 		return (syntax_error("("));
 }
 
-t_token	*lexer2(char **input, char **env, int status)
+t_token	*lexer2(char **input, char **env)
 {
 	t_token	*tokens;
 	int		i;
 
-	handle_quotes(input, env, status);
+	handle_quotes(input, env);
 	add_history(*input);
 	tokens = NULL;
 	i = 0;
@@ -107,8 +107,8 @@ t_token	*lexer2(char **input, char **env, int status)
 	return (check_brackets(tokens));
 }
 
-t_token	*lexer(char **input, char **env, int status)
+t_token	*lexer(char **input, char **env)
 {
-	handle_last_pipe(input, env, status);
-	return (lexer2(input, env, status));
+	handle_last_pipe(input, env);
+	return (lexer2(input, env));
 }

@@ -14,7 +14,7 @@
 
 void	handle_word(char *input, t_token **tokens, int *i);
 
-void	handle_last_pipe(char **input, char **env, int status)
+void	handle_last_pipe(char **input, char **env)
 {
 	int	i;
 
@@ -26,10 +26,10 @@ void	handle_last_pipe(char **input, char **env, int status)
 	if (i >= 0 && (*input)[i] == '|')
 		*input = ft_strjoin_and_free(*input,
 				ft_strjoin_and_free(ft_strdup(" "),
-					here_doc_pipe('\n', env, status)));
+					here_doc_pipe('\n', env)));
 	else
 		return ;
-	lexer(input, env, status);
+	lexer(input, env);
 }
 
 // static void	handle_quotes(char **input)
@@ -62,7 +62,7 @@ void	handle_last_pipe(char **input, char **env, int status)
 // }
 
 
-void	handle_quotes(char **input, char **env, int status)
+void	handle_quotes(char **input, char **env)
 {
 	int		i;
 	char	quote;
@@ -85,10 +85,10 @@ void	handle_quotes(char **input, char **env, int status)
 	if (quote)
 		*input = ft_strjoin_and_free(*input,
 				ft_strjoin_and_free(ft_strdup("\n"), // \n
-					here_doc_word(quote, env, status)));
+					here_doc_word(quote, env)));
 	else
 		return ;
-	lexer(input, env, status);
+	lexer(input, env);
 }
 
 

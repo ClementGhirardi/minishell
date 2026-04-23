@@ -12,14 +12,14 @@
 
 #include "../includes/minishell.h"
 
-int	executor(t_ast *ast, int status, char ***env)
+int	executor(t_ast *ast, char ***env)
 {
 	char	*tmp;
 
 	if (ast && ast->type == NODE_CMD)
-		return (expander(ast, status, *env), execute_cmd(ast, status, env));
+		return (expander(ast, *env), execute_cmd(ast, env));
 	else if (ast && ast->type == NODE_PIPE)
-		return (execute_pipe(ast, status, env));
+		return (execute_pipe(ast, env));
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
@@ -29,14 +29,14 @@ int	executor(t_ast *ast, int status, char ***env)
 		if (ast->file)
 		{
 			tmp = ft_strdup(ast->file);
-			expander(ast, status, *env);
+			expander(ast, *env);
 			if (!ast->file && ast->fd == -1)
 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
 					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
 			free(tmp);
 		}
-		return (execute_redir(ast, status, env));
+		return (execute_redir(ast, env));
 	}
 	else
-		return (execute_operator(ast, status, env));
+		return (execute_operator(ast, env));
 }

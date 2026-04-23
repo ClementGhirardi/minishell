@@ -67,24 +67,24 @@ static int	ft_isin(char c, char *str)
 // 	return (word);
 // }
 
-
-char	*here_doc_word(char limiter, char **env, int status)
+char	*here_doc_word(char limiter, char **env)
 {
 	char	*input;
 	char	*word;
 
-	input = ft_strdup("");
+	//input = ft_strdup("");
 	word = ft_strdup("");
-	if (!input || !word)
+	if (!word)//(!input || !word)
 		return (perror("malloc"), NULL);
 	while (!ft_isin(limiter, word))
 	{
 		input = readline("> ");
 		if (!input)
 		{
-			error_heredocword(limiter, env, status);
-			free(word);
-			break ;
+			error_heredocword(limiter, env);
+			//free(word);
+			//return (NULL);
+			return (word);
 		}
 		// ligne dessous inclut la quote
 		word = ft_strjoin_and_free(word, input);
