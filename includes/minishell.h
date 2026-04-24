@@ -101,7 +101,7 @@ void		free_token(t_token *tokens);
 t_token		*lexer(char **input, char **env);
 t_token		*lexer2(char **input, char **env);
 void		handle_quotes(char **input, char **env);
-void		handle_last_pipe(char **input, char **env);
+t_token		*handle_last_pipe_op(t_token *tokens, char **env);
 void		handle_last_and(char **input, char **env);
 
 void		handle_pipe(char *input, t_token **tokens, int *i);
@@ -113,6 +113,8 @@ void		*syntax_error(char *c);
 int			syntax_analyzer(t_token *tokens);
 
 t_token		*split_bracket(t_token **tokens);
+void		ft_tokadd_back(t_token **lst, t_token *new);
+
 
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, char *file, char **env);
@@ -134,7 +136,7 @@ char		*extract_var_name(char *str, int *i, char **env);
 void		expander(t_ast *node, char **env);
 
 int			here_doc(char *limiter, char **env);
-char		*here_doc_pipe(char **env);
+char		*here_doc_pipe_op(char **env);
 
 char		*get_path(char *cmd, char **envp);
 

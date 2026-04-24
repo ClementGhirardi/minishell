@@ -166,7 +166,7 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env);
-		minishell(&input, &env); //&
+		minishell(&input, &env);
 		free(input);
 	}
 	ft_exit(&env);

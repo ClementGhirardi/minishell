@@ -28,17 +28,19 @@ int	isempty(char *s)
 	return (1);
 }
 
-char	*here_doc_pipe(char **env)
+char	*here_doc_pipe_op(char **env)
 {
 	char	*input;
 
 	input = readline("> ");
+	if (!input)
+		error_heredocword(0, env);
 	while (input && isempty(input))
 	{
-		if (!input)
-			error_heredocword(0, env);
 		free(input);
 		input = readline("> ");
+		if (!input)
+			error_heredocword(0, env);
 	}
 	return (input);
 }

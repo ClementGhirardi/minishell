@@ -1,5 +1,16 @@
 #include "../includes/minishell.h"
 
+int	syntax_after_bracket(t_token *tokens)
+{
+	if (!tokens)
+		return (1);
+	if (tokens->type != TOKEN_WORD
+		&& tokens->type != TOKEN_O_BRACK
+		&& tokens->type != TOKEN_C_BRACK)
+		return (0);
+	return (1);
+}
+
 int	syntax_after_token(t_token *tokens)
 {
 	if (!tokens)
@@ -29,6 +40,13 @@ int	dispatch(t_token *tokens)
 			return (0);
 		}
 	}
+	if (tokens->type == TOKEN_O_BRACK || tokens->type == TOKEN_C_BRACK)
+	{
+		if (tokens->type == TOKEN_O_BRACK
+			&& tokens->next->type == TOKEN_C_BRACK)
+			return (0);
+		return (syntax_after_bracket(tokens->next));
+	}
 	return (1);
 }
 
@@ -56,8 +74,6 @@ int	syntax_analyzer(t_token *tokens)
 		{
 			if (tokens->next)
 				syntax_error(tokens->next->value);
-			// else
-			// 	syntax_error("newline");
 			return (0);
 		}
 		tokens = tokens->next;

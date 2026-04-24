@@ -104,12 +104,19 @@ t_token	*lexer2(char **input, char **env)
 		else
 			handle_word(*input, &tokens, &i);
 	}
-	return (check_brackets(tokens));
+	return (tokens);
 }
 
 t_token	*lexer(char **input, char **env)
 {
-	handle_last_pipe(input, env);
-	handle_last_and(input, env);
-	return (lexer2(input, env));
+	t_token	*tokens;
+	t_token	*end;
+
+	tokens = lexer2(input, env);
+	if (!syntax_analyzer(tokens) || !check_brackets(tokens))
+		return (NULL);
+	end = handle_last_pipe_op(tokens, env);
+	if (end)
+		ft_tokadd_back(&tokens, end);
+	return (tokens);
 }
