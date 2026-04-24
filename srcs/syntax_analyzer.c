@@ -11,6 +11,18 @@ int	syntax_after_bracket(t_token *tokens)
 	return (1);
 }
 
+int	syntax_after_redir(t_token *tokens)
+{
+	if (!tokens)
+		return (0);
+	if (tokens->type == TOKEN_REDIR_IN
+		|| tokens->type == TOKEN_REDIR_OUT
+		|| tokens->type == TOKEN_HEREDOC
+		|| tokens->type == TOKEN_APPEND)
+		return (0);
+	return (1);
+}
+
 int	syntax_after_token(t_token *tokens)
 {
 	if (!tokens)
@@ -29,17 +41,12 @@ int	dispatch(t_token *tokens)
 		&& tokens->type != TOKEN_C_BRACK
 		&& !syntax_after_token(tokens->next))
 		return (0);
-	if (tokens->type == TOKEN_REDIR_IN
-		|| tokens->type == TOKEN_REDIR_OUT
-		|| tokens->type == TOKEN_HEREDOC
-		|| tokens->type == TOKEN_APPEND)
-	{
-		if (!tokens->next)
-		{
-			syntax_error("newline");
-			return (0);
-		}
-	}
+	if ((tokens->type == TOKEN_REDIR_IN
+			|| tokens->type == TOKEN_REDIR_OUT
+			|| tokens->type == TOKEN_HEREDOC
+			|| tokens->type == TOKEN_APPEND)
+		&& !syntax_after_redir(tokens->next))
+		return (0);
 	if (tokens->type == TOKEN_O_BRACK || tokens->type == TOKEN_C_BRACK)
 	{
 		if (tokens->type == TOKEN_O_BRACK
@@ -74,6 +81,8 @@ int	syntax_analyzer(t_token *tokens)
 		{
 			if (tokens->next)
 				syntax_error(tokens->next->value);
+			else
+				syntax_error("newline");
 			return (0);
 		}
 		tokens = tokens->next;
