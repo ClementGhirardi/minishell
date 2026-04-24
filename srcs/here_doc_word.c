@@ -40,41 +40,13 @@ static int	ft_isin(char c, char *str)
 	return (0);
 }
 
-// char	*here_doc_word(char limiter)
-// {
-// 	char	*word;
-// 	char	*buffer;
-
-// 	word = ft_strdup("");
-// 	if (!word)
-// 		return (perror("malloc"), NULL);
-// 	write(1, "> ", 2);
-// 	buffer = get_next_line(STDIN_FILENO);
-// 	if (!buffer)
-// 		return (free(word), perror("malloc"), NULL);
-// 	while (!ft_isin(limiter, buffer))
-// 	{
-// 		word = ft_strjoin_and_free(word, buffer);
-// 		write(1, "> ", 2);
-// 		buffer = get_next_line(STDIN_FILENO);
-// 		if (!buffer)
-// 			return (free(word), perror("malloc"), NULL);
-// 	}
-// 	word = ft_strjoin_and_free(word,
-// 			ft_substr(buffer, 0, ft_strlen(buffer) - 1));
-// 	if (buffer)
-// 		free(buffer);
-// 	return (word);
-// }
-
 char	*here_doc_word(char limiter, char **env)
 {
 	char	*input;
 	char	*word;
 
-	//input = ft_strdup("");
 	word = ft_strdup("");
-	if (!word)//(!input || !word)
+	if (!word)
 		return (perror("malloc"), NULL);
 	while (!ft_isin(limiter, word))
 	{
@@ -82,13 +54,9 @@ char	*here_doc_word(char limiter, char **env)
 		if (!input)
 		{
 			error_heredocword(limiter, env);
-			//free(word);
-			//return (NULL);
 			return (word);
 		}
-		// ligne dessous inclut la quote
 		word = ft_strjoin_and_free(word, input);
-		// word = ft_strjoinsep_free(word, input, '\n');
 	}
 	return (word);
 }

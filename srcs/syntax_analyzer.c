@@ -15,8 +15,9 @@ int	dispatch(t_token *tokens)
 {
 	if (tokens->type != TOKEN_WORD
 		&& tokens->type != TOKEN_O_BRACK
-		&& tokens->type != TOKEN_C_BRACK)
-		return (syntax_after_token(tokens->next));
+		&& tokens->type != TOKEN_C_BRACK
+		&& !syntax_after_token(tokens->next))
+		return (0);
 	if (tokens->type == TOKEN_REDIR_IN
 		|| tokens->type == TOKEN_REDIR_OUT
 		|| tokens->type == TOKEN_HEREDOC
@@ -55,8 +56,8 @@ int	syntax_analyzer(t_token *tokens)
 		{
 			if (tokens->next)
 				syntax_error(tokens->next->value);
-			else
-				syntax_error("newline");
+			// else
+			// 	syntax_error("newline");
 			return (0);
 		}
 		tokens = tokens->next;

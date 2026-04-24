@@ -24,8 +24,8 @@ int	executor(t_ast *ast, char ***env)
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
 		if (!ast->file && ast->fd == -1)
-			return (ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
-					"syntax error near unexpected token `newline'", 2), 2);
+			return (ft_putstr_fd("minishell: ", 2), 2);//ft_putendl_fd(
+					//"syntax error near unexpected token `newline'", 2), 2);
 		if (ast->file)
 		{
 			tmp = ft_strdup(ast->file);

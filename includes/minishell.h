@@ -102,11 +102,15 @@ t_token		*lexer(char **input, char **env);
 t_token		*lexer2(char **input, char **env);
 void		handle_quotes(char **input, char **env);
 void		handle_last_pipe(char **input, char **env);
+void		handle_last_and(char **input, char **env);
+
 void		handle_pipe(char *input, t_token **tokens, int *i);
 void		handle_and(char *input, t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
 
 void		*syntax_error(char *c);
+
+int			syntax_analyzer(t_token *tokens);
 
 t_token		*split_bracket(t_token **tokens);
 
@@ -130,7 +134,7 @@ char		*extract_var_name(char *str, int *i, char **env);
 void		expander(t_ast *node, char **env);
 
 int			here_doc(char *limiter, char **env);
-char		*here_doc_pipe(char limiter, char **env);
+char		*here_doc_pipe(char **env);
 
 char		*get_path(char *cmd, char **envp);
 

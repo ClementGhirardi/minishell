@@ -1,0 +1,21 @@
+en.subject.pdf
+includes
+libft
+Makefile
+minishell
+out
+outfile
+readline.supp
+srcs
+vgcore.290434
+total 8476
+-rw-r--r--  1 adbarth 2025_paris 1334301 Apr  9 10:47 en.subject.pdf
+drwxr-xr-x  2 adbarth 2025_paris      40 Apr  9 10:47 includes
+drwxr-xr-x  5 adbarth 2025_paris     107 Apr 24 17:59 libft
+-rw-r--r--  1 adbarth 2025_paris    1636 Apr 23 15:02 Makefile
+-rwxr-xr-x  1 adbarth 2025_paris   71000 Apr 24 19:31 minishell
+-rw-r--r--  1 adbarth 2025_paris      94 Apr 24 19:33 out
+-rw-r--r--  1 adbarth 2025_paris       0 Apr 21 15:43 outfile
+-rw-r--r--. 1 adbarth 2025_paris      73 Apr 23 11:47 readline.supp
+drwxr-xr-x  2 adbarth 2025_paris    4096 Apr 24 19:31 srcs
+-rw-------. 1 adbarth 2025_paris 7254016 Apr 23 10:56 vgcore.290434

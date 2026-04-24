@@ -23,13 +23,32 @@ void	handle_last_pipe(char **input, char **env)
 	i = ft_strlen(*input) - 1;
 	while ((*input)[i] && (*input)[i] == ' ')
 		i--;
-	if (i >= 0 && (*input)[i] == '|')
+	if (i > 0 && (*input)[i] == '|')
+	{
+		if ((*input)[i - 1] == '|' && (*input)[i - 2] == '|')
+			return ;
 		*input = ft_strjoin_and_free(*input,
 				ft_strjoin_and_free(ft_strdup(" "),
-					here_doc_pipe('\n', env)));
-	else
+					here_doc_pipe(env)));
+	}
+}
+
+void	handle_last_and(char **input, char **env)
+{
+	int	i;
+
+	if (!(*input))
 		return ;
-	//lexer(input, env);
+	i = ft_strlen(*input) - 1;
+	while ((*input)[i] && (*input)[i] == ' ')
+		i--;
+	if (i > 0
+		&& (*input)[i] == '&'
+		&& (*input)[i - 1] == '&'
+		&& (*input)[i - 2] != '&')
+		*input = ft_strjoin_and_free(*input,
+				ft_strjoin_and_free(ft_strdup(" "),
+					here_doc_pipe(env)));
 }
 
 // static void	handle_quotes(char **input)

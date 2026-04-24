@@ -110,5 +110,6 @@ t_token	*lexer2(char **input, char **env)
 t_token	*lexer(char **input, char **env)
 {
 	handle_last_pipe(input, env);
+	handle_last_and(input, env);
 	return (lexer2(input, env));
 }
