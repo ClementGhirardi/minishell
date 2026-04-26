@@ -53,31 +53,6 @@ void	handle_word(char *input, t_token **tokens, int *i)
 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
-static t_token	*check_brackets(t_token	*tokens)
-{
-	t_token	*tmp;
-	int		o_brack;
-	int		c_brack;
-
-	o_brack = 0;
-	c_brack = 0;
-	tmp = tokens;
-	while (tmp)
-	{
-		if (tmp->type == TOKEN_O_BRACK)
-			o_brack++;
-		if (tmp->type == TOKEN_C_BRACK)
-			c_brack++;
-		if (c_brack > o_brack)
-			return (syntax_error(")"));
-		tmp = tmp->next;
-	}
-	if (o_brack == c_brack)
-		return (tokens);
-	else
-		return (syntax_error("("));
-}
-
 t_token	*lexer2(char **input, char **env)
 {
 	t_token	*tokens;
@@ -113,8 +88,11 @@ t_token	*lexer(char **input, char **env)
 	t_token	*end;
 
 	tokens = lexer2(input, env);
-	if (!syntax_analyzer(tokens) || !check_brackets(tokens))
+	if (!syntax_analyzer(tokens))
+	{
+		free_token(tokens);
 		return (NULL);
+	}
 	end = handle_last_pipe_op(tokens, env);
 	if (end)
 		ft_tokadd_back(&tokens, end);

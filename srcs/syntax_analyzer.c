@@ -70,6 +70,31 @@ int	dispatch(t_token *tokens)
 	return (1);
 }
 
+static t_token	*check_brackets(t_token	*tokens)
+{
+	t_token	*tmp;
+	int		o_brack;
+	int		c_brack;
+
+	o_brack = 0;
+	c_brack = 0;
+	tmp = tokens;
+	while (tmp)
+	{
+		if (tmp->type == TOKEN_O_BRACK)
+			o_brack++;
+		if (tmp->type == TOKEN_C_BRACK)
+			c_brack++;
+		if (c_brack > o_brack)
+			return (syntax_error(")"));
+		tmp = tmp->next;
+	}
+	if (o_brack == c_brack)
+		return (tokens);
+	else
+		return (syntax_error("("));
+}
+
 int	syntax_first_token(t_token *tokens)
 {
 	if (!tokens)
@@ -86,7 +111,7 @@ int	syntax_first_token(t_token *tokens)
 
 int	syntax_analyzer(t_token *tokens)
 {
-	if (!syntax_first_token(tokens))
+	if (!syntax_first_token(tokens) || !check_brackets(tokens))
 		return (0);
 	while (tokens)
 	{

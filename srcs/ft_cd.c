@@ -20,6 +20,7 @@ void	update_pwd(char ***env)
 	old_pwd = ft_getenv(*env, "PWD");
 	if (old_pwd)
 		ft_setenv(env, "OLDPWD", old_pwd);
+	free(old_pwd);
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		ft_setenv(env, "PWD", cwd);
 }

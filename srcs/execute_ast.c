@@ -32,8 +32,8 @@ int	execute_cmd(t_ast *node, char ***env)
 			if (!path)
 				return (write(2, "minishell: ", 12),
 					write(2, node->args[0], ft_strlen(node->args[0])),
-					write(2, ": command not found\n", 21),
-					exit(127), 127);
+					write(2, ": command not found\n", 21), free_array(*env),
+					ast_free(node), exit(127), 127);
 			execve(path, node->args, *env);
 			free(path);
 			return (ft_putstr_fd("minishell: ", 2),
@@ -58,7 +58,11 @@ int	execute_pipe(t_ast *node, char ***env)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(executor(node->left, env));
+		status = executor(node->left, env);
+		ast_free(node);
+		free_array(*env);
+		exit(status);
+		//exit(executor(node->left, env));
 	}
 	pid[1] = fork();
 	if (pid[1] == 0)
@@ -66,7 +70,11 @@ int	execute_pipe(t_ast *node, char ***env)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(executor(node->right, env));
+		status = executor(node->right, env);
+		ast_free(node);
+		free_array(*env);
+		exit(status);
+		//exit(executor(node->right, env));
 	}
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),
@@ -88,38 +96,6 @@ static int	open_fd(t_ast *node, char *file)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	return (fd);
 }
-
-// int	execute_redir(t_ast *node, int status, char ***env)
-// {
-// 	int	fd;
-// 	int	std[2];
-
-// 	fd = open_fd(node, node->file);
-// 	if (fd == -1)
-// 		return (perror("open"), 1);
-// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
-// 	{
-// 		std[0] = dup(STDIN_FILENO);
-// 		dup2(fd, STDIN_FILENO);
-// 	}
-// 	else
-// 	{
-// 		std[1] = dup(STDOUT_FILENO);
-// 		dup2(fd, STDOUT_FILENO);
-// 	}
-// 	status = executor(node->left, status, env);
-// 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
-// 	{
-// 		dup2(std[0], STDIN_FILENO);
-// 		//close(std[0]);
-// 	}
-// 	else
-// 	{
-// 		dup2(std[1], STDOUT_FILENO);
-// 		//close(std[1]);
-// 	}
-// 	return (status);
-// }
 
 int	execute_redir(t_ast *node, char ***env)
 {

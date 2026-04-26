@@ -101,15 +101,9 @@ static void	init_signals(void)
 void	minishell(char **input, char ***env)
 {
 	t_token	*tokens;
-	t_token	*tmp;
 	t_ast	*ast;
 
 	tokens = lexer(input, *env);
-	if (!syntax_analyzer(tokens))
-	{
-		free_token(tokens);
-		return ;
-	}
 	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)
@@ -119,7 +113,6 @@ void	minishell(char **input, char ***env)
 	// }
 	tokens = split_bracket(&tokens);
 
-	// tmp = tokens;
 	// while (tmp)
 	// {
 	// 	if (tmp->bracket)
@@ -129,7 +122,7 @@ void	minishell(char **input, char ***env)
 	// }
 
 	// free_token(tmp);
-	tmp = tokens;
+	//tmp = tokens;
 	// current = tokens;
 	// while (current)
 	// {
@@ -144,7 +137,6 @@ void	minishell(char **input, char ***env)
 			status = executor(ast, env);
 			ast_free(ast);
 		}
-		free_token(tmp);
 	}
 }
 
@@ -161,8 +153,6 @@ int	main(int ac, char **av, char **envp)
 	init_signals();
 	while (1)
 	{
-		if (status == 130)
-			status = 130;
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env);
