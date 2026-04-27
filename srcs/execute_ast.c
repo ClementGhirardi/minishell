@@ -22,7 +22,7 @@ int	execute_cmd(t_ast *node, char ***env)
 	// if (!node->args)
 	// 	return (expander(node->left, status, env), execute_cmd(node->left, status, env));
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node->args, env));
+		return (run_builtin(node, node->args, env));
 	else
 	{
 		pid = fork();

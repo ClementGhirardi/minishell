@@ -100,6 +100,7 @@ static void	init_signals(void)
 
 void	minishell(char **input, char ***env)
 {
+	t_token	*tmp;
 	t_token	*tokens;
 	t_ast	*ast;
 
@@ -111,8 +112,9 @@ void	minishell(char **input, char ***env)
 		// ft_printf("%d: |%s|\n", current->type, current->value);
 		// current = current->next;
 	// }
+	tmp = tokens;
 	tokens = split_bracket(&tokens);
-
+	free_token(tmp);
 	// while (tmp)
 	// {
 	// 	if (tmp->bracket)
@@ -129,9 +131,11 @@ void	minishell(char **input, char ***env)
 		// ft_printf("%d: |%s|\n", current->type, current->value);
 		// current = current->next;
 	// }
+	tmp = tokens;
 	if (tokens)
 	{
 		ast = parse(&tokens, *env, input);
+		free_token(tmp);
 		if (ast)
 		{
 			status = executor(ast, env);
@@ -155,9 +159,9 @@ int	main(int ac, char **av, char **envp)
 	{
 		input = readline("minishell$ ");
 		if (!input)
-			ft_exit(&env);
+			ft_exit(NULL, NULL, &env);
 		minishell(&input, &env);
 		free(input);
 	}
-	ft_exit(&env);
+	ft_exit(NULL, NULL, &env);
 }

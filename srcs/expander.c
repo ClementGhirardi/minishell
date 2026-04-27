@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+static char	*expand_string(char *str, char **env);
+
 static int	is_var_char(char c)
 {
 	if (('a' <= c && c <= 'z')
@@ -22,28 +24,62 @@ static int	is_var_char(char c)
 	return (0);
 }
 
+// char	*extract_var_name(char *str, int *i, char **env)
+// { ? ISVARCHAR
+// 	int		start;
+// 	char	*tmp;
+// 	char	*var;
+
+// 	if (!str[++(*i)])
+// 		return (ft_strdup(str));
+// 	start = *i;
+// 	if (str[*i] == '?')
+// 	{
+// 		(*i)++;
+// 		var = ft_strdup(ft_itoa(status));
+// 		return (var);
+// 	}
+// 	while (is_var_char(str[*i]))
+// 		(*i)++;
+// 	tmp = ft_substr(str, start, *i - start);
+// 	if (!tmp)
+// 		return (NULL);
+// 	var = ft_getenv(env, tmp);
+// 	if (!var)
+// 		return (NULL);
+// 	free(tmp);
+// 	return (var);
+// }
+
 char	*extract_var_name(char *str, int *i, char **env)
 {
 	int		start;
 	char	*tmp;
 	char	*var;
 
-	(*i)++;
+	if (!str[++(*i)])
+		return (ft_strdup(str));
 	start = *i;
 	if (str[*i] == '?')
 	{
 		(*i)++;
-		var = ft_strdup(ft_itoa(status));
-		return (var);
+		tmp = ft_itoa(status);
+		var = ft_strdup(tmp);
+		free(tmp);
+		start = *i;
+		while ((str[*i]))
+			(*i)++;
+		return (ft_strjoin_and_free(var, expand_string(
+					ft_substr(str, start, *i - start), env)));
 	}
+	if (!is_var_char(str[*i]))
+		return (ft_strdup("$"));
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
 	if (!tmp)
 		return (NULL);
 	var = ft_getenv(env, tmp);
-	if (!var)
-		return (NULL);
 	free(tmp);
 	return (var);
 }

@@ -66,7 +66,7 @@ int	dispatch(t_token *tokens)
 	}
 	if (tokens->type == TOKEN_C_BRACK)
 		return ((tokens->next && tokens->next->type != TOKEN_O_BRACK)
-				|| !tokens->next);
+			|| !tokens->next);
 	return (1);
 }
 

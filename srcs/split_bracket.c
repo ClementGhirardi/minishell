@@ -93,12 +93,12 @@ t_token	*create_clean_list(t_token **tokens)
 t_token	*split_bracket(t_token **tokens)
 {
 	t_token	*clean_list;
-	t_token	*tmp;
+	//t_token	*tmp;
 
 	if (!tokens || !*tokens)
 		return (NULL);
-	tmp = *tokens;
+	//tmp = *tokens;
 	clean_list = create_clean_list(tokens);
-	free_token(tmp);
+	//free_token(tmp);
 	return (clean_list);
 }

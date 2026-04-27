@@ -160,10 +160,9 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
-int			ft_exit(char ***env);
-
+int			ft_exit(t_ast **ast, char **args, char ***env);
 int			is_builtin(char *cmd);
-int			run_builtin(char **args, char ***env);
+int			run_builtin(t_ast *ast, char **args, char ***env);
 
 int			executor(t_ast *ast, char ***env);
 int			execute_operator(t_ast *ast, char ***env);
