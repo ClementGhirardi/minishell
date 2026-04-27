@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 11:20:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/27 15:13:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,6 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 
 int	executor(t_ast *ast, int status, char ***env)
 {
-	char	*tmp;
-
 	if (!ast)
 		return (1);
 	if (ast->type == NODE_CMD)
@@ -129,11 +127,11 @@ int	executor(t_ast *ast, int status, char ***env)
 					"syntax error near unexpected token `newline'", 2), 2);
 		if (ast->file)
 		{
-			tmp = ft_strdup(ast->file);
 			expander(ast, status, *env);
 			if (!ast->file && ast->fd == -1)
-				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
-					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
+				return (ft_putstr_fd("minishell: ", 2),
+					ft_putstr_fd(ast->file, 2),
+					ft_putendl_fd(": ambiguous redirect", 2), 2);
 		}
 		return (execute_redir(ast, status, env));
 	}

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 16:45:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/27 12:33:19 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,20 @@ static t_ast	*parse_redirection(t_token **tokens, int status, char **env,
 	t_ast			*instr;
 	t_token_type	redir_type;
 	char			*file;
+	t_token			*tmp;
+	t_data			data;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
-		return (ast_new_redir(redir_type, NULL, status, env));
-	else
-		file = ft_strdup((*tokens)->value);
-	instr = ast_new_redir(redir_type, file, status, env);
-	if (instr->type == NODE_HEREDOC)
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"),
-					ft_strjoin_and_free(ft_gethole_fd(instr->fd),
-						ft_strdup(instr->file))));
+	tmp = new_token(redir_type, NULL);
+	data.tokens = tokens;
+	data.input = input;
+	if (!(*tokens) || (*tokens)->type != TOKEN_WORD || !(*tokens)->value)
+		return (ast_new_redir(tmp, status, env, &data));
+	file = ft_strdup((*tokens)->value);
+	tmp->value = file;
+	instr = ast_new_redir(tmp, status, env, &data);
+	free(tmp);
 	*tokens = (*tokens)->next;
 	return (instr);
 }

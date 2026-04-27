@@ -6,28 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 16:27:45 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:52:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static void	handle_last_pipe(char **input)
-{
-	int	i;
-
-	if (!(*input))
-		return ;
-	i = ft_strlen(*input) - 1;
-	while ((*input)[i] && (*input)[i] == ' ')
-		i--;
-	if (i >= 0 && (*input)[i] == '|')
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup(" "), here_doc_word('\n')));
-	else
-		return ;
-	lexer(input);
-}
 
 static void	handle_quotes(char **input)
 {
@@ -58,36 +41,6 @@ static void	handle_quotes(char **input)
 	lexer(input);
 }
 
-// static void	handle_empty_quotes(char **input)
-// {
-// 	char	*result;
-// 	size_t	i;
-
-// 	if (!(*input) && ft_strncmp(*input, "", ft_strlen(*input)))
-// 		return ;
-// 	result = NULL;
-// 	i = 0;
-// 	while ((*input)[i] && (*input)[i + 1])
-// 	{
-// 		if (((*input)[i] == '\'' || (*input)[i] == '"')
-// 			&& ((*input)[i] == (*input)[i + 1]))
-// 		{
-// 			if (i == 0)
-// 				result = ft_substr(*input, i + 2, ft_strlen(*input));
-// 			else if (i + 3 < ft_strlen(*input))
-// 				result = ft_substr(*input, 0, i);
-// 			else
-// 				result = ft_strjoin_and_free(ft_substr(*input, 0, i),
-// 						ft_substr(*input, i + 2, ft_strlen(*input)));
-// 			ft_printf("%s\n", result);
-// 			free(*input);
-// 			*input = result;
-// 			i++;
-// 		}
-// 		i++;
-// 	}
-// }
-
 static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 {
 	if (dir == 1)
@@ -116,14 +69,13 @@ static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 }
 
-static void	handle_word(char *input, t_token **tokens, int *i)
+static int	read_word(char *input, int *i)
 {
 	int		start;
 	char	quote;
-	char	*word;
 
 	start = *i;
-	while (input[*i] && input[*i] != ' ')
+	while (input[*i] && input[*i] != ' ' && input[*i] != '\n')
 	{
 		quote = ' ';
 		if (input[*i] == '\'' || input[*i] == '\"')
@@ -131,17 +83,31 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 			quote = input[*i];
 			(*i)++;
 		}
-		while (input[*i] && input[*i] != '|'
-			&& input[*i] != '<' && input[*i] != '>'
-			&& input[*i] != quote)
+		while (input[*i] && input[*i] != '|' && input[*i] != '<'
+			&& input[*i] != '>' && input[*i] != quote && input[*i] != '\n')
 			(*i)++;
 		if (input[*i] == quote && quote != ' ')
 			(*i)++;
 	}
-	word = ft_substr(input, start, *i - start);
-	if (!word)
-		return ;
-	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
+	return (start);
+}
+
+static void	handle_word(char *input, t_token **tokens, int *i)
+{
+	int		start;
+	char	*word;
+
+	start = read_word(input, i);
+	if (start != *i)
+	{
+		word = ft_substr(input, start, *i - start);
+		add_token(tokens, new_token(TOKEN_WORD, word));
+		free(word);
+	}
+	if (input[*i] == '\n')
+		return (start = *i, *i = ft_strlen(input),
+			word = ft_substr(input, start, *i - start),
+			add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
 t_token	*lexer(char **input)

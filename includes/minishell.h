@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 16:36:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:51:53 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,25 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
+typedef struct s_data
+{
+	t_token	**tokens;
+	char	**input;
+	char	*limiter;
+}	t_data;
+
+typedef struct s_var
+{
+	t_token	*current;
+	t_token	*previous;
+
+	char	*value;
+	char	*new_value;
+
+	int		len;
+	char	*line;
+}	t_var;
+
 char		*ft_strjoin_and_free(char *s1, char *s2);
 
 char		*here_doc_word(char limiter);
@@ -79,11 +98,12 @@ t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
+void		handle_last_pipe(char **input);
+
 t_token		*lexer(char **input);
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type r_type, char *file,
-				int status, char **env);
+t_ast		*ast_new_redir(t_token *tmp, int status, char **env, t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
@@ -97,7 +117,7 @@ char		*ft_getenv(char **env, const char *name);
 char		*extract_var_name(char *str, int *i, int status, char **env);
 void		expander(t_ast *node, int status, char **env);
 
-int			here_doc(char *limiter, int status, char **env);
+int			here_doc(t_data *data, int status, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
