@@ -24,6 +24,35 @@ static void	handle_bracket(char *input, t_token **tokens, int *i)
 	(*i)++;
 }
 
+// void	handle_word(char *input, t_token **tokens, int *i)
+// {
+// 	int		start;
+// 	char	quote;
+// 	char	*word;
+
+// 	start = *i;
+// 	if (input[*i] == '&')
+// 		(*i)++;
+// 	while (input[*i] && input[*i] != ' ' && input[*i] != '|'
+// 		&& input[*i] != '<' && input[*i] != '>' && input[*i] != '&'
+// 		&& input[*i] != '(' && input[*i] != ')')
+// 	{
+// 		quote = ' ';
+// 		if (input[*i] == '\'' || input[*i] == '\"')
+// 			quote = input[(*i)++];
+// 		while (input[*i] && input[*i] != '|' && input[*i] != '<'
+// 			&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
+// 			&& input[*i] != ')' && input[*i] != quote)
+// 			(*i)++;
+// 		if (input[*i] == quote && quote != ' ')
+// 			(*i)++;
+// 	}
+// 	word = ft_substr(input, start, *i - start);
+// 	if (!word)
+// 		return ;
+// 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
+// }
+
 void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
@@ -40,9 +69,7 @@ void	handle_word(char *input, t_token **tokens, int *i)
 		quote = ' ';
 		if (input[*i] == '\'' || input[*i] == '\"')
 			quote = input[(*i)++];
-		while (input[*i] && input[*i] != '|' && input[*i] != '<'
-			&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
-			&& input[*i] != ')' && input[*i] != quote)
+		while (input[*i] && input[*i] != quote)
 			(*i)++;
 		if (input[*i] == quote && quote != ' ')
 			(*i)++;
