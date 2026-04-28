@@ -22,6 +22,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ft_getenv.c \
  	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/get_buffer.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \

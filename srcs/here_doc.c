@@ -6,27 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 11:37:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 12:12:54 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int	idx_next_line(char *str)
-{
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\n')
-			return (i + 1);
-		i++;
-	}
-	return (i);
-}
 
 int	begin(t_data *data, t_var *v)
 {
@@ -46,6 +30,22 @@ int	begin(t_data *data, t_var *v)
 	if (ft_strlen(v->value) == 0)
 		return (0);
 	return (1);
+}
+
+int	idx_next_line(char *str)
+{
+	int	i;
+
+	if (!str)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\n')
+			return (i + 1);
+		i++;
+	}
+	return (i);
 }
 
 int	read_previous(t_data *data, int status, char **env, int *fd)
@@ -93,27 +93,24 @@ int	last_here_doc(t_data *data)
 
 int	here_doc(t_data *data, int status, char **env)
 {
-	char	*buffer;
-	int		size;
-	int		fd[2];
+	static int	nb_line;
+	char		*buffer;
+	int			size;
+	int			fd[2];
 
 	pipe(fd);
 	if (read_previous(data, status, env, fd))
 		return (close(fd[1]), fd[0]);
 	size = ft_strlen(data->limiter);
-	write(1, "> ", 2);
-	buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
-	if (!buffer)
-		perror("gnl");
+	if (!get_buffer(&buffer, &nb_line, status, env))
+		return (-1);
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
 	while (ft_strncmp(buffer, data->limiter, size))
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
-		write(1, "> ", 2);
-		buffer = expand_string(get_next_line(STDIN_FILENO), status, env);
-		if (!buffer)
-			perror("gnl");
+		if (!get_buffer(&buffer, &nb_line, status, env))
+			return (-1);
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
 	last_here_doc(data);
