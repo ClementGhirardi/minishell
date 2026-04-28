@@ -53,31 +53,47 @@ static void	handle_bracket(char *input, t_token **tokens, int *i)
 // 	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 // }
 
+void	create_word(char *input, t_token **tokens, int i, int start)
+{
+	char	*word;
+
+	word = ft_substr(input, start, i - start);
+	if (!word)
+		return ;
+	add_token(tokens, new_token(TOKEN_WORD, word));
+	free(word);
+}
+
 void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
 	char	quote;
-	char	*word;
 
 	start = *i;
 	if (input[*i] == '&')
 		(*i)++;
-	while (input[*i] && input[*i] != ' ' && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>' && input[*i] != '&'
-		&& input[*i] != '(' && input[*i] != ')')
+	while (input[*i] && input[*i] != ' ' && input[*i] != '|' && input[*i] != '<'
+		&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
+		&& input[*i] != ')')
 	{
 		quote = ' ';
 		if (input[*i] == '\'' || input[*i] == '\"')
+		{
 			quote = input[(*i)++];
-		while (input[*i] && input[*i] != quote)
-			(*i)++;
+			while (input[*i] && input[*i] != quote)
+				(*i)++;
+		}
+		else
+		{
+			while (input[*i] && input[*i] != '|' && input[*i] != '<'
+				&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
+				&& input[*i] != ')' && input[*i] != quote)
+				(*i)++;
+		}
 		if (input[*i] == quote && quote != ' ')
 			(*i)++;
 	}
-	word = ft_substr(input, start, *i - start);
-	if (!word)
-		return ;
-	return (add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
+	create_word(input, tokens, *i, start);
 }
 
 t_token	*lexer2(char **input, char **env)
