@@ -82,7 +82,10 @@ int	ft_strcmp(char *s1, char *s2)
 	return (s1[i] - s2[i]);
 }
 
-int	here_doc(char *limiter, char **env)
+char	*ft_strdup_no_empty_quotes(char *str);
+int		count_empty_quotes(char *str);
+
+int	here_doc_empty_limiter(char **env)
 {
 	char		*input;
 	int			fd[2];
@@ -91,15 +94,15 @@ int	here_doc(char *limiter, char **env)
 
 	first_line = ++i;
 	pipe(fd);
-	input = ft_strdup("");
-	while (ft_strcmp(input, limiter))
+	input = ft_strdup("\n");
+	while (input && *input)
 	{
 		ft_putstr_fd(input, fd[1]);
 		free(input);
 		input = readline("> ");
 		if (!input)
 		{
-			error_heredoc(first_line, limiter);
+			error_heredoc(first_line, "");
 			close(fd[1]);
 			//i--;
 			break ;
@@ -107,10 +110,40 @@ int	here_doc(char *limiter, char **env)
 		input = expand_string(input, env);
 		i++;
 	}
-	i++;
-	free(input);
-	close(fd[1]);
-	status = 0;
-	return (fd[0]);
+	return (i++, free(input), close(fd[1]), status = 0, fd[0]);
 }
 
+int	here_doc(char *limiter, char **env)
+{
+	char		*input;
+	char		*clean_limiter;
+	int			fd[2];
+	static int	i;
+	int			first_line;
+
+	first_line = ++i;
+	pipe(fd);
+	clean_limiter = ft_strdup_no_empty_quotes(limiter);
+	if (!clean_limiter)
+		return (close(fd[1]), fd[0]);
+	if (!*clean_limiter)
+		return (close(fd[0]), close(fd[1]), free(clean_limiter), here_doc_empty_limiter(env));
+	input = ft_strdup("");
+	while (ft_strcmp(input, clean_limiter))
+	{
+		ft_putstr_fd(input, fd[1]);
+		free(input);
+		input = readline("> ");
+		if (!input)
+		{
+			error_heredoc(first_line, clean_limiter);
+			close(fd[1]);
+			//i--;
+			break ;
+		}
+		input = expand_string(input, env);
+		i++;
+	}
+	return (status = 0, i++, close(fd[1]), free(clean_limiter),
+		free(input), fd[0]);
+}

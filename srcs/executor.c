@@ -109,7 +109,7 @@ int	executor(t_ast *ast, char ***env)
 		// if (!ast->file && ast->fd == -1)
 		// 	return (ft_putstr_fd("minishell: ", 2), 2); ft_putendl_fd(
 		// 			"syntax error near unexpected token `newline'", 2), 2);
-		if (ast->file)
+		if (ast->file && ast->type != NODE_HEREDOC)
 		{
 			tmp = ft_strdup_no_empty_quotes(ast->file);
 			expander(ast, *env);
