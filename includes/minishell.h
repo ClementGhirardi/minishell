@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/27 16:51:53 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 10:55:38 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ t_ast		*parse(t_token *tokens, int status, char **env, char **input);
 char		*ft_getenv(char **env, const char *name);
 
 char		*extract_var_name(char *str, int *i, int status, char **env);
+char		*expand_string(char *str, int status, char **env);
 void		expander(t_ast *node, int status, char **env);
 
 int			here_doc(t_data *data, int status, char **env);

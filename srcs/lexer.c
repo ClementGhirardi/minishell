@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/27 16:52:22 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 10:36:50 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 	}
 	if (input[*i] == '\n')
 		return (start = *i, *i = ft_strlen(input),
-			word = ft_substr(input, start, *i - start),
+			word = ft_substr(input, start + 1, *i - start),
 			add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 

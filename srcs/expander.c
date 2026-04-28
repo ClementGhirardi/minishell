@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 15:43:02 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 10:55:00 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static char	*coucou(char *str, int *i, int status, char **env)
 	return (tmp);
 }
 
-static char	*expand_string(char *str, int status, char **env)
+char	*expand_string(char *str, int status, char **env)
 {
 	int		i;
 	char	*result;

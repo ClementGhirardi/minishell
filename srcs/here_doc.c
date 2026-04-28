@@ -6,32 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/27 16:43:21 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 11:37:54 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static char	*expand_string(char *str, int status, char **env)
-{
-	int		i;
-	char	*result;
-	char	*var;
-
-	i = 0;
-	result = ft_strdup("");
-	if (!result)
-		return (free(str), NULL);
-	while (str[i])
-	{
-		if (str[i] == '$')
-			var = extract_var_name(str, &i, status, env);
-		else
-			var = ft_substr(str, i++, 1);
-		result = ft_strjoin_and_free(result, var);
-	}
-	return (free(str), result);
-}
 
 int	idx_next_line(char *str)
 {
@@ -64,6 +43,8 @@ int	begin(t_data *data, t_var *v)
 	if (!v->current)
 		return (0);
 	v->value = (v->current)->value;
+	if (ft_strlen(v->value) == 0)
+		return (0);
 	return (1);
 }
 
@@ -74,9 +55,7 @@ int	read_previous(t_data *data, int status, char **env, int *fd)
 
 	if (!begin(data, &v))
 		return (0);
-	i = 1;
-	if (i == ft_strlen(v.value))
-		return (0);
+	i = 0;
 	while ((v.value)[i])
 	{
 		v.len = idx_next_line(&(v.value)[i]);
@@ -84,7 +63,7 @@ int	read_previous(t_data *data, int status, char **env, int *fd)
 			return (free_token(v.current), (v.previous)->next = NULL, 0);
 		v.line = ft_substr(v.value, i, v.len);
 		i += v.len;
-		if (!ft_strncmp(data->limiter, v.line, ft_strlen(v.line) - 1))
+		if (!ft_strncmp(data->limiter, v.line, v.len - 1) && v.len != 1)
 		{
 			if (i == ft_strlen(v.value))
 				return (free_token(v.current), (v.previous)->next = NULL, 1);
@@ -93,7 +72,23 @@ int	read_previous(t_data *data, int status, char **env, int *fd)
 		}
 		ft_putstr_fd(expand_string(v.line, status, env), fd[1]);
 	}
-	return (free_token(v.current), (v.previous)->next = NULL, 0);
+	return (ft_putstr_fd("\n", fd[1]),
+		free_token(v.current), (v.previous)->next = NULL, 0);
+}
+
+int	last_here_doc(t_data *data)
+{
+	t_token	*current;
+
+	current = *data->tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_HEREDOC)
+			return (0);
+		current = current->next;
+	}
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	return (1);
 }
 
 int	here_doc(t_data *data, int status, char **env)
@@ -121,5 +116,6 @@ int	here_doc(t_data *data, int status, char **env)
 			perror("gnl");
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
+	last_here_doc(data);
 	return (free(buffer), close(fd[1]), fd[0]);
 }
