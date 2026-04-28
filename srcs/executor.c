@@ -12,6 +12,89 @@
 
 #include "../includes/minishell.h"
 
+// int	executor(t_ast *ast, char ***env)
+// {
+// 	char	*tmp;
+
+// 	if (ast && ast->type == NODE_CMD)
+// 		return (expander(ast, *env), execute_cmd(ast, env));
+// 	else if (ast && ast->type == NODE_PIPE)
+// 		return (execute_pipe(ast, env));
+// 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
+// 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
+// 	{
+// 		if (!ast->file && ast->fd == -1)
+// 			return (ft_putstr_fd("minishell: ", 2), 2);//ft_putendl_fd(
+// 					//"syntax error near unexpected token `newline'", 2), 2);
+// 		if (ast->file)
+// 		{
+// 			tmp = ft_strdup(ast->file);
+// 			expander(ast, *env);
+// 			if (!ast->file && ast->fd == -1)
+// 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
+// 					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
+// 			free(tmp);
+// 		}
+// 		return (execute_redir(ast, env));
+// 	}
+// 	else
+// 		return (execute_operator(ast, env));
+// }
+
+int	count_empty_quotes(char *str)
+{
+	int		i;
+	int		count;
+	char	quote;
+
+	i = 0;
+	count = 0;
+	while (str && str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
+			quote = str[i];
+			if (str[i + 1] == quote)
+			{
+				i += 2;
+				continue ;
+			}
+		}
+		count++;
+		i++;
+	}
+	return (count);
+}
+
+char	*ft_strdup_no_empty_quotes(char *str)
+{
+	char	*result;
+	int		len;
+	int		i;
+	char	quote;
+
+	len = count_empty_quotes(str);
+	result = malloc(sizeof(char) * (len + 1));
+	i = 0;
+	if (!result)
+		return (NULL);
+	while (str && *str)
+	{
+		if (*str == '\'' || *str == '"')
+		{
+			quote = *str;
+			if (*(str + 1) == quote)
+			{
+				str += 2;
+				continue ;
+			}
+		}
+		result[i++] = *str++;
+	}
+	result[i] = '\0';
+	return (result);
+}
+
 int	executor(t_ast *ast, char ***env)
 {
 	char	*tmp;
@@ -23,16 +106,21 @@ int	executor(t_ast *ast, char ***env)
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
-		if (!ast->file && ast->fd == -1)
-			return (ft_putstr_fd("minishell: ", 2), 2);//ft_putendl_fd(
-					//"syntax error near unexpected token `newline'", 2), 2);
+		// if (!ast->file && ast->fd == -1)
+		// 	return (ft_putstr_fd("minishell: ", 2), 2); ft_putendl_fd(
+		// 			"syntax error near unexpected token `newline'", 2), 2);
 		if (ast->file)
 		{
-			tmp = ft_strdup(ast->file);
+			tmp = ft_strdup_no_empty_quotes(ast->file);
 			expander(ast, *env);
-			if (!ast->file && ast->fd == -1)
+			if (access(tmp, F_OK))
 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
-					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
+					ft_putendl_fd(": No such file or directory", 2),
+					free(tmp), 1);
+			else if (access(tmp, X_OK))
+				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
+					ft_putendl_fd(": Permission denied", 2),
+					free(tmp), 1);
 			free(tmp);
 		}
 		return (execute_redir(ast, env));
