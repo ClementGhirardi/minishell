@@ -1,24 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_buffer.c                                       :+:      :+:    :+:   */
+/*   idx_to_next_line.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 13:53:14 by cghirard         ###   ########.fr       */
+/*   Created: 2026/04/28 14:15:27 by cghirard          #+#    #+#             */
+/*   Updated: 2026/04/28 14:15:36 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	get_buffer(char **buffer, int *nb_line, int status, char **env)
+int	idx_to_next_line(char *str)
 {
-	write(1, "> ", 2);
-	*buffer = get_next_line(STDIN_FILENO);
-	if (!(*buffer))
+	int	i;
+
+	if (!str)
 		return (0);
-	*buffer = expand_string(*buffer, status, env);
-	(*nb_line)++;
-	return (1);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\n')
+			return (i + 1);
+		i++;
+	}
+	return (i);
 }

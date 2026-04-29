@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 12:12:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:14:54 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,14 @@ int	begin(t_data *data, t_var *v)
 	return (1);
 }
 
-int	idx_next_line(char *str)
+int	when_find_limiter(size_t i, t_var *v)
 {
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\n')
-			return (i + 1);
-		i++;
-	}
-	return (i);
+	if (i == ft_strlen(v->value))
+		return (free_token(v->current), (v->previous)->next = NULL, 1);
+	v->new_value = ft_substr(v->value, i, ft_strlen(v->value) - i);
+	if (!v->new_value)
+		return (1);
+	return (free(v->value), (v->current)->value = v->new_value, 1);
 }
 
 int	read_previous(t_data *data, int status, char **env, int *fd)
@@ -58,18 +52,15 @@ int	read_previous(t_data *data, int status, char **env, int *fd)
 	i = 0;
 	while ((v.value)[i])
 	{
-		v.len = idx_next_line(&(v.value)[i]);
+		v.len = idx_to_next_line(&(v.value)[i]);
 		if (v.len == 0)
 			return (free_token(v.current), (v.previous)->next = NULL, 0);
 		v.line = ft_substr(v.value, i, v.len);
+		if (!v.line)
+			return (1);
 		i += v.len;
 		if (!ft_strncmp(data->limiter, v.line, v.len - 1) && v.len != 1)
-		{
-			if (i == ft_strlen(v.value))
-				return (free_token(v.current), (v.previous)->next = NULL, 1);
-			return (v.new_value = ft_substr(v.value, i, ft_strlen(v.value) - i),
-				free(v.value), (v.current)->value = v.new_value, 1);
-		}
+			return (when_find_limiter(i, &v));
 		ft_putstr_fd(expand_string(v.line, status, env), fd[1]);
 	}
 	return (ft_putstr_fd("\n", fd[1]),
@@ -98,19 +89,20 @@ int	here_doc(t_data *data, int status, char **env)
 	int			size;
 	int			fd[2];
 
-	pipe(fd);
+	if (pipe(fd) < 0)
+		return (-1);
 	if (read_previous(data, status, env, fd))
 		return (close(fd[1]), fd[0]);
 	size = ft_strlen(data->limiter);
 	if (!get_buffer(&buffer, &nb_line, status, env))
-		return (-1);
+		return (error_here_doc(fd, nb_line, data->limiter));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
 	while (ft_strncmp(buffer, data->limiter, size))
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
 		if (!get_buffer(&buffer, &nb_line, status, env))
-			return (-1);
+			return (error_here_doc(fd, nb_line, data->limiter));
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
 	last_here_doc(data);

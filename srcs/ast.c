@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 11:36:24 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:52:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,30 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token *tmp, int status, char **env, t_data *data)
+t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
+		t_data *data)
 {
-	t_ast			*node;
+	t_ast	*node;
 
-	node = malloc(1 * sizeof(t_ast));
+	node = create_redir_node(status, data);
 	if (!node)
 		return (NULL);
-	if (tmp->type == TOKEN_REDIR_IN)
+	if (r_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
-	if (tmp->type == TOKEN_REDIR_OUT)
+	if (r_type == TOKEN_REDIR_OUT)
 		node->type = NODE_REDIR_OUT;
-	if (tmp->type == TOKEN_APPEND)
+	if (r_type == TOKEN_APPEND)
 		node->type = NODE_APPEND;
-	if (tmp->type == TOKEN_HEREDOC)
+	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		data->limiter = tmp->value;
-		node->fd = here_doc(data, status, env);
+		data->limiter = node->file;
+		node->fd = here_doc(data, *status, env);
 	}
 	else
 		node->fd = -1;
-	node->args = NULL;
-	node->file = tmp->value;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	return (node->args = NULL, node->left = NULL, node->right = NULL,
+		node);
 }
 
 t_ast	*ast_new_pipe(t_ast *left, t_ast *right)

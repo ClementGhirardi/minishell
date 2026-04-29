@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 12:13:22 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:52:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,21 +102,27 @@ void		handle_last_pipe(char **input);
 
 t_token		*lexer(char **input);
 
+char		*ft_typetostr(t_token_type type);
+t_ast		*create_redir_node(int *status, t_data *data);
+
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token *tmp, int status, char **env, t_data *data);
+t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env,
+				t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
 char		*ft_gethole_fd(int fd);
 
-t_ast		*parse(t_token *tokens, int status, char **env, char **input);
+t_ast		*parser(t_token *tokens, int *status, char **env, char **input);
 
 char		*ft_getenv(char **env, const char *name);
 
 char		*extract_var_name(char *str, int *i, int status, char **env);
 char		*expand_string(char *str, int status, char **env);
 void		expander(t_ast *node, int status, char **env);
+
+int			idx_to_next_line(char *str);
 
 int			get_buffer(char **buffer, int *nb_line, int status, char **env);
 
@@ -148,5 +154,9 @@ int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env, int status);
 
 int			executor(t_ast *ast, int status, char ***env);
+
+int			error_creating_env(void);
+int			error_here_doc(int *fd, int nb_line, char *limiter);
+void		*error_syntax(char *str, int *status);
 
 #endif

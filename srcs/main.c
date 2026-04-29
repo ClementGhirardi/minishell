@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 11:38:19 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/28 16:06:45 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(int status, char **input, char ***env)
+void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
@@ -99,10 +99,10 @@ void	minishell(int status, char **input, char ***env)
 	tokens = lexer(input);
 	if (tokens)
 	{
-		ast = parse(tokens, status, *env, input);
+		ast = parser(tokens, status, *env, input);
 		if (ast)
 		{
-			status = executor(ast, status, env);
+			*status = executor(ast, *status, env);
 			ast_free(ast);
 		}
 		free_token(tokens);
@@ -118,6 +118,8 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	env = dup_array(envp);
+	if (!env)
+		return (error_creating_env());
 	status = 0;
 	init_signals();
 	while (1)
@@ -125,7 +127,7 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env, status);
-		minishell(status, &input, &env);
+		minishell(&status, &input, &env);
 		add_history(input);
 		free(input);
 	}

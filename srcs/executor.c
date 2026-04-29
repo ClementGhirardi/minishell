@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/27 15:13:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 14:56:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	execute_pipe(t_ast *node, int status, char ***env)
 	pid_t	pid[2];
 
 	if (pipe(fd) == -1)
-		return (perror("pipe"), 1);
+		return (1);
 	pid[0] = fork();
 	if (pid[0] == 0)
 	{

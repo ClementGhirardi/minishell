@@ -17,11 +17,13 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer_handle_last_pipe.c \
 	$(SRCS_DIR)/lexer.c \
+	$(SRCS_DIR)/ast_utils.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ft_getenv.c \
  	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/idx_to_next_line.c \
 	$(SRCS_DIR)/get_buffer.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/get_path.c \
@@ -36,6 +38,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_exit.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
+	$(SRCS_DIR)/errors.c \
 
 SRCS_BONUS = 
 
