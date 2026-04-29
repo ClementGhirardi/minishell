@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:53:32 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 19:05:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	here_doc(t_data *data, int status, char **env)
 	int			size;
 	int			fd[2];
 
+	g_sig_status = 3;
 	if (pipe(fd) < 0)
 		return (-1);
 	if (read_previous(data, status, env, fd))
@@ -97,7 +98,7 @@ int	here_doc(t_data *data, int status, char **env)
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	while (ft_strncmp(buffer, data->limiter, size) && !g_sig_status)
+	while (ft_strncmp(buffer, data->limiter, size) && g_sig_status == 3)
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
@@ -106,5 +107,7 @@ int	here_doc(t_data *data, int status, char **env)
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
 	last_here_doc(data);
+	if (g_sig_status == 4)
+		return (free(buffer), close(fd[1]), close(fd[0]), g_sig_status = 2, -1);
 	return (free(buffer), close(fd[1]), fd[0]);
 }

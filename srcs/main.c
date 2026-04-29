@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 18:32:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 19:07:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,16 @@ static void	sigint_handler(int sig)
 	{
 		g_sig_status = 2;
 		ft_putchar_fd('\n', 1);
+		return ;
+	}
+	if (g_sig_status == 3)
+	{
+		g_sig_status = 4;
+		rl_erase_empty_line = 1;
+		rl_done = 1;
+		ft_putendl_fd("", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
 		return ;
 	}
 	ft_putendl_fd("", 1);
