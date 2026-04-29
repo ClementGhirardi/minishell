@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:23:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 18:32:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,16 @@ volatile sig_atomic_t	g_sig_status = 0;
 static void	sigint_handler(int sig)
 {
 	(void) sig;
-	if (g_sig_status != 1)
+	if (g_sig_status == 1)
 	{
-		ft_putendl_fd("", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		g_sig_status = 2;
+		ft_putchar_fd('\n', 1);
+		return ;
 	}
-	g_sig_status = 1;
+	ft_putendl_fd("", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 static void	init_signals(void)
@@ -127,12 +129,15 @@ int	main(int ac, char **av, char **envp)
 	if (!env)
 		return (error_creating_env());
 	status = 0;
+	g_sig_status = 0;
 	init_signals();
 	while (1)
 	{
+		g_sig_status = 0;
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(&env, status);
+		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		add_history(input);
 		free(input);

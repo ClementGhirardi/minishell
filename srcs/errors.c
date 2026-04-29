@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 15:06:07 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:59:35 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,13 @@ int	error_open(char *file_name)
 	ft_putstr_fd(file_name, 2);
 	ft_putendl_fd(": No such file or directory", 2);
 	return (1);
+}
+
+int	error_cmd(char *cmd_name)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd_name, 2);
+	ft_putendl_fd(": command not found\n", 2);
+	exit(127);
+	return (127);
 }

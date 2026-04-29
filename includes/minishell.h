@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:51:36 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:59:46 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,5 +161,6 @@ int			error_creating_env(void);
 int			error_here_doc(int *fd, int nb_line, char *limiter);
 void		*error_syntax(char *str, int *status);
 int			error_open(char *file_name);
+int			error_cmd(char *cmd_name);
 
 #endif

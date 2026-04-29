@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:35:29 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 18:28:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 		{
 			path = get_path(node->args[0], *env);
 			if (!path)
-				return (write(2, "minishell: ", 12),
-					write(2, node->args[0], ft_strlen(node->args[0])),
-					write(2, ": command not found\n", 21),
-					exit(127), 127);
+				return (error_cmd(node->args[0]));
 			execve(path, node->args, *env);
 			free(path);
 			return (perror("execve"), exit(126), 126);
@@ -117,6 +114,8 @@ int	executor(t_ast *ast, int status, char ***env)
 {
 	if (!ast)
 		return (1);
+	if (g_sig_status == 2)
+		return (130);
 	if (ast->type == NODE_CMD)
 		return (expander(ast, status, *env), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
@@ -125,8 +124,7 @@ int	executor(t_ast *ast, int status, char ***env)
 		|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC)
 	{
 		if (!ast->file && ast->fd == -1)
-			return (ft_putstr_fd("minishell: ", 2), ft_putendl_fd(
-					"syntax error near unexpected token `newline'", 2), 2);
+			return (error_syntax("`newline'", &status), 2);
 		if (ast->file)
 		{
 			expander(ast, status, *env);
