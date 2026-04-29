@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 15:52:13 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 16:56:44 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ typedef struct s_var
 	char	*line;
 }	t_var;
 
+extern volatile sig_atomic_t	g_sig_status;
+
 char		*ft_strjoin_and_free(char *s1, char *s2);
 
 char		*here_doc_word(char limiter);
@@ -158,5 +160,6 @@ int			executor(t_ast *ast, int status, char ***env);
 int			error_creating_env(void);
 int			error_here_doc(int *fd, int nb_line, char *limiter);
 void		*error_syntax(char *str, int *status);
+int			error_open(char *file_name);
 
 #endif

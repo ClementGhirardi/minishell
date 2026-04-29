@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 14:56:12 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 15:06:38 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 
 	fd = open_fd(node, node->file);
 	if (fd == -1)
-		return (perror("open"), 1);
+		return (error_open(node->file));
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);

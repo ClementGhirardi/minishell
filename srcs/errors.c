@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 15:24:47 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 15:06:07 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,12 @@ void	*error_syntax(char *str, int *status)
 	ft_putstr_fd("minishell: syntax error near unexpected token ", 2);
 	ft_putendl_fd(str, 2);
 	return (NULL);
+}
+
+int	error_open(char *file_name)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(file_name, 2);
+	ft_putendl_fd(": No such file or directory", 2);
+	return (1);
 }

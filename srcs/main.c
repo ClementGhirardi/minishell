@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 16:06:45 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:02:21 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,19 @@
 // ft_printf("\n\n");
 // // END TESTS
 
+volatile sig_atomic_t	g_sig_status = 0;
+
 static void	sigint_handler(int sig)
 {
-	(void)sig;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	(void) sig;
+	if (g_sig_status != 1)
+	{
+		ft_putendl_fd("", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	g_sig_status = 1;
 }
 
 static void	init_signals(void)

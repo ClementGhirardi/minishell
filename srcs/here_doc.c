@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 14:14:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 16:56:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	here_doc(t_data *data, int status, char **env)
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	while (ft_strncmp(buffer, data->limiter, size))
+	while (ft_strncmp(buffer, data->limiter, size) && !g_sig_status)
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
