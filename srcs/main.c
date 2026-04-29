@@ -104,6 +104,8 @@ void	minishell(char **input, char ***env)
 	t_token	*tokens;
 	t_ast	*ast;
 
+	if (input && *input && !**input)
+		return ;
 	tokens = lexer(input, *env);
 	// tmp = tokens;
 	// t_token *current = tokens;
