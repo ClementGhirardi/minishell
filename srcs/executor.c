@@ -97,8 +97,6 @@ char	*ft_strdup_no_empty_quotes(char *str)
 
 int	executor(t_ast *ast, char ***env)
 {
-	char	*tmp;
-
 	if (ast && ast->type == NODE_CMD)
 		return (expander(ast, *env), execute_cmd(ast, env));
 	else if (ast && ast->type == NODE_PIPE)
@@ -111,17 +109,7 @@ int	executor(t_ast *ast, char ***env)
 		// 			"syntax error near unexpected token `newline'", 2), 2);
 		if (ast->file && ast->type != NODE_HEREDOC)
 		{
-			tmp = ft_strdup_no_empty_quotes(ast->file);
 			expander(ast, *env);
-			if (access(tmp, F_OK))
-				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
-					ft_putendl_fd(": No such file or directory", 2),
-					free(tmp), 1);
-			else if (access(tmp, X_OK))
-				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
-					ft_putendl_fd(": Permission denied", 2),
-					free(tmp), 1);
-			free(tmp);
 		}
 		return (execute_redir(ast, env));
 	}

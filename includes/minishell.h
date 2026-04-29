@@ -134,6 +134,7 @@ char		*ft_getenv(char **env, const char *name);
 
 char		*extract_var_name(char *str, int *i, char **env);
 void		expander(t_ast *node, char **env);
+char		*expand_string(char *str, char **env);
 
 int			here_doc(char *limiter, char **env);
 char		*here_doc_pipe_op(char **env);

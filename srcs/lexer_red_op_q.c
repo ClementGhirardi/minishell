@@ -100,11 +100,9 @@ void	handle_and(char *input, t_token **tokens, int *i)
 	if (input[*i + 1] == '&')
 	{
 		add_token(tokens, new_token(TOKEN_AND, "&&"));
-		//(*i)++;
 		*i += 2;
 		return ;
 	}
-	//(*i)++;
 	handle_word(input, tokens, i);
 }
 

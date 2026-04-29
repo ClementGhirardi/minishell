@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static char	*expand_string(char *str, char **env);
+char	*expand_string(char *str, char **env);
 
 static int	is_var_char(char c)
 {
@@ -104,7 +104,7 @@ static char	*coucou(char *str, int *i, char **env)
 	return (tmp);
 }
 
-static char	*expand_string(char *str, char **env)
+char	*expand_string(char *str, char **env)
 {
 	int		i;
 	char	*result;

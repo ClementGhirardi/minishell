@@ -101,7 +101,8 @@ int	syntax_first_token(t_token *tokens)
 		return (0);
 	if (tokens->type == TOKEN_AND
 		|| tokens->type == TOKEN_OR
-		|| tokens->type == TOKEN_PIPE)
+		|| tokens->type == TOKEN_PIPE
+		|| tokens->type == TOKEN_C_BRACK)
 	{
 		syntax_error(tokens->value);
 		return (0);

@@ -45,7 +45,7 @@ char	*here_doc_pipe_op(char **env)
 	return (input);
 }
 
-static char	*expand_string(char *str, char **env)
+static char	*expand_string_heredoc(char *str, char **env)
 {
 	int		i;
 	char	*result;
@@ -107,7 +107,7 @@ int	here_doc_empty_limiter(char **env)
 			//i--;
 			break ;
 		}
-		input = expand_string(input, env);
+		input = expand_string_heredoc(input, env);
 		i++;
 	}
 	return (i++, free(input), close(fd[1]), status = 0, fd[0]);
@@ -123,7 +123,10 @@ int	here_doc(char *limiter, char **env)
 
 	first_line = ++i;
 	pipe(fd);
-	clean_limiter = ft_strdup_no_empty_quotes(limiter);
+	input = expand_string(ft_strdup(limiter), env);
+	clean_limiter = ft_strjoin_and_free(ft_strdup(""), ft_strdup_no_empty_quotes(input));
+	clean_limiter = ft_strjoin_and_free(ft_strdup(""), clean_limiter);
+	free(input);
 	if (!clean_limiter)
 		return (close(fd[1]), fd[0]);
 	if (!*clean_limiter)
@@ -141,7 +144,7 @@ int	here_doc(char *limiter, char **env)
 			//i--;
 			break ;
 		}
-		input = expand_string(input, env);
+		input = expand_string_heredoc(input, env);
 		i++;
 	}
 	return (status = 0, i++, close(fd[1]), free(clean_limiter),
