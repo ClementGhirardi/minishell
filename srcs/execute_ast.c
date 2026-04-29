@@ -37,8 +37,9 @@ int	execute_cmd(t_ast *node, char ***env)
 			execve(path, node->args, *env);
 			free(path);
 			return (ft_putstr_fd("minishell: ", 2),
-				ft_putstr_fd(node->args[0], 2),
-				ft_putendl_fd(": Permission denied", 2), exit(126), 126);
+				ft_putstr_fd(node->args[0], 2), ft_putendl_fd(
+					": Permission denied", 2), free_array(*env), ast_free(node),
+					 exit(126), 126);
 		}
 		waitpid(pid, &status, 0);
 		return (get_status());

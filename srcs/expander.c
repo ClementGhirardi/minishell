@@ -127,7 +127,7 @@ char	*expand_string(char *str, char **env)
 
 void	expander(t_ast *node, char **env)
 {
-	int	i;
+	int		i;
 
 	if (!node)
 		return ;

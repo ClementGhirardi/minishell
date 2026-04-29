@@ -1,0 +1,28 @@
+PROBLEMES
+
+Expander:
+- echo $9HOME devrait afficher HOME
+- echo $UID devrait afficher le contenu de UID
+- $HOMExxx devrait rien faire + ca leak
+- $HOMExxx entoure de squotes ou dquotes : leaks
+- leak quand $VAR_ENV (certaines variables d'environnement)
+
+Executor:
+- 'cmd -> heredoc ' : message d'erreur mal affiche (pareil si cmd')
+- cmd'|'cmd : mauvais message d'erreur
+- . et ou / devrait donner 'Is a directory' ? ou pas besoin de gerer ca ?
+- cat|rev ou rev|cat puis ctrlC : probleme d'affichage
+- heredoc << puis ctrl+D : echo $? donne 1 au lieu de 0
+
+Builtin
+- echo '' '' '' | cat -e : il manque un espace dans l'affichage
+- export $RIEN : ca devrait faire la meme chose que export tout seul
+- export arg='mot|mot' : marche pas
+- export '='='=' : mauvais message d'erreur
+- /bin/cd : mauvais message d'erreur
+- ls | exit devrait rien afficher
+- exit > out devrait rien ecrire dans out
+- sleep 3 | exit devrait sleep puis ne rien ecrire, pas sleep puis ecrire exit
+
+Autres:
+- leaks (still reachable si multiple pipes, parfois conditionnal jump si enter sans input)

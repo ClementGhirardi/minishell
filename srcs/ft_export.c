@@ -43,6 +43,7 @@ static char	*get_name(char *arg)
 	char	*name;
 
 	len = 0;
+	if (arg[len])
 	while (arg[len] && arg[len] != '=')
 		len++;
 	name = ft_substr(arg, 0, len);
