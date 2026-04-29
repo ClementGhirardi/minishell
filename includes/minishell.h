@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 16:56:44 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:51:36 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void		handle_last_pipe(char **input);
 t_token		*lexer(char **input);
 
 char		*ft_typetostr(t_token_type type);
-t_ast		*create_redir_node(int *status, t_data *data);
+t_ast		*create_redir_node(int *status, char **env, t_data *data);
 
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env,

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 15:51:01 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 15:52:47 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:52:19 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*ft_typetostr(t_token_type type)
 	return (NULL);
 }
 
-t_ast	*create_redir_node(int *status, t_data *data)
+t_ast	*create_redir_node(int *status, char **env, t_data *data)
 {
 	t_ast	*node;
 	char	*str;
@@ -44,6 +44,7 @@ t_ast	*create_redir_node(int *status, t_data *data)
 		return (NULL);
 	}
 	node->file = ft_strdup((*data->tokens)->value);
+	node->file = expand_string(node->file, *status, env);
 	if (!node->file)
 		return (free(node), NULL);
 	return (node);

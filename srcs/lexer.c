@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 10:36:50 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:36:39 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ static int	read_word(char *input, int *i)
 	char	quote;
 
 	start = *i;
-	while (input[*i] && input[*i] != ' ' && input[*i] != '\n')
+	while (input[*i] && input[*i] != ' ' && input[*i] != '\n'
+		&& input[*i] != '|')
 	{
 		quote = ' ';
 		if (input[*i] == '\'' || input[*i] == '\"')

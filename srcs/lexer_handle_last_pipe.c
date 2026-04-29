@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 13:29:20 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:23:00 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	consecutive_pipe(char *input)
 		{
 			if (consecutive == 0)
 				consecutive = 1;
-			if (consecutive == 1)
+			else if (consecutive == 1)
 				return (1);
 		}
 		else if (input[i] != ' ')

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 15:52:42 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/29 17:53:18 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 {
 	t_ast	*node;
 
-	node = create_redir_node(status, data);
+	node = create_redir_node(status, env, data);
 	if (!node)
 		return (NULL);
 	if (r_type == TOKEN_REDIR_IN)
