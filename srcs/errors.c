@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:59:35 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/30 16:48:43 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,16 @@ int	error_creating_env(void)
 	return (0);
 }
 
-int	error_here_doc(int *fd, int nb_line, char *limiter)
+int	error_here_doc(int *fd, int nb_line, char *limiter, int status)
 {
+	if (status == 130)
+		return (close(fd[1]), fd[0]);
 	ft_putstr_fd("\nminishell: warning: here-document at line ", 2);
 	ft_putnbr_fd(nb_line, 2);
 	ft_putstr_fd(" delimited by end-of-file (wanted `", 2);
 	ft_putstr_fd(limiter, 2);
 	ft_putendl_fd("')", 2);
-	close(fd[1]);
-	return (fd[0]);
+	return (close(fd[1]), fd[0]);
 }
 
 void	*error_syntax(char *str, int *status)
@@ -49,7 +50,7 @@ int	error_cmd(char *cmd_name)
 {
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd_name, 2);
-	ft_putendl_fd(": command not found\n", 2);
+	ft_putendl_fd(": command not found", 2);
 	exit(127);
 	return (127);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 19:07:56 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/30 16:44:24 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,7 @@ static void	sigint_handler(int sig)
 	if (g_sig_status == 3)
 	{
 		g_sig_status = 4;
-		rl_erase_empty_line = 1;
-		rl_done = 1;
-		ft_putendl_fd("", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		return ;
+		exit(130);
 	}
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
@@ -118,7 +113,7 @@ void	minishell(int *status, char **input, char ***env)
 	if (tokens)
 	{
 		ast = parser(tokens, status, *env, input);
-		if (ast)
+		if (ast && g_sig_status != 4)
 		{
 			*status = executor(ast, *status, env);
 			ast_free(ast);
@@ -149,7 +144,8 @@ int	main(int ac, char **av, char **envp)
 			ft_exit(&env, status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
-		add_history(input);
+		if (status != 130)
+			add_history(input);
 		free(input);
 	}
 	ft_exit(&env, status);

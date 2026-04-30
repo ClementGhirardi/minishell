@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:59:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/30 16:43:58 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,9 +126,9 @@ void		expander(t_ast *node, int status, char **env);
 
 int			idx_to_next_line(char *str);
 
-int			get_buffer(char **buffer, int *nb_line, int status, char **env);
+int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
 
-int			here_doc(t_data *data, int status, char **env);
+int			here_doc(t_data *data, int *status, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
@@ -158,7 +158,7 @@ int			run_builtin(char **args, char ***env, int status);
 int			executor(t_ast *ast, int status, char ***env);
 
 int			error_creating_env(void);
-int			error_here_doc(int *fd, int nb_line, char *limiter);
+int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
 void		*error_syntax(char *str, int *status);
 int			error_open(char *file_name);
 int			error_cmd(char *cmd_name);

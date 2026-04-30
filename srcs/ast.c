@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:53:18 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/30 16:07:34 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 	{
 		node->type = NODE_HEREDOC;
 		data->limiter = node->file;
-		node->fd = here_doc(data, *status, env);
+		node->fd = here_doc(data, status, env);
 	}
 	else
 		node->fd = -1;
