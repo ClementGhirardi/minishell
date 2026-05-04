@@ -12,6 +12,22 @@
 
 #include "../includes/minishell.h"
 
+int	error_open(char *file)
+{
+	if (!file)
+		return (ft_putendl_fd("minishell: : No such file or directory", 2), 1);
+	if (file[0] == '$')
+		return (1);
+	if (access(file, F_OK))
+		return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(file, 2),
+			ft_putendl_fd(": No such file or directory", 2), 1);
+	if (access(file, X_OK))
+		return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(file, 2),
+			ft_putendl_fd(": Permission denied", 2), 1);
+	return (ft_putstr_fd("minishell: ", 2),
+		ft_putendl_fd(": open failed", 2), 1);
+}
+
 void	error_heredocword(char limiter, char **env)
 {
 	if (limiter == '\'' || limiter == '"')
@@ -21,12 +37,12 @@ void	error_heredocword(char limiter, char **env)
 		ft_putchar_fd(limiter, 2);
 		ft_putchar_fd('\'', 2);
 		ft_putendl_fd("", 2);
-		ft_exit(NULL, NULL, &env);
+		ft_exit(NULL, &env);
 	}
 	else
 	{
 		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
-		ft_exit(NULL, NULL, &env);
+		ft_exit(NULL, &env);
 	}
 }
 

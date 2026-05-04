@@ -12,7 +12,44 @@
 
 #include "../includes/minishell.h"
 
-char	*expand_string(char *str, char **env);
+int	dollar_finder(char *file)
+{
+	int	i;
+
+	i = 0;
+	while (file[i])
+	{
+		if (file[i] == '$')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char	*expand_dollar_in_filename(char *file, char **env)
+{
+	char	*filename;
+	char	*tmp;
+	int		i;
+	int		start;
+
+	i = 0;
+	filename = NULL;
+	while (file[i])
+	{
+		start = i;
+		if (file[i] == '$')
+			i++;
+		while (file[i] && file[i] != '$')
+			i++;
+		tmp = ft_substr(file, start, i - start);
+		if (!tmp)
+			return (NULL);
+		tmp = expand_string(tmp, env);
+		filename = ft_strjoin_and_free(filename, tmp);
+	}
+	return (filename);
+}
 
 static int	is_var_char(char c)
 {
@@ -24,32 +61,22 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-// char	*extract_var_name(char *str, int *i, char **env)
-// { ? ISVARCHAR
-// 	int		start;
-// 	char	*tmp;
-// 	char	*var;
+char	*question_mark(char *str, int *i, char **env)
+{
+	char	*tmp;
+	char	*var;
+	int		start;
 
-// 	if (!str[++(*i)])
-// 		return (ft_strdup(str));
-// 	start = *i;
-// 	if (str[*i] == '?')
-// 	{
-// 		(*i)++;
-// 		var = ft_strdup(ft_itoa(status));
-// 		return (var);
-// 	}
-// 	while (is_var_char(str[*i]))
-// 		(*i)++;
-// 	tmp = ft_substr(str, start, *i - start);
-// 	if (!tmp)
-// 		return (NULL);
-// 	var = ft_getenv(env, tmp);
-// 	if (!var)
-// 		return (NULL);
-// 	free(tmp);
-// 	return (var);
-// }
+	(*i)++;
+	tmp = ft_itoa(status);
+	var = ft_strdup(tmp);
+	free(tmp);
+	start = *i;
+	while ((str[*i]))
+		(*i)++;
+	return (ft_strjoin_and_free(var, expand_string(
+				ft_substr(str, start, *i - start), env)));
+}
 
 char	*extract_var_name(char *str, int *i, char **env)
 {
@@ -61,17 +88,7 @@ char	*extract_var_name(char *str, int *i, char **env)
 		return (ft_strdup(str));
 	start = *i;
 	if (str[*i] == '?')
-	{
-		(*i)++;
-		tmp = ft_itoa(status);
-		var = ft_strdup(tmp);
-		free(tmp);
-		start = *i;
-		while ((str[*i]))
-			(*i)++;
-		return (ft_strjoin_and_free(var, expand_string(
-					ft_substr(str, start, *i - start), env)));
-	}
+		return (question_mark(str, i, env));
 	if (!is_var_char(str[*i]))
 		return (ft_strdup("$"));
 	while (is_var_char(str[*i]))
@@ -84,7 +101,8 @@ char	*extract_var_name(char *str, int *i, char **env)
 	return (var);
 }
 
-static char	*coucou(char *str, int *i, char **env)
+
+static char	*expand_quotes(char *str, int *i, char **env)
 {
 	char	quote;
 	char	*tmp;
@@ -92,12 +110,16 @@ static char	*coucou(char *str, int *i, char **env)
 
 	quote = str[(*i)++];
 	tmp = ft_strdup("");
+	if (!tmp)
+		return (NULL);
 	while (str[*i] && str[*i] != quote)
 	{
 		if (quote != '\'' && str[*i] == '$')
 			var = extract_var_name(str, i, env);
 		else
 			var = ft_substr(str, (*i)++, 1);
+		if (!var)
+			return (free(tmp), NULL);
 		tmp = ft_strjoin_and_free(tmp, var);
 	}
 	(*i)++;
@@ -106,20 +128,24 @@ static char	*coucou(char *str, int *i, char **env)
 
 char	*expand_string(char *str, char **env)
 {
-	int		i;
 	char	*result;
 	char	*tmp;
+	int		i;
 
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '\"')
-			tmp = coucou(str, &i, env);
+			tmp = expand_quotes(str, &i, env);
 		else if (str[i] == '$')
 			tmp = extract_var_name(str, &i, env);
 		else
 			tmp = ft_substr(str, i++, 1);
+		if (!tmp)
+			return (free(str), free(result), NULL);
 		result = ft_strjoin_and_free(result, tmp);
 	}
 	return (free(str), result);
@@ -127,22 +153,20 @@ char	*expand_string(char *str, char **env)
 
 void	expander(t_ast *node, char **env)
 {
-	int		i;
+	char	**new;
 
-	if (!node)
-		return ;
-	if (node->args)
+	if (node && node->args)
 	{
-		i = 0;
-		while (node->args[i])
-		{
-			node->args[i] = expand_string(node->args[i], env);
-			i++;
-		}
+		new = filter_and_dup_array(node->args, env);
+		free(node->args);
+		node->args = new;
 	}
-	if (node->file)
+	if (node && node->file)
 	{
-		node->file = expand_string(node->file, env);
+		if (dollar_finder(node->file)
+			&& !expand_dollar_in_filename(node->file, env))
+			return ;
+		node->file = expand_dollar_in_filename(node->file, env);
 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
 		{
 			free(node->file);

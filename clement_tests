@@ -1,0 +1,218 @@
+TESTS
+
+readline.supp
+{
+	ignore_libreadline_leaks
+	Memcheck:Leak
+	...
+	obj:*/libreadline.so.*
+}
+valgrind --track-fds=yes --leak-check-full --show-leak-kinds=all --suppressions=readline.supp
+
+
+
+BUILTINS PAS TESTEES
+
+
+-----BAD SYNTAX-----
+| (error + leak)
+| ls
+< < (leak)
+> > (leak)
+<< << (leak)
+>> >> (leak)
+<<<<<<<< (leak)
+>>>>>>>> (leak)
+ls || (error + leak)
+redir pipe [ex: <<|]  (error + leak)
+random redirs [ex: <<>><<] (leak)
+
+
+-----PIPES-----
+
+ls | wc (leak)
+ls | cat | cat | wc (leak)
+ls|wc (leak)
+wc | ls (leak)
+'ls' | 'wc' (leak)
+'ls|wc' (error + leak)
+ls "|" cat "|" wc (error + leak)
+ls"|"wc (error + leak)
+ls | (leak)
+ls | wc "|" (error + leak)
+ls "|" wc | (error + leak)
+ls | cat | rien (leak)
+rien | ls | wc (leak)
+ls | rien | wc (leak)
+
+-----REDIRECTIONS-----
+
+HEREDOC:
+<< limiter (error (sortie de heredoc quand ligne vide) + leak)
+<< '' (leak)
+<< $rien (error + leak)
+<< $existing (error + leak)
+ctrl+C (leak)
+ctrl+D (leak)
+historique
+$existing dans le heredoc (error + leak)
+$rien dans le heredoc (segfault)
+heredoc dans heredoc (leak)
+<< ok' (error + leak)
+
+AUTRES REDIRECTIONS:
+file_no_permissions (error)
+does_not_exit
+>> not_empty_file
+< ls
+
+
+----MULTIPLE OPERATIONS-----
+ls | cat | wc > out (leak)
+< infile ls | cat | wc >> out (leak)
+<< limiter ls | wc > out (leak)
+
+
+-----QUOTES-----
+'s'le'ep' 3
+''ls''
+$e'xis'ting (error + leak)
+'ls' '-l'
+ls > '' (segfault)
+"" (error + leak)
+' (error + leak)
+" (error + leak)
+"ls | 'wc'" (error + leak)
+'"ls" | wc' (error + leak)
+"'ls'" (leak)
+'"ls' (error + leak)
+"'"'" (error : ' dans le heredoc devrait suffire a quitter, + leak)
+
+-----EXPANDER-----
+$? (leak)
+echo $rien (leak)
+$rien (leak)
+$existing (leak)
+$PATH (error : devrait afficher path + no such file, + leak)
+"'$existing'" (leak)
+'"$existing"' (leak)
+$'exi'sti'ng'm (error + leak)
+$"existing" (error + leak)
+$ (error + leak)
+$?$? (leak)
+$?$ (error + leak)
+$?qwerty (leak)
+$rienHOME (leak)
+'$existing' (leak)
+"$existing" (leak)
+ls > $file (leak)
+ls > $rien (error + leak)
+ls | "$ls" (leak)
+ls | $rien (error + leak)
+
+export arg1=export ; export arg2=argument ; export arg3='=' ; export arg4=ok ;
+$arg1 $arg2$arg3$arg4
+echo $argument
+doit donner : ok
+(leak)
+
+$TERM? (leak)
+"$"USER (error + leak)
+'$'USER (leak)
+echo $45 (error + leak)
+
+-----BUILTINS----- (pas testees)
+ECHO:
+echo | cat -e
+echo '' '' '' | cat -e
+echoo ok
+ech ok
+echo-n ok
+echo n ok
+echo 1 2 3
+echo -nnnn ok
+echo -nj ok
+echo -nn -nnnn -n
+echo -n -n -n ok
+echo -n-n-n-n ok
+echo --n ok
+echo -n '' | cat -e
+echo ok
+echo -n ok
+echo ' + historique 
+echo ' puis << dans heredoc
+echo " + ctrlC -> echo $?
+echo " + ctrlD -> echo $?
+echo $HOME
+echo $arg
+echo \n
+echo "       " | cat -e
+echo ' cat
+<echo<
+echo |
+echo -n <<<<
+echo "'ok"''ok''ok"ok""'"
+echo | echo
+
+EXPORT:
+export ===
+export
+export arg
+export arg=
+export arg=ok
+export 'arg'=ok
+export arg'='ok
+export arg='ok'
+export 'arg=ok'
+export arg1=$arg
+export $arg1=ok
+export a'r'g=o'k'
+export =ok (a)
+export arg='ok|ok'
+export arg1='$arg'
+exports arg=erreur
+export ^arg=ok
+export arg^=ok
+export $arg$rien=ok
+exportarg=ok
+export arg=''
+
+EXIT:
+exit
+exit 4
+exit 4 5
+exit ""
+exit "" ""
+exit > out
+exit | sleep 5
+sleep 5 | exit
+ls | exit 4
+exits
+exit exit
+
+
+-----COMMANDS-----
+sleep 5 + ctrl+C
+sleep 5 + ctrl+D
+cat|rev et rev|cat puis ctrl+c
+ls ls ls
+
+-----AUTRES-----
+./Makefile (error (pb affichage) + leak)
+./minishell
+enter (leak si c'est le 1er input)
+ok (leak)
+espaces (comme enter)
+
+
+-----STATUS-----
+prompt ctrl+C
+prompt ctrl+D
+prompt ctrl+\
+ctrl+D
+ctrl+\
+echo $? apres ctrl+C (error)
+echo $? apres ls
+echo $? apres lsss
+echo $? apres ./Makefile
+

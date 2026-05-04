@@ -137,7 +137,8 @@ int	here_doc(char *limiter, char **env)
 		ft_putstr_fd(input, fd[1]);
 		free(input);
 		input = readline("> ");
-		if (!input)
+		//ft_printf("status = %d\n", status);
+		if (!input || status == 130)
 		{
 			error_heredoc(first_line, clean_limiter);
 			close(fd[1]);
@@ -147,6 +148,11 @@ int	here_doc(char *limiter, char **env)
 		input = expand_string_heredoc(input, env);
 		i++;
 	}
+	// if (status == 130)
+	// {
+	// 	error_heredoc(first_line, clean_limiter);
+	// 	close(fd[1]);
+	// }
 	return (status = 0, i++, close(fd[1]), free(clean_limiter),
 		free(input), fd[0]);
 }

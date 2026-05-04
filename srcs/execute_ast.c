@@ -14,15 +14,48 @@
 
 int	executor(t_ast *ast, char ***env);
 
+// int	execute_cmd(t_ast *node, char ***env)
+// {
+// 	pid_t	pid;
+// 	char	*path;
+
+// 	// if (!node->args)
+// 	// 	return (expander(node->left, status, env), execute_cmd(node->left, status, env));
+// 	if (is_builtin(node->args[0]))
+// 		return (run_builtin(node, node->args, env));
+	
+// 	else
+// 	{
+// 		pid = fork();
+// 		if (pid == 0)
+// 		{
+// 			path = get_path(node->args[0], *env);
+// 			if (!path)
+// 				return (write(2, "minishell: ", 12),
+// 					write(2, node->args[0], ft_strlen(node->args[0])),
+// 					write(2, ": command not found\n", 21), free_array(*env),
+// 					ast_free(node), exit(127), 127);
+// 			execve(path, node->args, *env);
+// 			free(path);
+// 			return (ft_putstr_fd("minishell: ", 2),
+// 				ft_putstr_fd(node->args[0], 2), ft_putendl_fd(
+// 					": Permission denied", 2), free_array(*env), ast_free(node),
+// 					 exit(126), 126);
+// 		}
+// 		waitpid(pid, (int *)&status, 0);
+// 	}
+// 	return (get_status());
+// }
+
 int	execute_cmd(t_ast *node, char ***env)
 {
 	pid_t	pid;
 	char	*path;
 
-	// if (!node->args)
-	// 	return (expander(node->left, status, env), execute_cmd(node->left, status, env));
+	if (!node->args[0])
+		return (0);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node, node->args, env));
+		return (run_builtin(node, &(node->args[0]), env));
 	else
 	{
 		pid = fork();
@@ -41,8 +74,7 @@ int	execute_cmd(t_ast *node, char ***env)
 					": Permission denied", 2), free_array(*env), ast_free(node),
 					 exit(126), 126);
 		}
-		waitpid(pid, &status, 0);
-		return (get_status());
+		return (waitpid(pid, (int *)&status, 0), get_status());
 	}
 }
 
@@ -78,15 +110,22 @@ int	execute_pipe(t_ast *node, char ***env)
 		//exit(executor(node->right, env));
 	}
 	return (close(fd[0]), close(fd[1]),
-		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),
+		waitpid(pid[0], (int *)&status, 0), waitpid(pid[1], (int *)&status, 0),
 		get_status());
 }
 
-static int	open_fd(t_ast *node, char *file)
+static int	open_fd(t_ast *node, char *file, char **env)
 {
 	int			fd;
 
 	fd = -1;
+	if (dollar_finder(node->file) && !expand_dollar_in_filename(node->file, env))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(node->file, 2);
+		ft_putendl_fd(": ambiguous redirect", 2);
+		return (fd);
+	}
 	if (node->type == NODE_REDIR_IN)
 		fd = open(file, O_RDONLY);
 	else if (node->type == NODE_HEREDOC)
@@ -103,10 +142,11 @@ int	execute_redir(t_ast *node, char ***env)
 	int	fd;
 	int	std[2];
 
-	fd = open_fd(node, node->file);
+	fd = -1;
+	if (node->file)
+		fd = open_fd(node, node->file, *env);
 	if (fd == -1)
-		return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(node->file, 2),
-			ft_putendl_fd(": Permission denied", 2), 1); //perror("open")
+		return (error_open(node->file));
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);

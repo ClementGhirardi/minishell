@@ -1,4 +1,4 @@
-PROBLEMES
+PROBLEMES BONUS
 
 Expander:
 - echo $9HOME devrait afficher HOME
@@ -13,6 +13,8 @@ Executor:
 - . et ou / devrait donner 'Is a directory' ? ou pas besoin de gerer ca ?
 - cat|rev ou rev|cat puis ctrlC : probleme d'affichage
 - heredoc << puis ctrl+D : echo $? donne 1 au lieu de 0
+- heredoc : ctrl+C doit quitter
+- heredoc : historique (attention a $arg)
 
 Builtin
 - echo '' '' '' | cat -e : il manque un espace dans l'affichage
@@ -26,3 +28,11 @@ Builtin
 
 Autres:
 - leaks (still reachable si multiple pipes, parfois conditionnal jump si enter sans input)
+
+
+
+
+PROBLEMES MANDATORY
+
+- commande qui n'existe pas : une newline en trop apres le massage d'erreur
+- heredoc : limiterxxx devrait pas quitter le heredoc

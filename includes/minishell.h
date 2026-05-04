@@ -25,7 +25,8 @@
 # include <string.h>
 # include <errno.h>
 
-extern int	status;
+//extern int	status;
+extern volatile sig_atomic_t	status;
 
 typedef enum e_token_type
 {
@@ -135,6 +136,11 @@ char		*ft_getenv(char **env, const char *name);
 char		*extract_var_name(char *str, int *i, char **env);
 void		expander(t_ast *node, char **env);
 char		*expand_string(char *str, char **env);
+char		*expand_dollar_in_filename(char *file, char **env);
+int			dollar_finder(char *file);
+
+char		**filter_and_dup_array(char **array, char **env);
+int			is_valid_variable(char *arg, char **env);
 
 int			here_doc(char *limiter, char **env);
 char		*here_doc_pipe_op(char **env);
@@ -161,7 +167,7 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
-int			ft_exit(t_ast **ast, char **args, char ***env);
+int			ft_exit(t_ast **ast, char ***env);
 int			is_builtin(char *cmd);
 int			run_builtin(t_ast *ast, char **args, char ***env);
 
@@ -173,5 +179,6 @@ int			execute_cmd(t_ast *node, char ***env);
 
 void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, char **env);
+int			error_open(char *file);
 
 #endif

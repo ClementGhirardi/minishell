@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	status = 0;
+volatile sig_atomic_t	status = 0;
 
 // void	ast_show(t_ast *ast)
 // {
@@ -104,7 +104,7 @@ void	minishell(char **input, char ***env)
 	t_token	*tokens;
 	t_ast	*ast;
 
-	if (input && *input && !**input)
+	if (!input || !*input || !**input)
 		return ;
 	tokens = lexer(input, *env);
 	// tmp = tokens;
@@ -161,9 +161,9 @@ int	main(int ac, char **av, char **envp)
 	{
 		input = readline("minishell$ ");
 		if (!input)
-			ft_exit(NULL, NULL, &env);
+			ft_exit(NULL, &env);
 		minishell(&input, &env);
 		free(input);
 	}
-	ft_exit(NULL, NULL, &env);
+	ft_exit(NULL, &env);
 }
