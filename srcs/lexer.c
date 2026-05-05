@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:36:39 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/05 15:48:12 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	handle_quotes(char **input)
+static int	handle_quotes(char **input)
 {
 	int	quote[2];
 	int	i;
 
 	if (!(*input))
-		return ;
+		return (1);
 	quote[0] = 0;
 	quote[1] = 0;
 	i = 0;
@@ -30,15 +30,9 @@ static void	handle_quotes(char **input)
 			quote[1] = (quote[1] + 1) % 2;
 		i++;
 	}
-	if (quote[0])
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\'')));
-	else if (quote[1])
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"), here_doc_word('\"')));
-	else
-		return ;
-	lexer(input);
+	if (quote[0] || quote[1])
+		return (1);
+	return (0);
 }
 
 static void	handle_redir(char *input, t_token **tokens, int *i, int dir)
@@ -76,19 +70,20 @@ static int	read_word(char *input, int *i)
 
 	start = *i;
 	while (input[*i] && input[*i] != ' ' && input[*i] != '\n'
-		&& input[*i] != '|')
+		&& input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
 	{
 		quote = ' ';
-		if (input[*i] == '\'' || input[*i] == '\"')
+		while (input[*i] && input[*i] != quote && input[*i] != '\n')
 		{
-			quote = input[*i];
+			if (quote == ' '
+				&& (input[*i] == '|' || input[*i] == '<' || input[*i] == '>'))
+				break ;
+			if (quote == ' ' && (input[*i] == '\'' || input[*i] == '\"'))
+				quote = input[*i];
+			else if (quote != ' ' && (input[*i] == quote))
+				quote = ' ';
 			(*i)++;
 		}
-		while (input[*i] && input[*i] != '|' && input[*i] != '<'
-			&& input[*i] != '>' && input[*i] != quote && input[*i] != '\n')
-			(*i)++;
-		if (input[*i] == quote && quote != ' ')
-			(*i)++;
 	}
 	return (start);
 }
@@ -111,13 +106,14 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 			add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
 }
 
-t_token	*lexer(char **input)
+t_token	*lexer(char **input, int *status, char **env)
 {
 	t_token	*tokens;
 	int		i;
 
-	handle_last_pipe(input);
-	handle_quotes(input);
+	handle_last_pipe(input, status, env);
+	if (handle_quotes(input))
+		return (NULL);
 	tokens = NULL;
 	i = 0;
 	while ((*input)[i])

@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/30 16:07:34 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/05 14:36:51 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 	node = create_redir_node(status, env, data);
 	if (!node)
 		return (NULL);
+	node->args = NULL;
 	if (r_type == TOKEN_REDIR_IN)
 		node->type = NODE_REDIR_IN;
 	if (r_type == TOKEN_REDIR_OUT)
@@ -47,11 +48,12 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 		node->type = NODE_HEREDOC;
 		data->limiter = node->file;
 		node->fd = here_doc(data, status, env);
+		if (node->fd == -1)
+			return (free(node->file), free(node), NULL);
 	}
 	else
 		node->fd = -1;
-	return (node->args = NULL, node->left = NULL, node->right = NULL,
-		node);
+	return (node->left = NULL, node->right = NULL, node);
 }
 
 t_ast	*ast_new_pipe(t_ast *left, t_ast *right)

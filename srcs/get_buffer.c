@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/30 16:34:15 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/05 15:30:59 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
 	waitpid(pid, &tmp, 0);
 	*status = get_status(tmp);
 	if (*status == 130)
-		return (close(fd[0]), 0);
+		return (g_sig_status = 4, close(fd[0]), 0);
 	*buffer = get_next_line(fd[0]);
 	if (!(*buffer))
 		return (close(fd[0]), 0);
 	if (!ft_strncmp(*buffer, "\n", 1))
 		return (free(*buffer), 0);
-	*buffer = expand_string(*buffer, *status, env);
+	if (*nb_line != -1)
+		*buffer = expand_string(*buffer, *status, env);
 	(*nb_line)++;
 	return (close(fd[0]), 1);
 }

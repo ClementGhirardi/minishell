@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/28 16:07:12 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/05 13:52:19 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ t_ast	*parser(t_token *tokens, int *status, char **env, char **input)
 {
 	t_ast	*left;
 	t_ast	*right;
+	t_ast	*new_ast;
 
 	if (!tokens)
 		return (NULL);
@@ -114,8 +115,11 @@ t_ast	*parser(t_token *tokens, int *status, char **env, char **input)
 		tokens = tokens->next;
 		right = parse_instructions(&tokens, status, env, input);
 		if (left && !right)
-			return (NULL);
-		left = ast_new_pipe(left, right);
+			return (ast_free(left), NULL);
+		new_ast = ast_new_pipe(left, right);
+		if (!new_ast)
+			return (ast_free(left), ast_free(right), NULL);
+		left = new_ast;
 	}
 	return (left);
 }

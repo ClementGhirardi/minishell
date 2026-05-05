@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handle_last_pipe.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:23:00 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/05 15:47:58 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,49 @@ static int	consecutive_pipe(char *input)
 	return (0);
 }
 
-void	handle_last_pipe(char **input)
+static int	only_one_pipe(char *input)
 {
+	int	pipe;
+	int	c;
 	int	i;
+
+	pipe = 0;
+	c = 0;
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '|')
+			pipe++;
+		else if (input[i] != ' ')
+			c = 1;
+		i++;
+	}
+	if (pipe == 1 && c == 0)
+		return (1);
+	return (0);
+}
+
+void	handle_last_pipe(char **input, int *status, char **env)
+{
+	char	*tmp;
+	int		i;
 
 	if (!(*input))
 		return ;
-	if (consecutive_pipe(*input))
+	if (consecutive_pipe(*input) || only_one_pipe(*input))
 		return ;
 	i = ft_strlen(*input) - 1;
 	while ((*input)[i] && (*input)[i] == ' ')
 		i--;
 	if (i >= 0 && (*input)[i] == '|')
+	{
+		tmp = here_doc_word('\n', status, env);
+		if (!tmp)
+			return ;
 		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup(" "), here_doc_word('\n')));
-	else
-		return ;
-	lexer(input);
+				ft_strjoin_and_free(ft_strdup(" "), tmp));
+		handle_last_pipe(input, status, env);
+	}
+	if (g_sig_status == 4)
+		add_history(*input);
 }

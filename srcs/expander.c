@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/29 17:30:41 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/05 15:42:01 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,9 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 	(*i)++;
 	start = *i;
 	if (str[*i] == '?')
-	{
-		(*i)++;
-		var = ft_strdup(ft_itoa(status));
-		return (var);
-	}
+		return ((*i)++, ft_strdup(ft_itoa(status)));
+	if (str[*i] == '$')
+		return ((*i)++, ft_getenv(env, "$"));
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);

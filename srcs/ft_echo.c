@@ -1,0 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/09 14:29:14 by adbarth           #+#    #+#             */
+/*   Updated: 2026/05/04 15:33:24 by clement-ghi      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/minishell.h"
+
+int	check_first_arg(char *s)
+{
+	int	i;
+
+	i = 2;
+	if (s[0] != '-' || s[1] != 'n')
+		return (0);
+	while (s[i])
+	{
+		if (s[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	ft_display(char **args)
+{
+	int	i;
+
+	i = -1;
+	while (args[++i])
+	{
+		if (!args[i][0])
+			ft_printf(" ");
+		else
+		{
+			ft_printf("%s", args[i]);
+			if (args[i + 1] && args[i + 1][0])
+				ft_printf(" ");
+		}
+	}
+}
+
+int	ft_echo(char **args)
+{
+	int	i;
+
+	i = 2;
+	if (!args[1])
+		return (ft_printf("\n"), 0);
+	if (check_first_arg(args[1]))
+	{
+		if (!args[2])
+			return (0);
+		while (check_first_arg(args[i]))
+			i++;
+		ft_display(&args[i]);
+	}
+	else
+	{
+		ft_display(&args[1]);
+		ft_printf("\n");
+	}
+	return (0);
+}

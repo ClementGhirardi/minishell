@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/30 16:43:58 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/05 15:48:03 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/wait.h>
 # include <string.h>
 # include <errno.h>
+# include <dirent.h>
 
 typedef enum e_token_type
 {
@@ -94,15 +95,15 @@ extern volatile sig_atomic_t	g_sig_status;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
 
-char		*here_doc_word(char limiter);
+char		*here_doc_word(char limiter, int *status, char **env);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-void		handle_last_pipe(char **input);
+void		handle_last_pipe(char **input, int *status, char **env);
 
-t_token		*lexer(char **input);
+t_token		*lexer(char **input, int *status, char **env);
 
 char		*ft_typetostr(t_token_type type);
 t_ast		*create_redir_node(int *status, char **env, t_data *data);
@@ -140,6 +141,8 @@ char		**sort_array(char **array);
 
 int			ft_setenv(char ***env, const char *name, const char *value);
 
+int			ft_echo(char **args);
+
 int			ft_cd(char **args, char ***env);
 
 int			ft_pwd(void);
@@ -150,7 +153,7 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
-int			ft_exit(char ***env, int status);
+int			ft_exit(char **args, char ***env, int status);
 
 int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env, int status);
@@ -162,5 +165,7 @@ int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
 void		*error_syntax(char *str, int *status);
 int			error_open(char *file_name);
 int			error_cmd(char *cmd_name);
+
+int			error_exec_cmd(char *arg, int *status, char **env);
 
 #endif

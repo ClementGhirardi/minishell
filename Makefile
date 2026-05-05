@@ -30,6 +30,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/get_status.c \
 	$(SRCS_DIR)/array.c \
 	$(SRCS_DIR)/ft_setenv.c \
+	$(SRCS_DIR)/ft_echo.c \
 	$(SRCS_DIR)/ft_cd.c \
 	$(SRCS_DIR)/ft_pwd.c \
 	$(SRCS_DIR)/ft_export.c \
@@ -38,7 +39,8 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_exit.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
-	$(SRCS_DIR)/errors.c \
+	$(SRCS_DIR)/errors0.c \
+	$(SRCS_DIR)/errors1.c \
 
 SRCS_BONUS = 
 
