@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:25:33 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:29:46 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,18 +86,17 @@ int	here_doc(t_data *data, int *status, char **env)
 {
 	static int	nb_line;
 	char		*buffer;
-	int			size;
 	int			fd[2];
 
 	if (pipe(fd) < 0 || g_sig_status == 4)
 		return (-1);
 	if (read_previous(data, *status, env, fd))
 		return (close(fd[1]), fd[0]);
-	size = ft_strlen(data->limiter);
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter, *status));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	while (ft_strncmp(buffer, data->limiter, size) && g_sig_status != 4)
+	while (ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
+		&& g_sig_status != 4)
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
