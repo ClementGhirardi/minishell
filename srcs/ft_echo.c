@@ -6,13 +6,13 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 14:29:14 by adbarth           #+#    #+#             */
-/*   Updated: 2026/05/04 15:33:24 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:23:14 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_arg(char *s)
+static int	check_first_arg(char *s)
 {
 	int	i;
 
@@ -28,7 +28,7 @@ int	check_first_arg(char *s)
 	return (1);
 }
 
-void	ft_display(char **args)
+static void	ft_display(char **args)
 {
 	int	i;
 

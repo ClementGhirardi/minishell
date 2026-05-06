@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:48:03 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:24:29 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ void		handle_last_pipe(char **input, int *status, char **env);
 
 t_token		*lexer(char **input, int *status, char **env);
 
-char		*ft_typetostr(t_token_type type);
 t_ast		*create_redir_node(int *status, char **env, t_data *data);
 
 t_ast		*ast_new_cmd(char **args);

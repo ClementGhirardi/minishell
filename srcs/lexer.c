@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:48:12 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 09:59:44 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ static int	read_word(char *input, int *i)
 				quote = ' ';
 			(*i)++;
 		}
+		if (input[*i] == quote && quote != ' ')
+			(*i)++;
 	}
 	return (start);
 }

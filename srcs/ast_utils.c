@@ -6,13 +6,13 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 15:51:01 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 11:18:08 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:22:06 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*ft_typetostr(t_token_type type)
+static char	*ft_typetostr(t_token_type type)
 {
 	if (type == TOKEN_PIPE)
 		return (ft_strdup("`|'"));

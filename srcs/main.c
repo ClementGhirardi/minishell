@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:42:30 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:26:05 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(int *status, char **input, char ***env)
+static void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;

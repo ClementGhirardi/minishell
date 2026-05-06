@@ -6,13 +6,13 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 14:41:00 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:25:33 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	begin(t_data *data, t_var *v)
+static int	begin(t_data *data, t_var *v)
 {
 	v->current = *data->tokens;
 	if (!v->current)
@@ -32,7 +32,7 @@ int	begin(t_data *data, t_var *v)
 	return (1);
 }
 
-int	when_find_limiter(size_t i, t_var *v)
+static int	when_find_limiter(size_t i, t_var *v)
 {
 	if (i == ft_strlen(v->value))
 		return (free_token(v->current), (v->previous)->next = NULL, 1);
@@ -42,7 +42,7 @@ int	when_find_limiter(size_t i, t_var *v)
 	return (free(v->value), (v->current)->value = v->new_value, 1);
 }
 
-int	read_previous(t_data *data, int status, char **env, int *fd)
+static int	read_previous(t_data *data, int status, char **env, int *fd)
 {
 	t_var	v;
 	size_t	i;
@@ -67,7 +67,7 @@ int	read_previous(t_data *data, int status, char **env, int *fd)
 		free_token(v.current), (v.previous)->next = NULL, 0);
 }
 
-int	last_here_doc(t_data *data)
+static int	last_here_doc(t_data *data)
 {
 	t_token	*current;
 

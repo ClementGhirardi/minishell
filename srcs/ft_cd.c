@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 20:50:19 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 11:19:23 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/06 16:22:54 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	update_pwd(char ***env)
+static void	update_pwd(char ***env)
 {
 	char	*old_pwd;
 	char	cwd[4096];

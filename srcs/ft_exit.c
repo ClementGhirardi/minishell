@@ -6,13 +6,13 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/04 15:21:51 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:24:09 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	error_num(char *arg, int *status)
+static void	error_num(char *arg, int *status)
 {
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(arg, 2);
@@ -20,14 +20,14 @@ void	error_num(char *arg, int *status)
 	*status = 2;
 }
 
-int	error_too_many_args(int *status)
+static int	error_too_many_args(int *status)
 {
 	ft_putendl_fd("minishell: exit: too many arguments", 2);
 	*status = 1;
 	return (*status);
 }
 
-int	ft_strslen(char **strs)
+static int	ft_strslen(char **strs)
 {
 	int	len;
 
@@ -39,7 +39,7 @@ int	ft_strslen(char **strs)
 	return (len);
 }
 
-int	ft_is_str_digit(char *str)
+static int	ft_is_str_digit(char *str)
 {
 	int	i;
 
@@ -59,7 +59,6 @@ int	ft_exit(char **args, char ***env, int status)
 {
 	int	len;
 
-	ft_putstr_fd("exit\n", 1);
 	len = ft_strslen(args);
 	if (len >= 2)
 	{
@@ -70,6 +69,12 @@ int	ft_exit(char **args, char ***env, int status)
 		else
 			status = ft_atoi(args[1]);
 	}
+	if (wait(NULL) != -1)
+		return (status);
+	exit(status);
+	if (wait(NULL) != -1)
+		return (status);
+	ft_putendl_fd("exit", 1);
 	rl_clear_history();
 	free_array(*env);
 	exit(status);
