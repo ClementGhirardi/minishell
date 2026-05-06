@@ -55,7 +55,7 @@ int	execute_cmd(t_ast *node, char ***env)
 	if (!node->args[0])
 		return (0);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node, &(node->args[0]), env));
+		return (run_builtin(node, node->args, env));
 	else
 	{
 		pid = fork();
@@ -119,7 +119,8 @@ static int	open_fd(t_ast *node, char *file, char **env)
 	int			fd;
 
 	fd = -1;
-	if (dollar_finder(node->file) && !expand_dollar_in_filename(node->file, env))
+	if (dollar_finder(node->file)
+		&& !expand_dollar_in_filename(ft_strdup(node->file), env))
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(node->file, 2);

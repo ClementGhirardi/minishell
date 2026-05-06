@@ -12,45 +12,6 @@
 
 #include "../includes/minishell.h"
 
-int	dollar_finder(char *file)
-{
-	int	i;
-
-	i = 0;
-	while (file[i])
-	{
-		if (file[i] == '$')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-char	*expand_dollar_in_filename(char *file, char **env)
-{
-	char	*filename;
-	char	*tmp;
-	int		i;
-	int		start;
-
-	i = 0;
-	filename = NULL;
-	while (file[i])
-	{
-		start = i;
-		if (file[i] == '$')
-			i++;
-		while (file[i] && file[i] != '$')
-			i++;
-		tmp = ft_substr(file, start, i - start);
-		if (!tmp)
-			return (NULL);
-		tmp = expand_string(tmp, env);
-		filename = ft_strjoin_and_free(filename, tmp);
-	}
-	return (filename);
-}
-
 static int	is_var_char(char c)
 {
 	if (('a' <= c && c <= 'z')
@@ -101,7 +62,6 @@ char	*extract_var_name(char *str, int *i, char **env)
 	return (var);
 }
 
-
 static char	*expand_quotes(char *str, int *i, char **env)
 {
 	char	quote;
@@ -122,7 +82,8 @@ static char	*expand_quotes(char *str, int *i, char **env)
 			return (free(tmp), NULL);
 		tmp = ft_strjoin_and_free(tmp, var);
 	}
-	(*i)++;
+	if (str[*i])
+		(*i)++;
 	return (tmp);
 }
 
@@ -153,24 +114,22 @@ char	*expand_string(char *str, char **env)
 
 void	expander(t_ast *node, char **env)
 {
-	char	**new;
+	char	*tmp;
 
 	if (node && node->args)
-	{
-		new = filter_and_dup_array(node->args, env);
-		free(node->args);
-		node->args = new;
-	}
+		node->args = filter_and_dup_array(node->args, env);
 	if (node && node->file)
 	{
-		if (dollar_finder(node->file)
-			&& !expand_dollar_in_filename(node->file, env))
-			return ;
-		node->file = expand_dollar_in_filename(node->file, env);
-		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
+		tmp = expand_dollar_in_filename(ft_strdup(node->file), env);
+		if (tmp)
 		{
-			free(node->file);
-			node->file = NULL;
+			node->file = expand_dollar_in_filename(node->file, env);
+			if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
+			{
+				free(node->file);
+				node->file = NULL;
+			}
+			free(tmp);
 		}
 	}
 }

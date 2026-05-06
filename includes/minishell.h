@@ -140,6 +140,7 @@ char		*expand_dollar_in_filename(char *file, char **env);
 int			dollar_finder(char *file);
 
 char		**filter_and_dup_array(char **array, char **env);
+char		**alloc_array(char **array, char **env);
 int			is_valid_variable(char *arg, char **env);
 
 int			here_doc(char *limiter, char **env);
