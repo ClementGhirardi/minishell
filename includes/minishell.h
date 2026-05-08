@@ -91,6 +91,10 @@ char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
 char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 
+void		*ft_realloc(void *ptr, size_t size);
+char		*ft_strjoin_sep_realloc(char **array, char c);
+char		*expand_string_heredoc(char *str, char **env);
+
 char		*here_doc_word(char limiter, char **env);
 int			ft_strcmp(char *s1, char *s2);
 size_t		ft_safe_strlen(char *s);

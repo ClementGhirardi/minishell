@@ -45,6 +45,8 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
 	$(SRCS_DIR)/filter_and_dup_array.c \
+	$(SRCS_DIR)/here_doc_utils.c \
+	$(SRCS_DIR)/heredoc_pipe_operator.c \
 
 SRCS_BONUS = 
 

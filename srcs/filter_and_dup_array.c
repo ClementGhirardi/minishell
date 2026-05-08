@@ -29,40 +29,58 @@ int	is_valid_variable(char *arg, char **env)
 	return (1); 
 }
 
-// int	odd_squotes(char *file)
+char	*skip_empty_quotes(char *file)
+{
+	char	*clean;
+	int		i;
+	int		start;
+
+	i = 0;
+	while (file[i] && file[i + 1] && (file[i] == '\'' || file[i] == '"')
+		&& (file[i + 1] == '\'' || file[i + 1] == '"'))
+	{
+		// if (file[i + 1] != '\'' && file[i + 1] != '"')
+		// 	break ;
+		// if (file[i] == file[i + 1])
+		// 	i++;
+		i++;
+	}
+	if ((i % 2))
+		i++;
+	start = i;
+	while (file[i])
+		i++;
+	clean = ft_substr(file, start, i - (start * 2));
+	free(file);
+	return (clean);
+}
+
+// char	*squote_exception(char *file)
 // {
 // 	int	i;
+// 	int	start;
 
+// 	if (!file || !*file)
+// 		return (NULL);
 // 	i = 0;
-// 	while (file[i] == '\'')
-// 		i++;
-// 	return (i % 2);
+// 	ft_printf("file avant squote exception = %s\n", file);
+// 	//file = skip_empty_quotes(file);
+// 	if (file[i] == '\'' && file[i + 1] == '$')
+// 	{
+// 		while (file[i] == '\'' && file[i + 1] == '\'')
+// 			i++;
+// 		if (file[i + 1] == '$')
+// 		{
+// 			start = ++i;
+// 			while (file[i] && file[i] != '\'')
+// 				i++;
+// 			if (file[i])
+// 				i++;
+// 			return (ft_substr(file, start, i - 1 - start));
+// 		}
+// 	}
+// 	return (NULL);
 // }
-
-char	*squote_exception(char *file, int *i)
-{
-	int	start;
-
-	if (!file || !*file)
-		return (NULL);
-	if (file[*i] == '\'' && file[*i + 1] == '$')
-	{
-		// if (!odd_squotes(&file[*i]))
-		// 	return (NULL);
-		while (file[*i] == '\'' && file[*i + 1] == '\'')
-			(*i)++;
-		if (file[*i + 1] == '$')
-		{
-			start = ++(*i);
-			while (file[*i] && file[*i] != '\'')
-				(*i)++;
-			if (file[*i])
-				(*i)++;
-			return (ft_substr(file, start, *i - 1 - start));
-		}
-	}
-	return (NULL);
-}
 
 char	*expand_dollar_in_filename(char *file, char **env)
 {
@@ -73,9 +91,15 @@ char	*expand_dollar_in_filename(char *file, char **env)
 
 	i = 0;
 	filename = NULL;
+	file = ft_strjoin_and_free(filename, skip_empty_quotes(file));
+	if (file && file[0] == '\'' && file[1] == '$')
+	{
+		tmp = ft_substr(file, 1, ft_strlen(file) - 2);
+		free(file);
+		return (tmp);
+	}
 	while (file[i])
 	{
-		filename = ft_strjoin_and_free(filename, squote_exception(file, &i));
 		start = i;
 		if (file[i] == '$' || file[i] == '\'' || file[i] == '"')
 			i++;
@@ -83,15 +107,10 @@ char	*expand_dollar_in_filename(char *file, char **env)
 			i++;
 		tmp = ft_substr(file, start, i - start);
 		if (!tmp)
-		{
-			free(file);
-			return (NULL);
-		}
-		tmp = expand_string(tmp, env);
-		filename = ft_strjoin_and_free(filename, tmp);
+			return (free(file), NULL);
+		filename = ft_strjoin_and_free(filename, expand_string(tmp, env));
 	}
-	free(file);
-	return (filename);
+	return (free(file), filename);
 }
 
 char	**alloc_array(char **array, char **env)
