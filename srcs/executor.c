@@ -12,35 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// int	executor(t_ast *ast, char ***env)
-// {
-// 	char	*tmp;
-
-// 	if (ast && ast->type == NODE_CMD)
-// 		return (expander(ast, *env), execute_cmd(ast, env));
-// 	else if (ast && ast->type == NODE_PIPE)
-// 		return (execute_pipe(ast, env));
-// 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
-// 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
-// 	{
-// 		if (!ast->file && ast->fd == -1)
-// 			return (ft_putstr_fd("minishell: ", 2), 2);//ft_putendl_fd(
-// 					//"syntax error near unexpected token `newline'", 2), 2);
-// 		if (ast->file)
-// 		{
-// 			tmp = ft_strdup(ast->file);
-// 			expander(ast, *env);
-// 			if (!ast->file && ast->fd == -1)
-// 				return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(tmp, 2),
-// 					ft_putendl_fd(": ambiguous redirect", 2), free(tmp), 2);
-// 			free(tmp);
-// 		}
-// 		return (execute_redir(ast, env));
-// 	}
-// 	else
-// 		return (execute_operator(ast, env));
-// }
-
 int	count_empty_quotes(char *str)
 {
 	int		i;
@@ -104,9 +75,6 @@ int	executor(t_ast *ast, char ***env)
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
-		// if (!ast->file && ast->fd == -1)
-		// 	return (ft_putstr_fd("minishell: ", 2), 2); ft_putendl_fd(
-		// 			"syntax error near unexpected token `newline'", 2), 2);
 		if (ast->file && ast->type != NODE_HEREDOC)
 		{
 			expander(ast, *env);

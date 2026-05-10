@@ -77,24 +77,55 @@ void	handle_word(char *input, t_token **tokens, int *i)
 		&& input[*i] != ')')
 	{
 		quote = ' ';
-		if (input[*i] == '\'' || input[*i] == '\"')
+		while (input[*i] && input[*i] != quote && input[*i] != '\n')
 		{
-			quote = input[(*i)++];
-			while (input[*i] && input[*i] != quote)
-				(*i)++;
-		}
-		else
-		{
-			while (input[*i] && input[*i] != '|' && input[*i] != '<'
-				&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
-				&& input[*i] != ')' && input[*i] != quote)
-				(*i)++;
+			if (quote == ' '
+				&& (input[*i] == '|' || input[*i] == '<' || input[*i] == '>'
+				|| input[*i] == '&' || input[*i] == '(' || input[*i] == ')'))
+				break ;
+			if (quote == ' ' && (input[*i] == '\'' || input[*i] == '\"'))
+				quote = input[*i];
+			else if (quote != ' ' && (input[*i] == quote))
+				quote = ' ';
+			(*i)++;
 		}
 		if (input[*i] == quote && quote != ' ')
 			(*i)++;
 	}
 	create_word(input, tokens, *i, start);
 }
+
+// void	handle_word(char *input, t_token **tokens, int *i)
+// {
+// 	int		start;
+// 	char	quote;
+
+// 	start = *i;
+// 	if (input[*i] == '&')
+// 		(*i)++;
+// 	while (input[*i] && input[*i] != ' ' && input[*i] != '|' && input[*i] != '<'
+// 		&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
+// 		&& input[*i] != ')')
+// 	{
+// 		quote = ' ';
+// 		if (input[*i] == '\'' || input[*i] == '\"')
+// 		{
+// 			quote = input[(*i)++];
+// 			while (input[*i] && input[*i] != quote)
+// 				(*i)++;
+// 		}
+// 		else
+// 		{
+// 			while (input[*i] && input[*i] != '|' && input[*i] != '<'
+// 				&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
+// 				&& input[*i] != ')' && input[*i] != quote)
+// 				(*i)++;
+// 		}
+// 		if (input[*i] == quote && quote != ' ')
+// 			(*i)++;
+// 	}
+// 	create_word(input, tokens, *i, start);
+// }
 
 t_token	*lexer2(char **input, char **env)
 {

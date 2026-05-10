@@ -14,39 +14,6 @@
 
 int	executor(t_ast *ast, char ***env);
 
-// int	execute_cmd(t_ast *node, char ***env)
-// {
-// 	pid_t	pid;
-// 	char	*path;
-
-// 	// if (!node->args)
-// 	// 	return (expander(node->left, status, env), execute_cmd(node->left, status, env));
-// 	if (is_builtin(node->args[0]))
-// 		return (run_builtin(node, node->args, env));
-	
-// 	else
-// 	{
-// 		pid = fork();
-// 		if (pid == 0)
-// 		{
-// 			path = get_path(node->args[0], *env);
-// 			if (!path)
-// 				return (write(2, "minishell: ", 12),
-// 					write(2, node->args[0], ft_strlen(node->args[0])),
-// 					write(2, ": command not found\n", 21), free_array(*env),
-// 					ast_free(node), exit(127), 127);
-// 			execve(path, node->args, *env);
-// 			free(path);
-// 			return (ft_putstr_fd("minishell: ", 2),
-// 				ft_putstr_fd(node->args[0], 2), ft_putendl_fd(
-// 					": Permission denied", 2), free_array(*env), ast_free(node),
-// 					 exit(126), 126);
-// 		}
-// 		waitpid(pid, (int *)&status, 0);
-// 	}
-// 	return (get_status());
-// }
-
 int	execute_cmd(t_ast *node, char ***env)
 {
 	pid_t	pid;
@@ -65,10 +32,6 @@ int	execute_cmd(t_ast *node, char ***env)
 			if (!path)
 				return (error_command(node->args[0]), free_array(*env),
 						ast_free(node), exit(127), 127);
-				// return (write(2, "minishell: ", 12),
-				// 	write(2, node->args[0], ft_strlen(node->args[0])),
-				// 	write(2, ": command not found\n", 21), free_array(*env),
-				// 	ast_free(node), exit(127), 127);
 			execve(path, node->args, *env);
 			free(path);
 			return (ft_putstr_fd("minishell: ", 2),
@@ -97,7 +60,6 @@ int	execute_pipe(t_ast *node, char ***env)
 		ast_free(node);
 		free_array(*env);
 		exit(status);
-		//exit(executor(node->left, env));
 	}
 	pid[1] = fork();
 	if (pid[1] == 0)
@@ -109,7 +71,6 @@ int	execute_pipe(t_ast *node, char ***env)
 		ast_free(node);
 		free_array(*env);
 		exit(status);
-		//exit(executor(node->right, env));
 	}
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], (int *)&status, 0), waitpid(pid[1], (int *)&status, 0),

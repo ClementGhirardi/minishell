@@ -87,6 +87,60 @@ static char	*expand_quotes(char *str, int *i, char **env)
 	return (tmp);
 }
 
+static char	*suppress_quotes(char *str)
+{
+	char	*new;
+	int		i;
+	int		start;
+	char	quote;
+
+	if (!str)
+		return (NULL);
+	new = NULL;
+	quote = str[0];
+	i = 1;
+	while (str[i])
+	{
+		start = i;
+		while (str[i] && str[i] != quote)
+			i++;
+		new = ft_strjoin_and_free(new, ft_substr(str, start, i - start));
+		if (!new)
+			return (NULL);
+		if (str[i])
+			i++;
+	}
+	return (new);
+}
+
+static char	*expand_quotes_first(char *str, int *i, char **env)
+{
+	char	quote;
+	char	*tmp;
+	char	*var;
+	int		start;
+	int		j;
+
+	quote = str[(*i)++];
+	start = *i;
+	j = 0;
+	tmp = ft_strdup("");
+	if (!tmp)
+		return (NULL);
+	str = suppress_quotes(str);
+	while (str[*i] && (str[*i] == '\'' || str[*i] == '"'))
+		(*i)++;
+	start = *i;
+	while (str[*i] && str[*i] != '\'' && str[*i] != '"')
+		(*i)++;
+	tmp = ft_substr(str, start, *i - start);
+	if (quote == '"')
+		var = extract_var_name(tmp, &j, env);
+	tmp = ft_strjoin_and_free(ft_substr(str, 0, start), var);
+	tmp = ft_strjoin_and_free(tmp, ft_substr(str, *i, ft_strlen(str) - *i));
+	return (tmp);
+}
+
 char	*expand_string(char *str, char **env)
 {
 	char	*result;
@@ -97,6 +151,11 @@ char	*expand_string(char *str, char **env)
 	if (!result)
 		return (NULL);
 	i = 0;
+	if (str[0] == '\'' || str[0] == '\"')
+	{
+		tmp = expand_quotes_first(str, &i, env);
+		return (free(str), tmp);
+	}
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '\"')
@@ -111,6 +170,31 @@ char	*expand_string(char *str, char **env)
 	}
 	return (free(str), result);
 }
+
+// char	*expand_string(char *str, char **env)
+// {
+// 	char	*result;
+// 	char	*tmp;
+// 	int		i;
+
+// 	result = ft_strdup("");
+// 	if (!result)
+// 		return (NULL);
+// 	i = 0;
+// 	while (str[i])
+// 	{
+// 		if (str[i] == '\'' || str[i] == '\"')
+// 			tmp = expand_quotes(str, &i, env);
+// 		else if (str[i] == '$')
+// 			tmp = extract_var_name(str, &i, env);
+// 		else
+// 			tmp = ft_substr(str, i++, 1);
+// 		if (!tmp)
+// 			return (free(str), free(result), NULL);
+// 		result = ft_strjoin_and_free(result, tmp);
+// 	}
+// 	return (free(str), result);
+// }
 
 void	expander(t_ast *node, char **env)
 {

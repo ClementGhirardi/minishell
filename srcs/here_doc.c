@@ -63,7 +63,7 @@ char	**reading_lines(char **history, char *limiter, int *fd, char **env)
 	first_line = ++i;
 	j = 1;
 	input = ft_strdup("");
-	while (limiter && ft_strcmp(input, limiter))
+	while (limiter && ft_strcmp(input, limiter) && status != 3)
 	{
 		ft_putstr_fd(input, fd[1]);
 		free(input);
