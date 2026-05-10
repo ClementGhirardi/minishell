@@ -47,7 +47,6 @@ char	*ft_strjoin_sep_realloc(char **array, char c)
 		str[j] = c;
 		i++;
 	}
-	//free_array(array);
 	return (str);
 }
 
@@ -61,7 +60,7 @@ char	*expand_string_heredoc(char *str, char **env)
 	result = ft_strdup("");
 	if (!result)
 		return (free(str), NULL);
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '$')
 			var = extract_var_name(str, &i, env);

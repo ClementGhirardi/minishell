@@ -136,7 +136,7 @@ t_token	*lexer(char **input, char **env)
 		free_token(tokens);
 		return (NULL);
 	}
-	end = handle_last_pipe_op(tokens, env);
+	end = handle_last_pipe_op(*input, tokens, env);
 	if (end)
 		ft_tokadd_back(&tokens, end);
 	return (tokens);

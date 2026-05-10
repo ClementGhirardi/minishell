@@ -63,10 +63,12 @@ int	execute_cmd(t_ast *node, char ***env)
 		{
 			path = get_path(node->args[0], *env);
 			if (!path)
-				return (write(2, "minishell: ", 12),
-					write(2, node->args[0], ft_strlen(node->args[0])),
-					write(2, ": command not found\n", 21), free_array(*env),
-					ast_free(node), exit(127), 127);
+				return (error_command(node->args[0]), free_array(*env),
+						ast_free(node), exit(127), 127);
+				// return (write(2, "minishell: ", 12),
+				// 	write(2, node->args[0], ft_strlen(node->args[0])),
+				// 	write(2, ": command not found\n", 21), free_array(*env),
+				// 	ast_free(node), exit(127), 127);
 			execve(path, node->args, *env);
 			free(path);
 			return (ft_putstr_fd("minishell: ", 2),

@@ -94,10 +94,13 @@ char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 void		*ft_realloc(void *ptr, size_t size);
 char		*ft_strjoin_sep_realloc(char **array, char c);
 char		*expand_string_heredoc(char *str, char **env);
+void		*ctrld_heredoc(char **history, char *limiter,
+				int first_line, int j);
 
-char		*here_doc_word(char limiter, char **env);
+char		*here_doc_word(char *input_beginning, char limiter, char **env);
 int			ft_strcmp(char *s1, char *s2);
 size_t		ft_safe_strlen(char *s);
+int			ft_is_in(char c, char *str);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
@@ -106,7 +109,7 @@ void		free_token(t_token *tokens);
 t_token		*lexer(char **input, char **env);
 t_token		*lexer2(char **input, char **env);
 void		handle_quotes(char **input, char **env);
-t_token		*handle_last_pipe_op(t_token *tokens, char **env);
+t_token		*handle_last_pipe_op(char *input, t_token *tokens, char **env);
 void		handle_last_and(char **input, char **env);
 
 void		handle_pipe(char *input, t_token **tokens, int *i);
@@ -148,7 +151,7 @@ char		**alloc_array(char **array, char **env);
 int			is_valid_variable(char *arg, char **env);
 
 int			here_doc(char *limiter, char **env);
-char		*here_doc_pipe_op(char **env);
+char		*here_doc_pipe_op(char *input_begining, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
@@ -185,5 +188,6 @@ int			execute_cmd(t_ast *node, char ***env);
 void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, char **env);
 int			error_open(char *file);
+void		error_command(char *command);
 
 #endif

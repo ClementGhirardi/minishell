@@ -14,7 +14,7 @@
 
 void	handle_word(char *input, t_token **tokens, int *i);
 
-t_token	*handle_last_pipe_op(t_token *tokens, char **env)
+t_token	*handle_last_pipe_op(char *input, t_token *tokens, char **env)
 {
 	t_token	*tmp;
 	t_token	*end_token;
@@ -30,31 +30,13 @@ t_token	*handle_last_pipe_op(t_token *tokens, char **env)
 		|| tmp->type == TOKEN_OR)
 	{
 		heredoc_output = ft_strjoin_and_free(ft_strdup(" "),
-				here_doc_pipe_op(env));
+				here_doc_pipe_op(ft_strdup(input), env));
 		end_token = lexer(&heredoc_output, env);
 		free(heredoc_output);
 		return (end_token);
 	}
 	return (NULL);
 }
-
-// void	handle_last_and(char **input, char **env)
-// {
-// 	int	i;
-
-// 	if (!(*input))
-// 		return ;
-// 	i = ft_strlen(*input) - 1;
-// 	while ((*input)[i] && (*input)[i] == ' ')
-// 		i--;
-// 	if (i > 0
-// 		&& (*input)[i] == '&'
-// 		&& (*input)[i - 1] == '&'
-// 		&& (*input)[i - 2] != '&')
-// 		*input = ft_strjoin_and_free(*input,
-// 				ft_strjoin_and_free(ft_strdup(" "),
-// 					here_doc_pipe(env)));
-// }
 
 void	handle_quotes(char **input, char **env)
 {
@@ -79,7 +61,7 @@ void	handle_quotes(char **input, char **env)
 	if (quote)
 		*input = ft_strjoin_and_free(*input,
 				ft_strjoin_and_free(ft_strdup("\n"),
-					here_doc_word(quote, env)));
+					here_doc_word(ft_substr(*input, 0, i), quote, env)));
 	return ;
 }
 

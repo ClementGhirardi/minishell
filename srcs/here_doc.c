@@ -43,15 +43,14 @@ int	here_doc_empty_limiter(char **env)
 	return (i++, free(input), close(fd[1]), status = 0, fd[0]);
 }
 
-void	*ctrld_heredoc(char **history, char *limiter, int first_line, int fd1, int j)
+void	*ctrld_heredoc(char **history, char *limiter, int first_line, int j)
 {
-	int	i;
-
-	i = 0;
-	error_heredoc(first_line, limiter);
-	close(fd1);
 	history[j] = NULL;
-	return (history);
+	if (first_line >= 0)
+		return (error_heredoc(first_line, limiter), history);
+	else
+		return (ft_putstr_fd("bash: unexpected EOF while looking for matching `", 2),
+			ft_putstr_fd(limiter, 2), ft_putendl_fd("'", 2), history);
 }
 
 char	**reading_lines(char **history, char *limiter, int *fd, char **env)
@@ -70,7 +69,8 @@ char	**reading_lines(char **history, char *limiter, int *fd, char **env)
 		free(input);
 		input = readline("> ");
 		if (!input || status == 130)
-			return (ctrld_heredoc(history, limiter, first_line, fd[1], j));
+			return (close(fd[1]),
+				ctrld_heredoc(history, limiter, first_line, j));
 		input = expand_string_heredoc(input, env);
 		history = ft_realloc(history, sizeof(char *) * (j + 2));
 		if (!history)
@@ -116,5 +116,5 @@ int	here_doc(char *limiter, char **env)
 		return (1);
 	input = ft_strjoin_sep_realloc(history, '\n');
 	add_history(input);
-	return (status = 0, close(fd[1]), free(limiter), fd[0]);
+	return (status = 0, close(fd[1]), free(limiter), fd[0]); //free(limter)
 }
