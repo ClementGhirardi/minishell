@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:24:29 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 13:35:04 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int			ft_cd(char **args, char ***env);
 
 int			ft_pwd(void);
 
-int			ft_export(char **args, char ***env);
+int			ft_export(char **args, char ***env, int status);
 
 int			ft_unset(char **args, char ***env);
 

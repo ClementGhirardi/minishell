@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:33:35 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 13:34:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	run_builtin(char **args, char ***env, int status)
 	if (!ft_strncmp(args[0], "cd", 2))
 		return (ft_cd(args, env));
 	if (!ft_strncmp(args[0], "export", 6))
-		return (ft_export(args, env));
+		return (ft_export(args, env, status));
 	if (!ft_strncmp(args[0], "unset", 5))
 		return (ft_unset(args, env));
 	if (!ft_strncmp(args[0], "env", 3))

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 23:55:50 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 23:54:58 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 13:37:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ static int	find_env_index(char **env, const char *name)
 	size_t	name_len;
 	int		i;
 
+	if (!name)
+		return (-1);
 	name_len = ft_strlen(name);
 	i = 0;
 	while (env[i])

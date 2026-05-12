@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:20:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 13:37:59 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	is_valid_id(char *arg)
 	if (!(('a' <= arg[i] && arg[i] <= 'z')
 			|| ('A' <= arg[i] && arg[i] <= 'Z')
 			|| (arg[i] == '_')))
-		return (ft_putstr_fd("minishells: export: `", 2),
+		return (ft_putstr_fd("minishell: export: `", 2),
 			ft_putstr_fd(arg, 2),
 			ft_putendl_fd("': not a valid identifier", 2), 0);
 	while (arg[i])
@@ -45,6 +45,8 @@ static char	*get_name(char *arg)
 	len = 0;
 	while (arg[len] && arg[len] != '=')
 		len++;
+	if (len == 0 && !is_valid_id(arg))
+		return (NULL);
 	name = ft_substr(arg, 0, len);
 	if (!name)
 		return (NULL);
@@ -101,7 +103,7 @@ static int	print_export(char **env)
 	return (0);
 }
 
-int	ft_export(char **args, char ***env)
+int	ft_export(char **args, char ***env, int status)
 {
 	int		i;
 	char	*name;
@@ -114,7 +116,7 @@ int	ft_export(char **args, char ***env)
 	{
 		name = get_name(args[i]);
 		if (!name)
-			return (1);
+			status = 1;
 		value = get_value(args[i]);
 		if (ft_setenv(env, name, value))
 		{
@@ -127,5 +129,5 @@ int	ft_export(char **args, char ***env)
 			free(value);
 		i++;
 	}
-	return (0);
+	return (status);
 }
