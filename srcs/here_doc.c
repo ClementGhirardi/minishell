@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:29:46 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 14:08:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,8 @@ int	here_doc(t_data *data, int *status, char **env)
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter, *status));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	while (ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
+	while ((ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
+			|| !ft_strncmp(buffer, "\n", 1))
 		&& g_sig_status != 4)
 	{
 		ft_putstr_fd(buffer, fd[1]);

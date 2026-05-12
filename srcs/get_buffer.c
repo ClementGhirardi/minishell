@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   get_buffer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:30:59 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 14:08:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static int	ft_isin(char *str, char c)
+{
+	int	i;
+
+	if (!str)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 static int	child(char **buffer, int *fd)
 {
@@ -42,8 +58,8 @@ int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
 	*buffer = get_next_line(fd[0]);
 	if (!(*buffer))
 		return (close(fd[0]), 0);
-	if (!ft_strncmp(*buffer, "\n", 1))
-		return (free(*buffer), 0);
+	if (!ft_isin(*buffer, '\n'))
+		return (close(fd[0]), free(*buffer), 0);
 	if (*nb_line != -1)
 		*buffer = expand_string(*buffer, *status, env);
 	(*nb_line)++;
