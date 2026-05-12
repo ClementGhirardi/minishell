@@ -19,7 +19,7 @@ int	execute_cmd(t_ast *node, char ***env)
 	pid_t	pid;
 	char	*path;
 
-	if (!node->args[0])
+	if (!node || !node->args || !node->args[0])
 		return (0);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node, node->args, env));
@@ -39,7 +39,7 @@ int	execute_cmd(t_ast *node, char ***env)
 					": Permission denied", 2), free_array(*env), ast_free(node),
 					 exit(126), 126);
 		}
-		return (waitpid(pid, (int *)&status, 0), get_status());
+		return (waitpid(pid, (int *)&status, 0), get_status(status));
 	}
 }
 
@@ -74,7 +74,7 @@ int	execute_pipe(t_ast *node, char ***env)
 	}
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], (int *)&status, 0), waitpid(pid[1], (int *)&status, 0),
-		get_status());
+		get_status(status));
 }
 
 static int	open_fd(t_ast *node, char *file, char **env)
@@ -82,14 +82,15 @@ static int	open_fd(t_ast *node, char *file, char **env)
 	int			fd;
 
 	fd = -1;
-	if (dollar_finder(node->file)
-		&& !expand_dollar_in_filename(ft_strdup(node->file), env))
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(node->file, 2);
-		ft_putendl_fd(": ambiguous redirect", 2);
-		return (fd);
-	}
+	(void)env;
+	// if (dollar_finder(node->file)
+	// 	&& !expand_dollar_in_filename(ft_strdup(node->file), env))
+	// {
+	// 	ft_putstr_fd("minishell: ", 2);
+	// 	ft_putstr_fd(node->file, 2);
+	// 	ft_putendl_fd(": ambiguous redirect", 2);
+	// 	return (fd);
+	// }
 	if (node->type == NODE_REDIR_IN)
 		fd = open(file, O_RDONLY);
 	else if (node->type == NODE_HEREDOC)

@@ -28,11 +28,11 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env)
+t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env, t_data *data)
 {
 	t_ast		*node;
 
-	node = malloc(1 * sizeof(t_ast));
+	node = create_redir_node(env, data);
 	if (!node)
 		return (NULL);
 	if (r_type == TOKEN_REDIR_IN)
@@ -44,7 +44,10 @@ t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env)
 	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		node->fd = here_doc(file, env);
+		data->limiter = file;
+		node->fd = here_doc(data, env);
+		if (node->fd == -1)
+			return (free(node->file), free(node), NULL);
 	}
 	else
 		node->fd = -1;

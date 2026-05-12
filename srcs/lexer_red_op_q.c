@@ -35,6 +35,8 @@ t_token	*handle_last_pipe_op(char *input, t_token *tokens, char **env)
 		free(heredoc_output);
 		return (end_token);
 	}
+	// if (status == -42 || status == 130)
+	// 	add_history(input);
 	return (NULL);
 }
 

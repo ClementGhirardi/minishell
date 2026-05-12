@@ -133,7 +133,7 @@ t_token	*lexer2(char **input, char **env)
 	int		i;
 
 	handle_quotes(input, env);
-	add_history(*input);
+	//add_history(*input);
 	tokens = NULL;
 	i = 0;
 	while ((*input)[i])

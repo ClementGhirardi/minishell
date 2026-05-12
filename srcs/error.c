@@ -12,6 +12,26 @@
 
 #include "../includes/minishell.h"
 
+int	error_here_doc(int *fd, int nb_line, char *limiter)
+{
+	if (status == 130)
+		return (close(fd[1]), close(fd[0]), -1);
+	ft_putstr_fd("\nminishell: warning: here-document at line ", 2);
+	ft_putnbr_fd(nb_line, 2);
+	ft_putstr_fd(" delimited by end-of-file (wanted `", 2);
+	ft_putstr_fd(limiter, 2);
+	ft_putendl_fd("')", 2);
+	return (close(fd[1]), fd[0]);
+}
+
+void	error_file(char *file)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (file)
+		ft_putstr_fd(file, 2);
+	ft_putendl_fd(": ambiguous redirect", 2);
+}
+
 static char	*replace(char *new, char *command)
 {
 	int	i;

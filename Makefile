@@ -21,10 +21,10 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/lexer.c \
 	$(SRCS_DIR)/lexer_red_op_q.c \
 	$(SRCS_DIR)/ast.c \
+	$(SRCS_DIR)/ast_utils.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/parser_cmd_redir.c \
 	$(SRCS_DIR)/ft_getenv.c \
- 	$(SRCS_DIR)/expander.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \
@@ -44,9 +44,11 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/error.c \
 	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
-	$(SRCS_DIR)/filter_and_dup_array.c \
 	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/heredoc_pipe_operator.c \
+	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/get_buffer.c \
+	$(SRCS_DIR)/idx_to_next_line.c \
 
 SRCS_BONUS = 
 

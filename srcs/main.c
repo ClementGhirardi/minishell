@@ -85,6 +85,12 @@ volatile sig_atomic_t	status = 0;
 void	sigint_handler(int sig) //STATIC
 {
 	(void)sig;
+	if (status == -30)
+	{
+		ft_printf("siginthandler status = -30\n");
+		status = -40;
+		exit(130);
+	}
 	status = 130;
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -138,7 +144,7 @@ void	minishell(char **input, char ***env)
 	{
 		ast = parse(&tokens, *env, input);
 		free_token(tmp);
-		if (ast)
+		if (ast && status != -40)
 		{
 			status = executor(ast, env);
 			ast_free(ast);
@@ -156,6 +162,7 @@ int	main(int ac, char **av, char **envp)
 	env = dup_array(envp);
 	if (!env)
 		return (1);
+	status = 0;
 	init_signals();
 	while (1)
 	{
@@ -163,6 +170,8 @@ int	main(int ac, char **av, char **envp)
 		if (!input)
 			ft_exit(NULL, &env);
 		minishell(&input, &env);
+		if (status != 130)
+			add_history(input);
 		free(input);
 	}
 	ft_exit(NULL, &env);

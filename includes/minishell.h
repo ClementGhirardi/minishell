@@ -87,6 +87,25 @@ typedef struct s_infos
 	char	**input;
 }	t_infos;
 
+typedef struct s_data
+{
+	t_token	**tokens;
+	char	**input;
+	char	*limiter;
+}	t_data;
+
+typedef struct s_var
+{
+	t_token	*current;
+	t_token	*previous;
+
+	char	*value;
+	char	*new_value;
+
+	int		len;
+	char	*line;
+}	t_var;
+
 char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
 char		*ft_strjoinsep_free(char *s1, char *s2, char c);
@@ -125,12 +144,14 @@ void		ft_tokadd_back(t_token **lst, t_token *new);
 
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type r_type, char *file, char **env);
+t_ast		*ast_new_redir(t_token_type r_type, char *file, char **env, t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
+
+t_ast		*create_redir_node(char **env, t_data *data);
 
 char		*ft_gethole_fd(int fd);
 
@@ -146,16 +167,28 @@ char		*expand_string(char *str, char **env);
 char		*expand_dollar_in_filename(char *file, char **env);
 int			dollar_finder(char *file);
 
+char		*quotes_cleaner(char *str);
+char		*skip_empty_first_quotes(char *str);
+char		**filter_args(char **args, char **env);
+int			existing_var(char *var, char **env);
+char		*expand_var(char *str, char **env);
+char		*skip_empty_quotes(char *str);
+
+
 char		**filter_and_dup_array(char **array, char **env);
 char		**alloc_array(char **array, char **env);
 int			is_valid_variable(char *arg, char **env);
 
-int			here_doc(char *limiter, char **env);
+int			here_doc(t_data *data, char **env);
 char		*here_doc_pipe_op(char *input_begining, char **env);
+
+int			idx_to_next_line(char *str);
+
+int			get_buffer(char **buffer, int *nb_line, char **env);
 
 char		*get_path(char *cmd, char **envp);
 
-int			get_status(void);
+int			get_status(int status);
 
 void		free_array(char **array);
 char		**dup_array(char **array);
@@ -189,5 +222,7 @@ void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, char **env);
 int			error_open(char *file);
 void		error_command(char *command);
+void		error_file(char *file);
+int			error_here_doc(int *fd, int nb_line, char *limiter);
 
 #endif

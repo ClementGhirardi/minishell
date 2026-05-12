@@ -70,6 +70,7 @@ int	executor(t_ast *ast, char ***env)
 {
 	if (ast && ast->type == NODE_CMD)
 		return (expander(ast, *env), execute_cmd(ast, env));
+		// return (execute_cmd(ast, env));
 	else if (ast && ast->type == NODE_PIPE)
 		return (execute_pipe(ast, env));
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT

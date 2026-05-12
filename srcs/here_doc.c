@@ -3,118 +3,111 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 13:55:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/06 16:29:46 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*ft_strdup_no_empty_quotes(char *str);
-int		count_empty_quotes(char *str);
-
-int	here_doc_empty_limiter(char **env)
+static int	begin(t_data *data, t_var *v)
 {
-	char		*input;
-	int			fd[2];
-	static int	i;
-	int			first_line;
-
-	first_line = ++i;
-	pipe(fd);
-	input = ft_strdup("\n");
-	while (input && *input)
+	if (!data)
+		return (0);
+	v->current = *data->tokens;
+	if (!v->current)
+		return (0);
+	v->previous = v->current;
+	v->current = (v->current)->next;
+	while (v->current && !ft_strchr((v->current)->value, '\n'))
 	{
-		ft_putstr_fd(input, fd[1]);
-		free(input);
-		input = readline("> ");
-		if (!input)
-		{
-			error_heredoc(first_line, "");
-			close(fd[1]);
-			//i--;
-			break ;
-		}
-		input = expand_string_heredoc(input, env);
-		i++;
+		v->previous = v->current;
+		v->current = (v->current)->next;
 	}
-	return (i++, free(input), close(fd[1]), status = 0, fd[0]);
+	if (!v->current)
+		return (0);
+	v->value = (v->current)->value;
+	if (ft_strlen(v->value) == 0)
+		return (0);
+	return (1);
 }
 
-void	*ctrld_heredoc(char **history, char *limiter, int first_line, int j)
+static int	when_find_limiter(size_t i, t_var *v)
 {
-	history[j] = NULL;
-	if (first_line >= 0)
-		return (error_heredoc(first_line, limiter), history);
-	else
-		return (ft_putstr_fd("bash: unexpected EOF while looking for matching `", 2),
-			ft_putstr_fd(limiter, 2), ft_putendl_fd("'", 2), history);
+	if (i == ft_strlen(v->value))
+		return (free_token(v->current), (v->previous)->next = NULL, 1);
+	v->new_value = ft_substr(v->value, i, ft_strlen(v->value) - i);
+	if (!v->new_value)
+		return (1);
+	return (free(v->value), (v->current)->value = v->new_value, 1);
 }
 
-char	**reading_lines(char **history, char *limiter, int *fd, char **env)
+static int	read_previous(t_data *data, char **env, int *fd)
 {
-	char		*input;
-	int			j;
-	int			first_line;
-	static int	i;
+	t_var	v;
+	size_t	i;
 
-	first_line = ++i;
-	j = 1;
-	input = ft_strdup("");
-	while (limiter && ft_strcmp(input, limiter) && status != 3)
+	if (!begin(data, &v))
+		return (0);
+	i = 0;
+	while ((v.value)[i])
 	{
-		ft_putstr_fd(input, fd[1]);
-		free(input);
-		input = readline("> ");
-		if (!input || status == 130)
-			return (close(fd[1]),
-				ctrld_heredoc(history, limiter, first_line, j));
-		input = expand_string_heredoc(input, env);
-		history = ft_realloc(history, sizeof(char *) * (j + 2));
-		if (!history)
-			return (NULL);
-		history[j++] = ft_strdup(input);
-		i++;
+		v.len = idx_to_next_line(&(v.value)[i]);
+		if (v.len == 0)
+			return (free_token(v.current), (v.previous)->next = NULL, 0);
+		v.line = ft_substr(v.value, i, v.len);
+		if (!v.line)
+			return (1);
+		i += v.len;
+		if (!ft_strncmp(data->limiter, v.line, v.len - 1) && v.len != 1)
+			return (when_find_limiter(i, &v));
+		ft_putstr_fd(expand_string(v.line, env), fd[1]);
 	}
-	history[j] = NULL;
-	return (i++, history);
+	return (ft_putstr_fd("\n", fd[1]),
+		free_token(v.current), (v.previous)->next = NULL, 0);
 }
 
-char	*clean_limiter(char *limiter, char **env)
+static int	last_here_doc(t_data *data)
 {
-	char	*clean_limiter;
-	char	*tmp;
+	t_token	*current;
 
-	tmp = expand_string(ft_strdup(limiter), env);
-	clean_limiter = ft_strjoin_and_free(ft_strdup(""),
-			ft_strdup_no_empty_quotes(tmp));
-	clean_limiter = ft_strjoin_and_free(ft_strdup(""), clean_limiter);
-	free(tmp);
-	free(limiter);
-	return (clean_limiter);
+	current = *data->tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_HEREDOC)
+			return (0);
+		current = current->next;
+	}
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	return (1);
 }
 
-int	here_doc(char *limiter, char **env)
+int	here_doc(t_data *data, char **env)
 {
-	char		*input;
-	char		**history;
+	static int	nb_line;
+	char		*buffer;
 	int			fd[2];
 
-	pipe(fd);
-	history = ft_calloc(2, sizeof(char *) * 2);
-	if (!history || !limiter)
-		return (1);
-	history[0] = ft_strjoin("<< ", limiter);
-	history[1] = NULL;
-	limiter = clean_limiter(limiter, env);
-	if (limiter && !*limiter)
-		return (here_doc_empty_limiter(env));
-	history = reading_lines(history, limiter, fd, env);
-	if (!history)
-		return (1);
-	input = ft_strjoin_sep_realloc(history, '\n');
-	add_history(input);
-	return (status = 0, close(fd[1]), free(limiter), fd[0]); //free(limter)
+	if (pipe(fd) < 0 || status == -40)
+		return (-1);
+	if (read_previous(data, env, fd))
+		return (close(fd[1]), fd[0]);
+	if (!get_buffer(&buffer, &nb_line, env))
+		return (error_here_doc(fd, nb_line, data->limiter));
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	while (ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
+		&& status != -40)
+	{
+		ft_putstr_fd(buffer, fd[1]);
+		*data->input = ft_strjoin_and_free(*data->input, buffer);
+		if (!get_buffer(&buffer, &nb_line, env))
+			return (error_here_doc(fd, nb_line, data->limiter));
+	}
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
+	last_here_doc(data);
+	if (status == -40)
+		return (free(buffer), close(fd[1]), close(fd[0]), -1);
+	return (free(buffer), close(fd[1]), fd[0]);
 }
