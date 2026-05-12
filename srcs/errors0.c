@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors0.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 14:33:08 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 14:50:17 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,10 @@ int	error_open(char *file_name)
 
 int	error_cmd(char *cmd_name)
 {
+	if (!ft_strncmp(cmd_name, "./", 2))
+		exit(127);
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd_name, 2);
-	if (!ft_strncmp(cmd_name, "./", 2))
-		ft_putendl_fd(": No such file or directory", 2);
-	else
-		ft_putendl_fd(": command not found", 2);
+	ft_putendl_fd(": command not found", 2);
 	exit(127);
-	return (127);
 }

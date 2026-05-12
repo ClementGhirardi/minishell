@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/04 15:21:26 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/12 14:50:49 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 		{
 			path = get_path(node->args[0], *env);
 			if (!path)
-				return (error_cmd(node->args[0]));
+				error_cmd(node->args[0]);
 			execve(path, node->args, *env);
 			free(path);
 			return (perror("execve"), exit(126), 126);

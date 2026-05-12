@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 13:35:04 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 15:04:34 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,6 @@ void		*error_syntax(char *str, int *status);
 int			error_open(char *file_name);
 int			error_cmd(char *cmd_name);
 
-int			error_exec_cmd(char *arg, int *status, char **env);
+int			error_exec_cmd(char *arg, int *status);
 
 #endif
