@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 15:12:36 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 15:16:59 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,19 +112,7 @@ static void	minishell(int *status, char **input, char ***env)
 	tokens = lexer(input, status, *env);
 	if (tokens)
 	{
-		t_token *current = tokens;
-		while (current)
-		{
-			ft_printf("%d: |%s|\n", current->type, current->value);
-			current = current->next;
-		}
 		ast = parser(tokens, status, *env, input);
-		current = tokens;
-		while (current)
-		{
-			ft_printf("%d: |%s|\n", current->type, current->value);
-			current = current->next;
-		}
 		if (ast && g_sig_status != 4)
 		{
 			*status = executor(ast, *status, env);
