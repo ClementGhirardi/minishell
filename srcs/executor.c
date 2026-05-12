@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 14:50:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 15:08:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 
 	if (!node->args[0])
 		return (0);
-	if (error_exec_cmd(node->args[0], &status, *env))
+	if (error_exec_cmd(node->args[0], &status))
 		return (status);
 	else if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, env, status));
