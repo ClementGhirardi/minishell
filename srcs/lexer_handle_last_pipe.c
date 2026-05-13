@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handle_last_pipe.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:47:58 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/13 15:27:14 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,9 @@ static int	only_one_pipe(char *input)
 
 void	handle_last_pipe(char **input, int *status, char **env)
 {
-	char	*tmp;
 	int		i;
 
-	if (!(*input))
+	if (!(*input) || g_sig_status == 4)
 		return ;
 	if (consecutive_pipe(*input) || only_one_pipe(*input))
 		return ;
@@ -71,11 +70,7 @@ void	handle_last_pipe(char **input, int *status, char **env)
 		i--;
 	if (i >= 0 && (*input)[i] == '|')
 	{
-		tmp = here_doc_word('\n', status, env);
-		if (!tmp)
-			return ;
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup(" "), tmp));
+		here_doc_word(input, '\n', status, env);
 		handle_last_pipe(input, status, env);
 	}
 	if (g_sig_status == 4)

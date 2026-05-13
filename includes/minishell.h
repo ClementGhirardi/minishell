@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 15:04:34 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/13 15:21:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ extern volatile sig_atomic_t	g_sig_status;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
 
-char		*here_doc_word(char limiter, int *status, char **env);
+char		*here_doc_word(char **input, char limiter, int *status, char **env);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
