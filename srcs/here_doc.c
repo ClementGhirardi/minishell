@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 14:08:13 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/13 15:00:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,32 @@ static int	read_previous(t_data *data, int status, char **env, int *fd)
 	size_t	i;
 
 	if (!begin(data, &v))
-		return (0);
+		return (add_history(*data->input), 0);
 	i = 0;
 	while ((v.value)[i])
 	{
 		v.len = idx_to_next_line(&(v.value)[i]);
 		if (v.len == 0)
-			return (free_token(v.current), (v.previous)->next = NULL, 0);
+			return (free_token(v.current), (v.previous)->next = NULL,
+				add_history(*data->input), 0);
 		v.line = ft_substr(v.value, i, v.len);
 		if (!v.line)
-			return (1);
+			return (add_history(*data->input), 1);
 		i += v.len;
 		if (!ft_strncmp(data->limiter, v.line, v.len - 1) && v.len != 1)
-			return (when_find_limiter(i, &v));
+			return (add_history(*data->input), when_find_limiter(i, &v));
 		ft_putstr_fd(expand_string(v.line, status, env), fd[1]);
 	}
 	return (ft_putstr_fd("\n", fd[1]),
-		free_token(v.current), (v.previous)->next = NULL, 0);
+		free_token(v.current), (v.previous)->next = NULL,
+		add_history(*data->input), 0);
 }
 
 static int	last_here_doc(t_data *data)
 {
 	t_token	*current;
 
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
 	current = *data->tokens;
 	while (current)
 	{
@@ -101,10 +104,10 @@ int	here_doc(t_data *data, int *status, char **env)
 	{
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
+		add_history(*data->input);
 		if (!get_buffer(&buffer, &nb_line, status, env))
 			return (error_here_doc(fd, nb_line, data->limiter, *status));
 	}
-	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
 	last_here_doc(data);
 	if (g_sig_status == 4)
 		return (free(buffer), close(fd[1]), close(fd[0]), -1);

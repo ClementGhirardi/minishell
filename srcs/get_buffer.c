@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 14:08:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/13 15:00:38 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ static int	child(char **buffer, int *fd)
 {
 	g_sig_status = 3;
 	close(fd[0]);
-	ft_putstr_fd("> ", 1);
-	*buffer = get_next_line(STDIN_FILENO);
+	*buffer = readline("> ");
 	if (*buffer)
-		ft_putstr_fd(*buffer, fd[1]);
+		ft_putendl_fd(*buffer, fd[1]);
 	exit(0);
 }
 
