@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 13:41:43 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 11:11:44 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/13 12:27:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 		return ((*i)++, ft_getenv(env, "SHELL"));
 	if ('1' <= str[*i] && str[*i] <= '9')
 		return ((*i)++, NULL);
+	if (!is_var_char(str[*i]))
+		return (ft_strdup("$"));
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
