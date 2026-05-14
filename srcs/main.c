@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-volatile sig_atomic_t	status = 0;
+volatile sig_atomic_t	g_sig_status = 0;
 
 // void	ast_show(t_ast *ast)
 // {
@@ -82,17 +82,21 @@ volatile sig_atomic_t	status = 0;
 // ft_printf("\n\n");
 // // END TESTS
 
-void	sigint_handler(int sig) //STATIC
+static void	sigint_handler(int sig) //STATIC
 {
-	(void)sig;
-	if (status == -30)
+	(void) sig;
+	if (g_sig_status == 1)
 	{
-		ft_printf("siginthandler status = -30\n");
-		status = -40;
+		g_sig_status = 2;
+		ft_putchar_fd('\n', 1);
+		return ;
+	}
+	if (g_sig_status == 3)
+	{
+		g_sig_status = 4;
 		exit(130);
 	}
-	status = 130;
-	write(1, "\n", 1);
+	ft_putendl_fd("", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
@@ -104,7 +108,7 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	minishell(char **input, char ***env)
+static void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tmp;
 	t_token	*tokens;
@@ -112,7 +116,7 @@ void	minishell(char **input, char ***env)
 
 	if (!input || !*input || !**input)
 		return ;
-	tokens = lexer(input, *env);
+	tokens = lexer(input, status, *env);
 	// tmp = tokens;
 	// t_token *current = tokens;
 	// while (current)
@@ -142,11 +146,11 @@ void	minishell(char **input, char ***env)
 	tmp = tokens;
 	if (tokens)
 	{
-		ast = parse(&tokens, *env, input);
+		ast = parse(&tokens, status, *env, input);
 		free_token(tmp);
-		if (ast && status != -40)
+		if (ast && g_sig_status != 4)
 		{
-			status = executor(ast, env);
+			*status = executor(ast, *status, env);
 			ast_free(ast);
 		}
 	}
@@ -156,23 +160,27 @@ int	main(int ac, char **av, char **envp)
 {
 	char	*input;
 	char	**env;
+	int		status;
 
 	(void)ac;
 	(void)av;
 	env = dup_array(envp);
 	if (!env)
-		return (1);
+		return (1); //1 ou 0 ?
 	status = 0;
+	g_sig_status = 0;
 	init_signals();
 	while (1)
 	{
+		g_sig_status = 0;
 		input = readline("minishell$ ");
 		if (!input)
-			ft_exit(NULL, &env);
-		minishell(&input, &env);
+			ft_exit(NULL, &env, status);
+		g_sig_status = 1;
+		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, &env);
+	ft_exit(NULL, &env, status);
 }

@@ -109,7 +109,7 @@ static int	print_export(char **env)
 	return (0);
 }
 
-int	ft_export(char **args, char ***env)
+int	ft_export(char **args, char ***env, int status)
 {
 	int		i;
 	char	*name;
@@ -122,7 +122,7 @@ int	ft_export(char **args, char ***env)
 	{
 		name = get_name(args[i]);
 		if (!name)
-			return (1);
+			status = 1;
 		value = get_value(args[i]);
 		if (ft_setenv(env, name, value))
 		{
@@ -135,5 +135,5 @@ int	ft_export(char **args, char ***env)
 			free(value);
 		i++;
 	}
-	return (0);
+	return (status);
 }

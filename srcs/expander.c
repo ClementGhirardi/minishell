@@ -22,7 +22,7 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-char	*extract_var_name(char *str, int *i, char **env)
+char	*extract_var_name(char *str, int *i, int status, char **env)
 {
 	int		start;
 	char	*tmp;
@@ -44,7 +44,7 @@ char	*extract_var_name(char *str, int *i, char **env)
 	return (var);
 }
 
-static char	*expand_quotes(char *str, int *i, char **env)
+static char	*expand_quotes(char *str, int *i, int status, char **env)
 {
 	char	quote;
 	char	*tmp;
@@ -57,7 +57,7 @@ static char	*expand_quotes(char *str, int *i, char **env)
 	while (str[*i] && str[*i] != quote)
 	{
 		if (quote != '\'' && str[*i] == '$')
-			var = extract_var_name(str, i, env);
+			var = extract_var_name(str, i, status, env);
 		else
 			var = ft_substr(str, (*i)++, 1);
 		if (!var)
@@ -68,7 +68,7 @@ static char	*expand_quotes(char *str, int *i, char **env)
 	return (tmp);
 }
 
-char	*expand_string(char *str, char **env)
+char	*expand_string(char *str, int status, char **env)
 {
 	char	*result;
 	char	*tmp;
@@ -81,9 +81,9 @@ char	*expand_string(char *str, char **env)
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '\"')
-			tmp = expand_quotes(str, &i, env);
+			tmp = expand_quotes(str, &i, status, env);
 		else if (str[i] == '$')
-			tmp = extract_var_name(str, &i, env);
+			tmp = extract_var_name(str, &i, status, env);
 		else
 			tmp = ft_substr(str, i++, 1);
 		result = ft_strjoin_and_free(result, tmp);
@@ -91,7 +91,7 @@ char	*expand_string(char *str, char **env)
 	return (free(str), result);
 }
 
-void	expander(t_ast *node, char **env)
+void	expander(t_ast *node, int status, char **env)
 {
 	int	i;
 
@@ -102,13 +102,13 @@ void	expander(t_ast *node, char **env)
 		i = 0;
 		while (node->args[i])
 		{
-			node->args[i] = expand_string(node->args[i], env);
+			node->args[i] = expand_string(node->args[i], status, env);
 			i++;
 		}
 	}
 	if (node->file)
 	{
-		node->file = expand_string(node->file, env);
+		node->file = expand_string(node->file, status, env);
 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
 		{
 			free(node->file);

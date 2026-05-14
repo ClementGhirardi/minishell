@@ -16,7 +16,7 @@ int	isempty(char *s)
 	return (1);
 }
 
-char	*here_doc_pipe_op(char *input_beginning, char **env)
+char	*here_doc_pipe_op(char *input_beginning, int *status, char **env)
 {
 	char	**history;
 	char	*to_add;
@@ -30,13 +30,13 @@ char	*here_doc_pipe_op(char *input_beginning, char **env)
 	history[2] = NULL;
 	input = readline("> ");
 	if (!input)
-		error_heredocword(0, env);
+		error_heredocword(0, *status, env);
 	while (input && isempty(input))
 	{
 		free(input);
 		input = readline("> ");
 		if (!input)
-			error_heredocword(0, env);
+			error_heredocword(0, *status, env);
 	}
 	history[1] = ft_strjoin_and_free(ft_strdup(" "), ft_strdup(input));
 	to_add = ft_strjoin_and_free(history[0], history[1]);

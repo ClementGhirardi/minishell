@@ -12,17 +12,19 @@
 
 #include "../includes/minishell.h"
 
-int	executor(t_ast *ast, char ***env);
+int	executor(t_ast *ast, int status, char ***env);
 
-int	execute_cmd(t_ast *node, char ***env)
+int	execute_cmd(t_ast *node, int status, char ***env)
 {
 	pid_t	pid;
 	char	*path;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
+	if (error_exec_cmd(node->args[0], &status, *env))
+		return (status);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node, node->args, env));
+		return (run_builtin(node, node->args, env, status));
 	else
 	{
 		pid = fork();
@@ -39,24 +41,24 @@ int	execute_cmd(t_ast *node, char ***env)
 					": Permission denied", 2), free_array(*env), ast_free(node),
 					 exit(126), 126);
 		}
-		return (waitpid(pid, (int *)&status, 0), get_status(status));
+		return (waitpid(pid, &status, 0), get_status(status));
 	}
 }
 
-int	execute_pipe(t_ast *node, char ***env)
+int	execute_pipe(t_ast *node, int status, char ***env)
 {
 	int		fd[2];
 	pid_t	pid[2];
 
 	if (pipe(fd) == -1)
-		return (perror("pipe"), 1);
+		return (1);
 	pid[0] = fork();
 	if (pid[0] == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		status = executor(node->left, env);
+		executor(node->left, status, env);
 		ast_free(node);
 		free_array(*env);
 		exit(status);
@@ -67,22 +69,20 @@ int	execute_pipe(t_ast *node, char ***env)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		status = executor(node->right, env);
+		executor(node->right, status, env);
 		ast_free(node);
 		free_array(*env);
 		exit(status);
 	}
-	return (close(fd[0]), close(fd[1]),
-		waitpid(pid[0], (int *)&status, 0), waitpid(pid[1], (int *)&status, 0),
-		get_status(status));
+	return (close(fd[0]), close(fd[1]), waitpid(pid[0], &status, 0),
+		waitpid(pid[1], &status, 0), get_status(status));
 }
 
-static int	open_fd(t_ast *node, char *file, char **env)
+static int	open_fd(t_ast *node, char *file)
 {
 	int			fd;
 
 	fd = -1;
-	(void)env;
 	// if (dollar_finder(node->file)
 	// 	&& !expand_dollar_in_filename(ft_strdup(node->file), env))
 	// {
@@ -102,21 +102,21 @@ static int	open_fd(t_ast *node, char *file, char **env)
 	return (fd);
 }
 
-int	execute_redir(t_ast *node, char ***env)
+int	execute_redir(t_ast *node, int status, char ***env)
 {
 	int	fd;
 	int	std[2];
 
 	fd = -1;
 	if (node->file)
-		fd = open_fd(node, node->file, *env);
+		fd = open_fd(node, node->file);
 	if (fd == -1)
 		return (error_open(node->file));
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
 		std[0] = dup(STDIN_FILENO);
 		dup2(fd, STDIN_FILENO);
-		status = executor(node->left, env);
+		status = executor(node->left, status, env);
 		dup2(std[0], STDIN_FILENO);
 		close(std[0]);
 	}
@@ -124,7 +124,7 @@ int	execute_redir(t_ast *node, char ***env)
 	{
 		std[1] = dup(STDOUT_FILENO);
 		dup2(fd, STDOUT_FILENO);
-		status = executor(node->left, env);
+		status = executor(node->left, status, env);
 		dup2(std[1], STDOUT_FILENO);
 		close(std[1]);
 	}
@@ -132,7 +132,7 @@ int	execute_redir(t_ast *node, char ***env)
 	return (status);
 }
 
-int	execute_operator(t_ast *ast, char ***env)
+int	execute_operator(t_ast *ast, int status, char ***env)
 {
 	static int	stop;
 
@@ -141,16 +141,18 @@ int	execute_operator(t_ast *ast, char ***env)
 		stop = 1;
 		return (stop);
 	}
-	stop = executor(ast->left, env);
+	stop = executor(ast->left, status, env);
+	status = stop;
 	if (ast->type == NODE_AND)
 	{
 		if (!stop)
-			stop = executor(ast->right, env);
+			stop = executor(ast->right, status, env);
 	}
 	else
 	{
 		if (stop)
-			stop = executor(ast->right, env);
+			stop = executor(ast->right, status, env);
 	}
+	status = stop;
 	return (stop);
 }

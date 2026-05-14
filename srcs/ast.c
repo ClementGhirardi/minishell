@@ -28,11 +28,11 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env, t_data *data)
+t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 {
 	t_ast		*node;
 
-	node = create_redir_node(env, data);
+	node = create_redir_node(status, env, data);
 	if (!node)
 		return (NULL);
 	if (r_type == TOKEN_REDIR_IN)
@@ -44,18 +44,19 @@ t_ast	*ast_new_redir(t_token_type r_type, char *file, char **env, t_data *data)
 	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		data->limiter = file;
-		node->fd = here_doc(data, env);
+		data->limiter = node->file;
+		node->fd = here_doc(data, status, env);
 		if (node->fd == -1)
 			return (free(node->file), free(node), NULL);
 	}
 	else
 		node->fd = -1;
-	node->args = NULL;
-	node->file = file;
-	node->left = NULL;
-	node->right = NULL;
+	// node->args = NULL;
+	// node->file = file;
+	// node->left = NULL;
+	// node->right = NULL;
 	return (node);
+	return (node->left = NULL, node->right = NULL, node);
 }
 
 t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
@@ -71,7 +72,7 @@ t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
 		node->type = NODE_OR;
 	else
 		node->type = NODE_PIPE;
-	node->args = NULL;
+	node->args = NULL; //iniialiser
 	node->file = NULL;
 	node->fd = -1;
 	node->left = left;

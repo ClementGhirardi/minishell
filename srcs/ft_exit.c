@@ -12,27 +12,99 @@
 
 #include "../includes/minishell.h"
 
-char	*expand_string(char *str, char **env);
+// char	*expand_string(char *str, char **env);
 
-int	isnumber(char *s)
+// int	isnumber(char *s)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (s[i])
+// 	{
+// 		if (!isdigit(s[i]))
+// 			return (0);
+// 		i++;
+// 	}
+// 	return (1);
+// }
+
+// int	ft_exit(t_ast **ast, char ***env)
+// {
+// 	ft_printf("exit\n");
+// 	if (ast)
+// 		ast_free(*ast);
+// 	rl_clear_history();
+// 	free_array(*env);
+// 	exit(status);
+// }
+
+
+
+
+
+static void	error_num(char *arg, int *status)
+{
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+	*status = 2;
+}
+
+static int	error_too_many_args(int *status)
+{
+	ft_putendl_fd("minishell: exit: too many arguments", 2);
+	*status = 1;
+	return (*status);
+}
+
+static int	ft_strslen(char **strs)
+{
+	int	len;
+
+	len = 0;
+	if (!strs)
+		return (len);
+	while (strs[len])
+		len++;
+	return (len);
+}
+
+static int	ft_is_str_digit(char *str)
 {
 	int	i;
 
+	if (!str)
+		return (0);
 	i = 0;
-	while (s[i])
+	while (str[i])
 	{
-		if (!isdigit(s[i]))
+		if (!ft_isdigit(str[i]))
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int	ft_exit(t_ast **ast, char ***env)
+int	ft_exit(char **args, char ***env, int status) //ast pour le free
 {
-	ft_printf("exit\n");
-	if (ast)
-		ast_free(*ast);
+	int	len;
+
+	len = ft_strslen(args);
+	if (len >= 2)
+	{
+		if (!ft_is_str_digit(args[1]))
+			error_num(args[1], &status);
+		else if (len > 2)
+			return (error_too_many_args(&status));
+		else
+			status = ft_atoi(args[1]);
+	}
+	if (wait(NULL) != -1)
+		return (status);
+	exit(status);
+	if (wait(NULL) != -1)
+		return (status);
+	ft_putendl_fd("exit", 1);
 	rl_clear_history();
 	free_array(*env);
 	exit(status);

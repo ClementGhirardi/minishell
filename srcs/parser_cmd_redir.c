@@ -62,12 +62,12 @@ t_ast	*parse_redirection(t_token **tokens, t_infos *infos)
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
-		return (ast_new_redir(redir_type, NULL, infos->env, &data));
+		return (ast_new_redir(redir_type, infos->status, infos->env, &data));
 	else
 		file = ft_strdup((*tokens)->value);
 	data.tokens = tokens;
 	data.input = infos->input;
-	instr = ast_new_redir(redir_type, file, infos->env, &data);
+	instr = ast_new_redir(redir_type, infos->status, infos->env, &data);
 	*tokens = (*tokens)->next;
 	return (instr);
 }

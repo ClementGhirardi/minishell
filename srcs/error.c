@@ -12,7 +12,48 @@
 
 #include "../includes/minishell.h"
 
-int	error_here_doc(int *fd, int nb_line, char *limiter)
+static int	error_exec_cmd_slash(char *arg, int *status, char **env)
+{
+	if (arg[0] == '/')
+	{
+		*status = 126;
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(arg, 2);
+		if (get_path(arg, env))
+			ft_putendl_fd(": Is a directory", 2);
+		else
+			ft_putendl_fd(": No such file or directory", 2);
+		return (1);
+	}
+	return (0);
+}
+
+int	error_exec_cmd(char *arg, int *status, char **env)
+{
+	DIR	*dir;
+
+	if (error_exec_cmd_slash(arg, status, env))
+		return (1);
+	if (!ft_strncmp(arg, ".", ft_strlen(arg)))
+		return (*status = 2,
+			ft_putendl_fd("minishell: .: filename argument required", 2),
+			ft_putendl_fd(".: usage: . filename [arguments]", 2), 1);
+	if (!ft_strncmp(arg, "./", 2))
+	{
+		dir = opendir(&arg[2]);
+		if (!dir)
+			return (0);
+		closedir(dir);
+		*status = 126;
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putendl_fd(": Is a directory", 2);
+		return (1);
+	}
+	return (0);
+}
+
+int	error_here_doc(int *fd, int nb_line, char *limiter, int status)
 {
 	if (status == 130)
 		return (close(fd[1]), close(fd[0]), -1);
@@ -119,7 +160,7 @@ int	error_open(char *file)
 		ft_putendl_fd(": open failed", 2), 1);
 }
 
-void	error_heredocword(char limiter, char **env)
+void	error_heredocword(char limiter, int status, char **env)
 {
 	if (limiter == '\'' || limiter == '"')
 	{
@@ -129,12 +170,12 @@ void	error_heredocword(char limiter, char **env)
 		ft_putchar_fd('\'', 2);
 		ft_putendl_fd("", 2);
 		status = 2;
-		ft_exit(NULL, &env);
+		ft_exit(NULL, &env, status);
 	}
 	else
 	{
 		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
-		ft_exit(NULL, &env);
+		ft_exit(NULL, &env, status);
 	}
 }
 
@@ -152,11 +193,11 @@ void	error_heredoc(int i, char *limiter)
 	ft_putendl_fd("')", 2);
 }
 
-void	*syntax_error(char *c)
+void	*syntax_error(char *str, int *status)
 {
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd("syntax error near unexpected token `", 2);
-	ft_putstr_fd(c, 2);
+	*status = 2;
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	ft_putstr_fd(str, 2);
 	ft_putendl_fd("'", 2);
 	return (NULL);
 }

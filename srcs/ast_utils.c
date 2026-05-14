@@ -27,7 +27,7 @@
 // 	return (NULL);
 // }
 
-t_ast	*create_redir_node(char **env, t_data *data)
+t_ast	*create_redir_node(int *status, char **env, t_data *data)
 {
 	t_ast	*node;
 	//char	*str;
@@ -35,7 +35,8 @@ t_ast	*create_redir_node(char **env, t_data *data)
 	// if (!(*data->tokens)->value)
 	// 	return (error_syntax("`newline'"), NULL);
 	node = malloc(1 * sizeof(t_ast));
-	// if (!node)
+	if (!node)
+		return (NULL);
 	// 	return (error_syntax("`newline'"), NULL);
 	// if ((*data->tokens)->type != TOKEN_WORD)
 	// {
@@ -46,7 +47,7 @@ t_ast	*create_redir_node(char **env, t_data *data)
 	// 	return (free(node), NULL);
 	// }
 	node->file = ft_strdup((*data->tokens)->value);
-	node->file = expand_string(node->file, env);
+	node->file = expand_string(node->file, *status, env);
 	if (!node->file)
 		return (free(node), NULL);
 	return (node);

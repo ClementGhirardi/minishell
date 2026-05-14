@@ -127,13 +127,17 @@ void	handle_word(char *input, t_token **tokens, int *i)
 // 	create_word(input, tokens, *i, start);
 // }
 
-t_token	*lexer2(char **input, char **env)
+t_token	*lexer2(char **input, int *status, char **env)
 {
 	t_token	*tokens;
 	int		i;
 
-	handle_quotes(input, env);
+	// handle_quotes(input, status, env);
 	//add_history(*input);
+	(void)status;
+	(void)env;
+	if (handle_quotes(input))
+		return (NULL);
 	tokens = NULL;
 	i = 0;
 	while ((*input)[i])
@@ -156,18 +160,18 @@ t_token	*lexer2(char **input, char **env)
 	return (tokens);
 }
 
-t_token	*lexer(char **input, char **env)
+t_token	*lexer(char **input, int *status, char **env)
 {
 	t_token	*tokens;
 	t_token	*end;
 
-	tokens = lexer2(input, env);
-	if (!syntax_analyzer(tokens))
+	tokens = lexer2(input, status, env);
+	if (!syntax_analyzer(tokens, status))
 	{
 		free_token(tokens);
 		return (NULL);
 	}
-	end = handle_last_pipe_op(*input, tokens, env);
+	end = handle_last_pipe_op(*input, tokens, status, env);
 	if (end)
 		ft_tokadd_back(&tokens, end);
 	return (tokens);

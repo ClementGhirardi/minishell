@@ -14,7 +14,7 @@
 
 void	handle_word(char *input, t_token **tokens, int *i);
 
-t_token	*handle_last_pipe_op(char *input, t_token *tokens, char **env)
+t_token	*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **env)
 {
 	t_token	*tmp;
 	t_token	*end_token;
@@ -30,8 +30,8 @@ t_token	*handle_last_pipe_op(char *input, t_token *tokens, char **env)
 		|| tmp->type == TOKEN_OR)
 	{
 		heredoc_output = ft_strjoin_and_free(ft_strdup(" "),
-				here_doc_pipe_op(ft_strdup(input), env));
-		end_token = lexer(&heredoc_output, env);
+				here_doc_pipe_op(ft_strdup(input), status, env));
+		end_token = lexer(&heredoc_output, status, env);
 		free(heredoc_output);
 		return (end_token);
 	}
@@ -40,31 +40,56 @@ t_token	*handle_last_pipe_op(char *input, t_token *tokens, char **env)
 	return (NULL);
 }
 
-void	handle_quotes(char **input, char **env)
-{
-	int		i;
-	char	quote;
+// void	handle_quotes(char **input, int *status, char **env)
+// {
+// 	int		i;
+// 	char	quote;
 
-	if (!input || !(*input))
-		return ;
-	i = -1;
-	while ((*input)[++i])
+// 	(void)status;
+// 	if (!input || !(*input))
+// 		return ;
+// 	i = -1;
+// 	while ((*input)[++i])
+// 	{
+// 		if ((*input)[i] == '\'' || (*input)[i] == '\"')
+// 		{
+// 			quote = (*input)[i++];
+// 			while ((*input)[i] && (*input)[i] != quote)
+// 				i++;
+// 			if (!(*input)[i])
+// 				break ;
+// 		}
+// 		quote = '\0';
+// 	}
+// 	if (quote)
+// 		*input = ft_strjoin_and_free(*input,
+// 				ft_strjoin_and_free(ft_strdup("\n"),
+// 					// here_doc_word(ft_substr(*input, 0, i), quote, env)));
+// 					//here_doc_word(*input, status, env)));
+// 	return ;
+// }
+
+int	handle_quotes(char **input)
+{
+	int	quote[2];
+	int	i;
+
+	if (!(*input))
+		return (1);
+	quote[0] = 0;
+	quote[1] = 0;
+	i = 0;
+	while ((*input)[i])
 	{
-		if ((*input)[i] == '\'' || (*input)[i] == '\"')
-		{
-			quote = (*input)[i++];
-			while ((*input)[i] && (*input)[i] != quote)
-				i++;
-			if (!(*input)[i])
-				break ;
-		}
-		quote = '\0';
+		if ((*input)[i] == '\'')
+			quote[0] = (quote[0] + 1) % 2;
+		if ((*input)[i] == '\"')
+			quote[1] = (quote[1] + 1) % 2;
+		i++;
 	}
-	if (quote)
-		*input = ft_strjoin_and_free(*input,
-				ft_strjoin_and_free(ft_strdup("\n"),
-					here_doc_word(ft_substr(*input, 0, i), quote, env)));
-	return ;
+	if (quote[0] || quote[1])
+		return (1);
+	return (0);
 }
 
 void	handle_pipe(char *input, t_token **tokens, int *i)

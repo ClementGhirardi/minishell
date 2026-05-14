@@ -70,7 +70,7 @@ int	dispatch(t_token *tokens)
 	return (1);
 }
 
-static t_token	*check_brackets(t_token	*tokens)
+static t_token	*check_brackets(t_token	*tokens, int *status)
 {
 	t_token	*tmp;
 	int		o_brack;
@@ -86,16 +86,16 @@ static t_token	*check_brackets(t_token	*tokens)
 		if (tmp->type == TOKEN_C_BRACK)
 			c_brack++;
 		if (c_brack > o_brack)
-			return (syntax_error(")"));
+			return (syntax_error(")", status));
 		tmp = tmp->next;
 	}
 	if (o_brack == c_brack)
 		return (tokens);
 	else
-		return (syntax_error("("));
+		return (syntax_error("(", status));
 }
 
-int	syntax_first_token(t_token *tokens)
+int	syntax_first_token(t_token *tokens, int *status)
 {
 	if (!tokens)
 		return (0);
@@ -104,24 +104,24 @@ int	syntax_first_token(t_token *tokens)
 		|| tokens->type == TOKEN_PIPE
 		|| tokens->type == TOKEN_C_BRACK)
 	{
-		syntax_error(tokens->value);
+		syntax_error(tokens->value, status);
 		return (0);
 	}
 	return (1);
 }
 
-int	syntax_analyzer(t_token *tokens)
+int	syntax_analyzer(t_token *tokens, int *status)
 {
-	if (!syntax_first_token(tokens) || !check_brackets(tokens))
+	if (!syntax_first_token(tokens, status) || !check_brackets(tokens, status))
 		return (0);
 	while (tokens)
 	{
 		if (!dispatch(tokens))
 		{
 			if (tokens->next)
-				syntax_error(tokens->next->value);
+				syntax_error(tokens->next->value, status);
 			else
-				syntax_error("newline");
+				syntax_error("newline", status);
 			return (0);
 		}
 		tokens = tokens->next;
