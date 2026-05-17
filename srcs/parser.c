@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 15:44:32 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/17 14:42:21 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ static t_ast	*parse_instructions(t_token **tokens, t_infos *infos)
 	else
 	{
 		instr = parse_redirection(tokens, infos);
-		instr->left = parse_instructions(tokens, infos);
+		if (g_sig_status != 4)
+			instr->left = parse_instructions(tokens, infos);
 	}
 	return (instr);
 }
@@ -49,7 +50,8 @@ t_ast	*parse_pipeline(t_token **tokens, t_infos *infos)
 	t_token	*tmp;
 
 	left = parse_instructions(tokens, infos);
-	while (tokens && *tokens && (*tokens)->type == TOKEN_PIPE)
+	while (tokens && *tokens && (*tokens)->type == TOKEN_PIPE
+		&& g_sig_status != 4)
 	{
 		brack = NULL;
 		if ((*tokens)->bracket)
@@ -134,7 +136,7 @@ t_ast	*parse(t_token **tokens, int *status, char **env, char **input)
 	brack = NULL;
 	//tmp = *tokens;
 	left = parse_pipeline(tokens, &infos);
-	while (*tokens)
+	while (*tokens && g_sig_status != 4)
 	{
 		left = parsing_loop(tokens, left, &brack, &infos);
 		if (*tokens)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_cmd_redir.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 11:36:24 by adbarth           #+#    #+#             */
-/*   Updated: 2026/04/17 11:36:26 by adbarth          ###   ########.fr       */
+/*   Updated: 2026/05/17 14:14:51 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,11 @@ t_ast	*parse_redirection(t_token **tokens, t_infos *infos)
 	t_ast			*instr;
 	t_token_type	redir_type;
 	t_data			data;
-	char			*file;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
 		return (ast_new_redir(redir_type, infos->status, infos->env, &data));
-	else
-		file = ft_strdup((*tokens)->value);
 	data.tokens = tokens;
 	data.input = infos->input;
 	instr = ast_new_redir(redir_type, infos->status, infos->env, &data);
