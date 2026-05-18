@@ -27,20 +27,27 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 	int		start;
 	char	*tmp;
 	char	*var;
+	char	*str_status;
 
 	(*i)++;
 	start = *i;
 	if (str[*i] == '?')
-		return ((*i)++, ft_strdup(ft_itoa(status)));
+	{
+		str_status = ft_itoa(status);
+		if (!str_status)
+			return ((*i)++, NULL);
+		tmp = ft_strdup(str_status);
+		return ((*i)++, free(str_status), tmp);
+	}
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
 	if (!tmp)
 		return (NULL);
 	var = ft_getenv(env, tmp);
+	free(tmp);
 	if (!var)
 		return (NULL);
-	free(tmp);
 	return (var);
 }
 

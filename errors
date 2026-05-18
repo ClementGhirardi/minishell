@@ -1,0 +1,39 @@
+valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp
+
+
+TESTS QUI ECHOUENT:
+
+wc | ls (LEAKS)
+
+$rien (ERROR)
+$rien ok (ERROR)
+$ (ERROR)
+$?$ (ERROR)
+$rienHOME (ERROR)
+ls > $file (LEAK)
+ls > $rien$file$rien (LEAK)
+ls > $rien (ERROR)
+"$"USER (LEAK)
+echo $45 (ERROR)
+ls $rien (ERROR)
+ls > $file'ls' (LEAK)
+
+echo '' '' '' | cat -e (ERROR)
+
+export $arg=ok (ERROR)
+export "$arg" (LEAK)
+
+exit > out (ERROR)
+exit | sleep 2 (LEAK)
+sleep 2 | exit (LEAK)
+ls | exit (LEAK)
+
+ctrl+C -> echo $? (ERROR, devrait afficher 130)
+
+
+
+TESTS MANQUANTS :
+- buitins (sauf echo, export, exit)
+- commandes complexes avec &&, ||, (), |, <
+- quotes
+- ulimit

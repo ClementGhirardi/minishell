@@ -58,7 +58,7 @@ int	execute_pipe(t_ast *node, t_ast *root, int status, char ***env)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		executor(node->left, root, status, env);
+		status = executor(node->left, root, status, env);
 		ast_free(root);
 		free_array(*env);
 		exit(status);
@@ -69,7 +69,7 @@ int	execute_pipe(t_ast *node, t_ast *root, int status, char ***env)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		executor(node->right, root, status, env);
+		status = executor(node->right, root, status, env);
 		ast_free(root);
 		free_array(*env);
 		exit(status);

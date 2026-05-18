@@ -117,32 +117,9 @@ static void	minishell(int *status, char **input, char ***env)
 	if (!input || !*input || !**input)
 		return ;
 	tokens = lexer(input, status, *env);
-	// tmp = tokens;
-	// t_token *current = tokens;
-	// while (current)
-	// {
-		// ft_printf("%d: |%s|\n", current->type, current->value);
-		// current = current->next;
-	// }
 	tmp = tokens;
 	tokens = split_bracket(&tokens);
 	free_token(tmp);
-	// while (tmp)
-	// {
-	// 	if (tmp->bracket)
-	// 		ft_printf("((");
-	//  	ft_printf("%d: |%s|\n", tmp->type, tmp->value);
-	// 	tmp = tmp->next;
-	// }
-
-	// free_token(tmp);
-	//tmp = tokens;
-	// current = tokens;
-	// while (current)
-	// {
-		// ft_printf("%d: |%s|\n", current->type, current->value);
-		// current = current->next;
-	// }
 	tmp = tokens;
 	if (tokens)
 	{

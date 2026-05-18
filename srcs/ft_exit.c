@@ -85,27 +85,55 @@ static int	ft_is_str_digit(char *str)
 	return (1);
 }
 
-int	ft_exit(char **args, char ***env, int status) //ast pour le free
+// int	ft_exit(char **args, char ***env, int status) //ast pour le free
+// {
+// 	int	len;
+
+// 	len = ft_strslen(args);
+// 	if (len >= 2)
+// 	{
+// 		if (!ft_is_str_digit(args[1]))
+// 			error_num(args[1], &status);
+// 		else if (len > 2)
+// 			return (error_too_many_args(&status));
+// 		else
+// 			status = ft_atoi(args[1]);
+// 	}
+// 	if (wait(NULL) != -1)
+// 		return (status);
+// 	//exit(status);
+// 	if (wait(NULL) != -1)
+// 		return (status);
+// 	ft_putendl_fd("exit", 1);
+// 	rl_clear_history();
+// 	free_array(*env);
+// 	exit(status);
+// }
+
+int	ft_exit(t_ast *ast, char ***env, int status) //ast pour le free
 {
 	int	len;
 
-	len = ft_strslen(args);
+	len = 0;
+	if (ast)
+		len = ft_strslen(ast->args);
 	if (len >= 2)
 	{
-		if (!ft_is_str_digit(args[1]))
-			error_num(args[1], &status);
+		if (!ft_is_str_digit(ast->args[1]))
+			error_num(ast->args[1], &status);
 		else if (len > 2)
 			return (error_too_many_args(&status));
 		else
-			status = ft_atoi(args[1]);
+			status = ft_atoi(ast->args[1]);
 	}
 	if (wait(NULL) != -1)
 		return (status);
-	exit(status);
+	//exit(status);
 	if (wait(NULL) != -1)
 		return (status);
 	ft_putendl_fd("exit", 1);
 	rl_clear_history();
 	free_array(*env);
+	ast_free(ast);
 	exit(status);
 }

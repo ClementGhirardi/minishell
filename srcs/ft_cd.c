@@ -44,11 +44,11 @@ int	ft_cd(char **args, char ***env)
 		ft_putchar_fd('\n', 1);
 	}
 	else
-		path = args[1];
+		path = ft_strdup(args[1]);
 	if (chdir(path) == -1)
 		return (ft_putstr_fd("minishell: cd: ", 2),
 			ft_putstr_fd(path, 2),
-			ft_putendl_fd(": no such file or directory", 2), 1);
+			ft_putendl_fd(": no such file or directory", 2), free(path), 1);
 	update_pwd(env);
-	return (0);
+	return (free(path), 0);
 }

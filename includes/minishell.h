@@ -209,8 +209,8 @@ int			ft_unset(char **args, char ***env);
 
 int			ft_env(char ***env);
 
-//int			ft_exit(t_ast **ast, char ***env, int status);
-int			ft_exit(char **args, char ***env, int status);
+int			ft_exit(t_ast *ast, char ***env, int status);
+// int			ft_exit(char **args, char ***env, int status);
 
 int			is_builtin(char *cmd);
 int			run_builtin(t_ast *ast, char **args, char ***env, int status);
