@@ -150,7 +150,7 @@ static void	minishell(int *status, char **input, char ***env)
 		free_token(tmp);
 		if (ast && g_sig_status != 4)
 		{
-			*status = executor(ast, *status, env);
+			*status = executor(ast, ast, *status, env);
 			ast_free(ast);
 		}
 	}

@@ -215,11 +215,11 @@ int			ft_exit(char **args, char ***env, int status);
 int			is_builtin(char *cmd);
 int			run_builtin(t_ast *ast, char **args, char ***env, int status);
 
-int			executor(t_ast *ast, int status, char ***env);
-int			execute_operator(t_ast *ast, int status, char ***env);
-int			execute_redir(t_ast *node, int status, char ***env);
-int			execute_pipe(t_ast *node, int status, char ***env);
-int			execute_cmd(t_ast *node, int status, char ***env);
+int			executor(t_ast *ast, t_ast *root, int status, char ***env);
+int			execute_operator(t_ast *ast, t_ast *root, int status, char ***env);
+int			execute_redir(t_ast *node, t_ast *root, int status, char ***env);
+int			execute_pipe(t_ast *node, t_ast *root, int status, char ***env);
+int			execute_cmd(t_ast *node, t_ast *root, int status, char ***env);
 
 void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, int status, char **env);

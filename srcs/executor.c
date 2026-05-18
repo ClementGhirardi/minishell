@@ -66,17 +66,17 @@ char	*ft_strdup_no_empty_quotes(char *str)
 	return (result);
 }
 
-int	executor(t_ast *ast, int status, char ***env)
+int	executor(t_ast *ast, t_ast *root, int status, char ***env)
 {
 	if (!ast)
 		return (1);
 	if (g_sig_status == 2)
 		return (130);
 	if (ast && ast->type == NODE_CMD)
-		return (expander(ast, status, *env), execute_cmd(ast, status, env));
+		return (expander(ast, status, *env), execute_cmd(ast, root, status, env));
 		// return (execute_cmd(ast, env));
 	else if (ast && ast->type == NODE_PIPE)
-		return (execute_pipe(ast, status, env));
+		return (execute_pipe(ast, root, status, env));
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
@@ -92,10 +92,10 @@ int	executor(t_ast *ast, int status, char ***env)
 					ft_putstr_fd(ast->file, 2),
 					ft_putendl_fd(": ambiguous redirect", 2), 2);
 		}
-		return (execute_redir(ast, status, env));
+		return (execute_redir(ast, root, status, env));
 	}
 	else if (ast && (ast->type == NODE_AND || ast->type == NODE_OR))
-		return (execute_operator(ast, status, env));
+		return (execute_operator(ast, root, status, env));
 	else
 		return (1);
 }
