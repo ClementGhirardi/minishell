@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 15:20:08 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/05/12 15:04:23 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/18 11:19:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,27 +21,27 @@ static int	check_error_point(char *arg, int *status)
 	return (0);
 }
 
-static int	check_error_slash(char *arg, int *status)
-{
-	if (arg[0] == '/')
-	{
-		*status = 126;
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(arg, 2);
-		if (!access(arg, F_OK))
-			ft_putendl_fd(": Is a directory", 2);
-		else
-			ft_putendl_fd(": No such file or directory", 2);
-		return (1);
-	}
-	return (0);
-}
+// static int	check_error_slash(char *arg, int *status)
+// {
+// 	if (arg[0] == '/')
+// 	{
+// 		*status = 126;
+// 		ft_putstr_fd("minishell: ", 2);
+// 		ft_putstr_fd(arg, 2);
+// 		if (!access(arg, F_OK))
+// 			ft_putendl_fd(": Is a directory", 2);
+// 		else
+// 			ft_putendl_fd(": No such file or directory", 2);
+// 		return (1);
+// 	}
+// 	return (0);
+// }
 
 static int	check_error_point_and_slash(char *arg, int *status)
 {
 	DIR		*dir;
 
-	if (!ft_strncmp(arg, "./", 2))
+	if (!ft_strncmp(arg, "./", 2) || !ft_strncmp(arg, "/", 1))
 	{
 		if (access(arg, F_OK))
 			return (*status = 126, ft_putstr_fd("minishell: ", 2),
@@ -63,8 +63,6 @@ static int	check_error_point_and_slash(char *arg, int *status)
 int	error_exec_cmd(char *arg, int *status)
 {
 	if (check_error_point(arg, status))
-		return (1);
-	if (check_error_slash(arg, status))
 		return (1);
 	if (check_error_point_and_slash(arg, status))
 		return (1);
