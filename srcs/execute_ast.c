@@ -108,9 +108,11 @@ int	execute_redir(t_ast *node, t_ast *root, int status, char ***env)
 	int	std[2];
 
 	fd = -1;
-	if (node->file)
+	if (!node->file || !node->file[0])
+		return (1);
+	if (node->file && node->file[0])
 		fd = open_fd(node, node->file);
-	if (fd == -1)
+	if (fd == -1 && node->file && node->file[0])
 		return (error_open(node->file));
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 	{
@@ -128,8 +130,7 @@ int	execute_redir(t_ast *node, t_ast *root, int status, char ***env)
 		dup2(std[1], STDOUT_FILENO);
 		close(std[1]);
 	}
-	close(fd);
-	return (status);
+	return (close(fd), status);
 }
 
 int	execute_operator(t_ast *ast, t_ast *root, int status, char ***env)

@@ -34,6 +34,8 @@ t_ast	*create_redir_node(int *status, char **env, t_data *data)
 
 	// if (!(*data->tokens)->value)
 	// 	return (error_syntax("`newline'"), NULL);
+	(void)status;
+	(void)env;
 	node = malloc(1 * sizeof(t_ast));
 	if (!node)
 		return (NULL);
@@ -47,7 +49,7 @@ t_ast	*create_redir_node(int *status, char **env, t_data *data)
 	// 	return (free(node), NULL);
 	// }
 	node->file = ft_strdup((*data->tokens)->value);
-	node->file = expand_string(node->file, *status, env);
+	//node->file = expand_string(node->file, *status, env);
 	if (!node->file)
 		return (free(node), NULL);
 	return (node);

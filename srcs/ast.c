@@ -50,13 +50,17 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 			return (free(node->file), free(node), NULL);
 	}
 	else
+	{
 		node->fd = -1;
+		node->left = NULL;
+		node->right = NULL;
+	}
 	// node->args = NULL;
 	// node->file = file;
 	// node->left = NULL;
 	// node->right = NULL;
 	return (node);
-	return (node->left = NULL, node->right = NULL, node);
+	// return (node->left = NULL, node->right = NULL, node);
 }
 
 t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)

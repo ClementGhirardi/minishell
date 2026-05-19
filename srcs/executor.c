@@ -80,18 +80,20 @@ int	executor(t_ast *ast, t_ast *root, int status, char ***env)
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
-		// if (ast->file && ast->type != NODE_HEREDOC)
-		// {
-		// 	expander(ast, *env);
-		// }
-		if (ast->file)
+		if (ast->file && ast->type != NODE_HEREDOC)
 		{
 			expander(ast, status, *env);
-			if (!ast->file && ast->fd == -1)
-				return (ft_putstr_fd("minishell: ", 2),
-					ft_putstr_fd(ast->file, 2),
-					ft_putendl_fd(": ambiguous redirect", 2), 2);
 		}
+		// if (ast->file)
+		// {
+		// 	expander(ast, status, *env);
+		// 	// if (!ast->file)
+		// 	// 	return (error_file())
+		// 	if (!ast->file) // && ast->fd == -1)
+		// 		return (ft_putstr_fd("minishell: ", 2),
+		// 			ft_putstr_fd(ast->file, 2),
+		// 			ft_putendl_fd(": ambiguous redirect", 2), 2);
+		// }
 		return (execute_redir(ast, root, status, env));
 	}
 	else if (ast && (ast->type == NODE_AND || ast->type == NODE_OR))
