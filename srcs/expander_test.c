@@ -22,6 +22,36 @@ static int	is_var_char(char c)
 	return (0);
 }
 
+// char	*extract_var_name(char *str, int *i, int status, char **env)
+// {
+// 	int		start;
+// 	char	*tmp;
+// 	char	*var;
+// 	char	*str_status;
+
+// 	(*i)++;
+// 	start = *i;
+// 	if (str[*i] == '?')
+// 	{
+// 		str_status = ft_itoa(status);
+// 		if (!str_status)
+// 			return ((*i)++, NULL);
+// 		tmp = ft_strdup(str_status);
+// 		return ((*i)++, free(str_status), tmp);
+// 	}
+// 	while (is_var_char(str[*i]))
+// 		(*i)++;
+// 	tmp = ft_substr(str, start, *i - start);
+// 	if (!tmp)
+// 		return (NULL);
+// 	var = ft_getenv(env, tmp);
+// 	free(tmp);
+// 	if (!var)
+// 		return (NULL);
+// 	return (var);
+// }
+
+
 char	*extract_var_name(char *str, int *i, int status, char **env)
 {
 	int		start;
@@ -29,28 +59,31 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 	char	*var;
 	char	*str_status;
 
-	(*i)++;
-	start = *i;
+	start = (*i)++;
 	if (str[*i] == '?')
 	{
 		str_status = ft_itoa(status);
 		if (!str_status)
 			return ((*i)++, NULL);
 		tmp = ft_strdup(str_status);
-		return ((*i)++, free(str_status), tmp);
+		while (str[++(*i)])
+			// tmp = ft_strjoin_and_free(tmp, expand_string(ft_strdup(&str[*i]), status, env));
+			tmp = ft_strjoin_and_free(tmp, ft_substr(str, (*i), 1));
+		ft_printf("tmp a la fin de extractvarname = %s\n", tmp);
+		return (free(str_status), tmp);
 	}
 	while (is_var_char(str[*i]))
 		(*i)++;
 	tmp = ft_substr(str, start, *i - start);
 	if (!tmp)
 		return (NULL);
-	// if (tmp[0] && tmp[0] == '$' && tmp[1])
-	// 	return (free(tmp), *i = ft_strlen(str), ft_strdup(str));
-	if (!tmp[0] || tmp[0] == '$') // a changer
+	if (!tmp[1] || tmp[1] == '$')
 		return (free(tmp), *i = ft_strlen(str), ft_strdup(str));
 	var = ft_getenv(env, tmp);
+	ft_printf("var = %s\n", var);
 	return (free(tmp), var);
 }
+
 
 static char	*expand_quotes(char *str, int *i, int status, char **env)
 {
@@ -86,6 +119,7 @@ char	*expand_string(char *str, int status, char **env)
 	if (!result)
 		return (NULL);
 	i = 0;
+	ft_printf("\nstrlen de str = %d\n", ft_strlen(str));
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '\"')
@@ -95,35 +129,13 @@ char	*expand_string(char *str, int status, char **env)
 		else
 			tmp = ft_substr(str, i++, 1);
 		result = ft_strjoin_and_free(result, tmp);
+		if (!str[i])
+			ft_printf("str[i] == caractere null\n");
+		ft_printf("str[i] = %c\n", str[i]);
+		ft_printf("i = %d\n", i);
 	}
 	return (free(str), str = NULL, result);
 }
-
-// void	expander(t_ast *node, int status, char **env)
-// {
-// 	int	i;
-
-// 	if (!node)
-// 		return ;
-// 	if (node->args)
-// 	{
-// 		i = 0;
-// 		while (node->args[i])
-// 		{
-// 			node->args[i] = expand_string(node->args[i], status, env);
-// 			i++;
-// 		}
-// 	}
-// 	if (node->file)
-// 	{
-// 		node->file = expand_string(node->file, status, env);
-// 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
-// 		{
-// 			free(node->file);
-// 			node->file = NULL;
-// 		}
-// 	}
-// }
 
 void	*ft_realloc(void *ptr, size_t size)
 {
@@ -160,6 +172,7 @@ char	**remove_empty_var(char **args, int status, char **env)
 	j = 0;
 	while (args && args[++i])
 	{
+		ft_printf("strlen de args[i] (avant expandstring) = %d\n", ft_strlen(args[i]));
 		test = expand_string(ft_strdup(args[i]), status, env);
 		if (test && *test)
 			j++;
@@ -168,9 +181,12 @@ char	**remove_empty_var(char **args, int status, char **env)
 			return (free_array(args), free_array(clean), NULL);
 		clean = tmp;
 		if (test && *test)
-			clean[j - 1] = ft_strjoin_and_free(clean[j - 1], expand_string(args[i], status, env));
+			clean[j - 1] = ft_strjoin_and_free(clean[j - 1], args[i]);
+			//clean[j - 1] = ft_strjoin_and_free(clean[j - 1], expand_string(args[i], status, env));
 		else
 			free(args[i]);
+		//ft_printf("strlen de args[i] (apres expandstring) = %d\n", ft_strlen(args[i]));
+		clean[j] = NULL;
 		free(test);
 		test = NULL;
 	}
@@ -187,7 +203,10 @@ void	expander(t_ast *node, int status, char **env)
 		i = -1;
 		node->args = remove_empty_var(node->args, status, env);
 		while (node->args && node->args[++i])
+		{
 			node->args[i] = expand_string(node->args[i], status, env);
+			ft_printf("OK\n");
+		}
 	}
 	if (node && node->file)
 	{

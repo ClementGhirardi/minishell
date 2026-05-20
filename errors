@@ -7,8 +7,16 @@ TESTS QUI ECHOUENT:
 
 wc | ls (LEAKS)
 
-$ (ERROR)
+$
+$$
+$$$
+$??
+$?ok
+$?$HOME
+$$? (ERROR)
 $?$ (ERROR)
+?$ (ERROR)
+$45 (ERROR)
 
 redirections (LEAKS)
 ls > $file'ls' (LEAK)
@@ -17,8 +25,6 @@ ls > $rien$file$rien (LEAK)
 ls > $rien
 "$"USER (LEAK)
 $HOME
-
-echo $45 (ERROR)
 
 echo '' '' '' | cat -e (ERROR)
 
@@ -48,7 +54,10 @@ ls $rien -l
 --------------------------------------------------------------------------
 
 TESTS MANQUANTS :
+- heredoc
+- redirections
 - buitins (sauf echo, export, exit)
 - commandes complexes avec &&, ||, (), |, <
 - quotes
+- points
 - ulimit

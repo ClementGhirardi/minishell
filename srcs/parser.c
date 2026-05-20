@@ -123,7 +123,6 @@ t_ast	*parsing_loop(t_token **tokens, t_ast *left, t_ast **brack,
 
 t_ast	*parse(t_token **tokens, int *status, char **env, char **input)
 {
-	//t_token		*tmp;
 	t_ast		*left;
 	t_ast		*brack;
 	t_infos		infos;
@@ -134,7 +133,6 @@ t_ast	*parse(t_token **tokens, int *status, char **env, char **input)
 	infos.input = input;
 	infos.status = status;
 	brack = NULL;
-	//tmp = *tokens;
 	left = parse_pipeline(tokens, &infos);
 	while (*tokens && g_sig_status != 4)
 	{
@@ -142,6 +140,5 @@ t_ast	*parse(t_token **tokens, int *status, char **env, char **input)
 		if (*tokens)
 			left = parse_after_bracket(tokens, left, brack, &infos);
 	}
-	//free_token(tmp);
 	return (left);
 }

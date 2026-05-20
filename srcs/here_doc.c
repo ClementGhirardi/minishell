@@ -96,7 +96,7 @@ int	here_doc(t_data *data, int *status, char **env)
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter, *status));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	while ((ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
+	while ((ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1) //((ft_strcmp(buffer, data->limiter)
 			|| !ft_strncmp(buffer, "\n", 1))
 		&& g_sig_status != 4)
 	{
