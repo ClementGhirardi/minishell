@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 09:59:44 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/20 11:58:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,17 @@ static void	handle_word(char *input, t_token **tokens, int *i)
 		free(word);
 	}
 	if (input[*i] == '\n')
-		return (start = *i, *i = ft_strlen(input),
-			word = ft_substr(input, start + 1, *i - start),
-			add_token(tokens, new_token(TOKEN_WORD, word)), free(word));
+	{
+		start = *i;
+		*i = ft_strlen(input);
+		word = ft_substr(input, start + 1, *i - start);
+		if (!word)
+			return ;
+		if (word[ft_strlen(word) - 1] != '\n')
+			word = ft_strjoin_and_free(word, ft_strdup("\n"));
+		add_token(tokens, new_token(TOKEN_WORD, word));
+		free(word);
+	}
 }
 
 t_token	*lexer(char **input, int *status, char **env)
