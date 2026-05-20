@@ -12,17 +12,45 @@
 
 #include "../includes/minishell.h"
 
+static int	is_an_env_var(char *path, char **env)
+{
+	int	i;
+	int	j;
+
+	if (!path)
+		return (0);
+	i = 0;
+	while (env[i])
+	{
+		j = 0;
+		while (env[i][j] && env[i][j] != '=')
+			j++;
+		if (!ft_strcmp(&env[i][j + 1], path))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 static int	error_exec_cmd_slash(char *arg, int *status, char **env)
 {
 	if (arg[0] == '/')
 	{
 		*status = 126;
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(arg, 2);
-		if (get_path(arg, env))
+		if (is_an_env_var(arg, env))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(arg, 2);
 			ft_putendl_fd(": Is a directory", 2);
-		else
+		}
+		else if (!existing_path(arg))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(arg, 2);
 			ft_putendl_fd(": No such file or directory", 2);
+		}
+		else
+			return (0);
 		return (1);
 	}
 	return (0);

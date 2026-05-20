@@ -31,6 +31,8 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 
 	(*i)++;
 	start = *i;
+	if (!str[*i] || str[*i] == '$')
+		return (ft_strdup("$"));
 	if (str[*i] == '?')
 	{
 		str_status = ft_itoa(status);
@@ -44,10 +46,6 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 	tmp = ft_substr(str, start, *i - start);
 	if (!tmp)
 		return (NULL);
-	// if (tmp[0] && tmp[0] == '$' && tmp[1])
-	// 	return (free(tmp), *i = ft_strlen(str), ft_strdup(str));
-	if (!tmp[0] || tmp[0] == '$') // a changer
-		return (free(tmp), *i = ft_strlen(str), ft_strdup(str));
 	var = ft_getenv(env, tmp);
 	return (free(tmp), var);
 }
@@ -99,84 +97,6 @@ char	*expand_string(char *str, int status, char **env)
 	return (free(str), str = NULL, result);
 }
 
-// void	expander(t_ast *node, int status, char **env)
-// {
-// 	int	i;
-
-// 	if (!node)
-// 		return ;
-// 	if (node->args)
-// 	{
-// 		i = 0;
-// 		while (node->args[i])
-// 		{
-// 			node->args[i] = expand_string(node->args[i], status, env);
-// 			i++;
-// 		}
-// 	}
-// 	if (node->file)
-// 	{
-// 		node->file = expand_string(node->file, status, env);
-// 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
-// 		{
-// 			free(node->file);
-// 			node->file = NULL;
-// 		}
-// 	}
-// }
-
-void	*ft_realloc(void *ptr, size_t size)
-{
-	unsigned char	*new;
-	unsigned char	*p;
-	size_t			i;
-
-	if (!size)
-		return (free(ptr), NULL);
-	p = ptr;
-	i = 0;
-	new = ft_calloc(1, size);
-	if (!new)
-		return (NULL);
-	while (p && p[i])
-	{
-		new[i] = p[i];
-		i++;
-	}
-	free(ptr);
-	return (new);
-}
-
-char	**remove_empty_var(char **args, int status, char **env)
-{
-	char	**clean;
-	char	**tmp;
-	char	*test;
-	int		i;
-	int		j;
-
-	clean = NULL;
-	i = -1;
-	j = 0;
-	while (args && args[++i])
-	{
-		test = expand_string(ft_strdup(args[i]), status, env);
-		if (test && *test)
-			j++;
-		tmp = ft_realloc((void *)clean, sizeof(char *) * (j + 1));
-		if (!tmp)
-			return (free_array(args), free_array(clean), NULL);
-		clean = tmp;
-		if (test && *test)
-			clean[j - 1] = ft_strjoin_and_free(clean[j - 1], expand_string(args[i], status, env));
-		else
-			free(args[i]);
-		free(test);
-		test = NULL;
-	}
-	return (free(args), clean);
-}
-
 void	expander(t_ast *node, int status, char **env)
 {
 	char	*tmp;
@@ -195,7 +115,7 @@ void	expander(t_ast *node, int status, char **env)
 		node->file = expand_string(node->file, status, env);
 		if (node->file && !ft_strncmp(node->file, "", ft_strlen(node->file)))
 		{
-			if (ft_strchr(tmp, '$'))
+			if (tmp && ft_strchr(tmp, '$'))
 				error_file(tmp);
 			else
 				error_open(NULL);

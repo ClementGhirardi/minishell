@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static int	existing_path(char *cmd)
+int	existing_path(char *cmd)
 {
 	if (!access(cmd, F_OK))
 	{

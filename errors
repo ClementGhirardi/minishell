@@ -7,24 +7,9 @@ TESTS QUI ECHOUENT:
 
 wc | ls (LEAKS)
 
-$
-$$
-$$$
-$??
-$?ok
-$?$HOME
-$$? (ERROR)
-$?$ (ERROR)
-?$ (ERROR)
-$45 (ERROR)
+probleme avec chmod ?
 
-redirections (LEAKS)
-ls > $file'ls' (LEAK)
-ls > $file (LEAK)
-ls > $rien$file$rien (LEAK)
-ls > $rien
 "$"USER (LEAK)
-$HOME
 
 echo '' '' '' | cat -e (ERROR)
 
@@ -49,6 +34,32 @@ $rien ls
 ls > $rien
 ls $rien
 ls $rien -l
+
+ls > $file'ls'
+ls > $file
+ls > $rien$file$rien
+ls > $rien
+
+leaks redirections
+
+$
+$$
+$$$
+$?
+$$?
+$?$?
+$?$?$
+$??
+$?ok
+$?$
+?$
+?$?
+?
+$HOME
+$?$HOME
+$HOME$
+
+/usr/bin/ls
 
 
 --------------------------------------------------------------------------

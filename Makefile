@@ -47,6 +47,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/heredoc_pipe_operator.c \
 	$(SRCS_DIR)/expander.c \
+	$(SRCS_DIR)/expander_cleaner.c \
 	$(SRCS_DIR)/get_buffer.c \
 	$(SRCS_DIR)/idx_to_next_line.c \
 

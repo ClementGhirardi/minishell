@@ -111,7 +111,7 @@ char		*ft_strjoin_and_free(char *s1, char *s2);
 char		*ft_strjoin_char_free(char *s1, char c);
 char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 
-void		*ft_realloc(void *ptr, size_t size);
+// void		*ft_realloc(void *ptr, size_t size);
 char		*ft_strjoin_sep_realloc(char **array, char c);
 char		*expand_string_heredoc(char *str, char **env);
 void		*ctrld_heredoc(char **history, char *limiter,
@@ -143,7 +143,6 @@ int			syntax_analyzer(t_token *tokens, int *status);
 t_token		*split_bracket(t_token **tokens);
 void		ft_tokadd_back(t_token **lst, t_token *new);
 
-
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
@@ -165,8 +164,7 @@ char		*ft_getenv(char **env, const char *name);
 char		*extract_var_name(char *str, int *i, int status, char **env);
 void		expander(t_ast *node, int status, char **env);
 char		*expand_string(char *str, int status, char **env);
-char		*expand_dollar_in_filename(char *file, char **env);
-int			dollar_finder(char *file);
+char		**remove_empty_var(char **args, int status, char **env);
 
 char		*quotes_cleaner(char *str);
 char		*skip_empty_first_quotes(char *str);
@@ -188,7 +186,7 @@ int			idx_to_next_line(char *str);
 int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
 
 char		*get_path(char *cmd, char **envp);
-
+int			existing_path(char *cmd);
 int			get_status(int status);
 
 void		free_array(char **array);

@@ -52,6 +52,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 	else
 	{
 		node->fd = -1;
+		node->args = NULL;
 		node->left = NULL;
 		node->right = NULL;
 	}
