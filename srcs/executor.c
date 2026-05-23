@@ -74,7 +74,6 @@ int	executor(t_ast *ast, t_ast *root, int status, char ***env)
 		return (130);
 	if (ast && ast->type == NODE_CMD)
 		return (expander(ast, status, *env), execute_cmd(ast, root, status, env));
-		// return (execute_cmd(ast, env));
 	else if (ast && ast->type == NODE_PIPE)
 		return (execute_pipe(ast, root, status, env));
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT

@@ -5,16 +5,25 @@ valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=
 
 TESTS QUI ECHOUENT:
 
+<< '' (createword lexer, heredoc.c, get_path, execute_cmd, rm_emptyvar)
+<< ok ; o (LEAK)
+<< ok && ls
+<< ok | wc
+<< ok ; ctrlD direct
+
 wc | ls (LEAKS)
 
-probleme avec chmod ?
+leaks redirections (FD):
+ls > $file'ls'
+ls > $file
+ls > $rien$file$rien
+ls > out
 
-"$"USER (LEAK)
-
+probleme avec chmod (affiche message d'erreur sans raison)
+export
 echo '' '' '' | cat -e (ERROR)
 
-export $arg=ok (ERROR)
-export "$arg" (LEAK)
+export arg=oui ; export $arg=ok ; echo $arg ; echo $oui (LEAK, ERROR)
 
 exit > out (ERROR)
 exit | sleep 2 (LEAK)
@@ -28,19 +37,8 @@ ctrl+C -> echo $? (ERROR, devrait afficher 130)
 
 TESTS CORRIGES:
 
-$rien
-$rien ok 
-$rien ls
 ls > $rien
-ls $rien
-ls $rien -l
-
-ls > $file'ls'
-ls > $file
-ls > $rien$file$rien
-ls > $rien
-
-leaks redirections
+ls > ''
 
 $
 $$
@@ -55,9 +53,33 @@ $?$
 ?$
 ?$?
 ?
+
+"$"
+"$"USER
 $HOME
 $?$HOME
 $HOME$
+'"$rien"'
+"'$rien'"
+
+$rien
+$rien ok 
+$rien ls
+ls > $rien
+ls $rien
+ls $rien -l
+
+ls ''
+'' ls
+ls '' -a
+''
+'' ""
+''""
+''ls''
+
+
+export $arg=ok
+export "$arg"
 
 /usr/bin/ls
 

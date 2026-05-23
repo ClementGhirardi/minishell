@@ -119,6 +119,7 @@ void		*ctrld_heredoc(char **history, char *limiter,
 
 char		*here_doc_word(char limiter, int *status, char **env);
 int			ft_strcmp(char *s1, char *s2);
+int 		ft_heredoc_strncmp(char *s1, char *s2, size_t size);
 size_t		ft_safe_strlen(char *s);
 int			ft_is_in(char c, char *str);
 
@@ -172,7 +173,6 @@ char		**filter_args(char **args, char **env);
 int			existing_var(char *var, char **env);
 char		*expand_var(char *str, char **env);
 char		*skip_empty_quotes(char *str);
-
 
 char		**filter_and_dup_array(char **array, char **env);
 char		**alloc_array(char **array, char **env);

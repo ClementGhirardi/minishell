@@ -21,7 +21,7 @@ int	execute_cmd(t_ast *node, t_ast *root,  int status, char ***env)
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
-	if (error_exec_cmd(node->args[0], &status, *env))
+	if (node->args[0][0] && error_exec_cmd(node->args[0], &status, *env)) //retirer 1ere condition
 		return (status);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node, node->args, env, status));
@@ -83,14 +83,6 @@ static int	open_fd(t_ast *node, char *file)
 	int			fd;
 
 	fd = -1;
-	// if (dollar_finder(node->file)
-	// 	&& !expand_dollar_in_filename(ft_strdup(node->file), env))
-	// {
-	// 	ft_putstr_fd("minishell: ", 2);
-	// 	ft_putstr_fd(node->file, 2);
-	// 	ft_putendl_fd(": ambiguous redirect", 2);
-	// 	return (fd);
-	// }
 	if (node->type == NODE_REDIR_IN)
 		fd = open(file, O_RDONLY);
 	else if (node->type == NODE_HEREDOC)

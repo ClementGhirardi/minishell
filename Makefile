@@ -25,7 +25,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/parser_cmd_redir.c \
 	$(SRCS_DIR)/ft_getenv.c \
-	$(SRCS_DIR)/here_doc.c \
+	$(SRCS_DIR)/here_doc_tests.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \
 	$(SRCS_DIR)/array.c \
@@ -47,7 +47,6 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/heredoc_pipe_operator.c \
 	$(SRCS_DIR)/expander.c \
-	$(SRCS_DIR)/expander_cleaner.c \
 	$(SRCS_DIR)/get_buffer.c \
 	$(SRCS_DIR)/idx_to_next_line.c \
 

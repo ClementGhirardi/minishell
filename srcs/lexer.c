@@ -57,12 +57,28 @@ void	create_word(char *input, t_token **tokens, int i, int start)
 {
 	char	*word;
 
-	word = ft_substr(input, start, i - start);
+	if ((input[i] == '\'' || input[i] == '"')
+		&& input[start] == input[i]
+		&& i - start == 2)
+		word = ft_strdup("");
+	else
+		word = ft_substr(input, start, i - start);
 	if (!word)
 		return ;
 	add_token(tokens, new_token(TOKEN_WORD, word));
 	free(word);
 }
+
+// void	create_word(char *input, t_token **tokens, int i, int start)
+// {
+// 	char	*word;
+
+// 	word = ft_substr(input, start, i - start);
+// 	if (!word)
+// 		return ;
+// 	add_token(tokens, new_token(TOKEN_WORD, word));
+// 	free(word);
+// }
 
 void	handle_word(char *input, t_token **tokens, int *i)
 {

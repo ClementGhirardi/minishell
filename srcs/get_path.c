@@ -61,7 +61,7 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp;
 	char	*full;
 
-	if (!cmd)
+	if (!cmd) //retirer 2e condiotn
 		return (NULL);
 	if (existing_path(cmd))
 		return (ft_strdup(cmd));
@@ -72,7 +72,7 @@ char	*get_path(char *cmd, char **envp)
 	while (paths[++i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
-		if (!cmd || !*cmd)
+		if (!cmd ||!*cmd)
 			return (free(tmp), free_strs(paths), NULL);
 		full = ft_strjoin(tmp, cmd);
 		free(tmp);

@@ -71,13 +71,47 @@
 // 	return (free(str), result);
 // }
 
+int	ft_heredoc_strncmp(char *s1, char *s2, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	if ((!s1 && !s2) || !size)
+		return (0);
+	if (!s2)
+		return (s1[0]);
+	if (!s1)
+		return (-s2[0]);
+	ft_printf("dans heredocstrncmp\n");
+	ft_printf("size/bufferlen = %d\n", size);
+	ft_printf("s2/limiter = %s\n", s2);
+	while (s1[i] && i < size - 1)
+	{
+		ft_printf("dans le while\n");
+		if (s1[i] == '\n' && !s2[i])
+			return (0);
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	ft_printf("sortie de while\n");
+	if (s1[i] == '\n' && !s2[i])
+		return (0);
+	ft_printf("dernier return\n");
+	return (s1[i] - s2[i]);
+}
+
 int	ft_strcmp(char *s1, char *s2)
 {
 	int	i;
 
 	i = 0;
-	if (!s1 || !s2)
-		return (300);
+	if (!s1 && !s2)
+		return (0);
+	if (!s2)
+		return (s1[0]);
+	if (!s1)
+		return (-s2[0]);
 	while (s1[i] && s2[i])
 	{
 		if (s1[i] - s2[i])
