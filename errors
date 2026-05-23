@@ -10,6 +10,7 @@ TESTS QUI ECHOUENT:
 << ok && ls
 << ok | wc
 << ok ; ctrlD direct
+cat | rev -> ctrlC -> heredoc -> sortie du heredoc (via limiter) -> ctrlD = segfault
 
 wc | ls (LEAKS)
 
@@ -19,8 +20,6 @@ ls > $file
 ls > $rien$file$rien
 ls > out
 
-probleme avec chmod (affiche message d'erreur sans raison)
-export
 echo '' '' '' | cat -e (ERROR)
 
 export arg=oui ; export $arg=ok ; echo $arg ; echo $oui (LEAK, ERROR)
