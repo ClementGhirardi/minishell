@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 15:55:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 17:51:28 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	ft_isin(char *str, char c)
 	return (0);
 }
 
-static int	child(char **buffer, int *fd, char **env)
+static int	child(char **buffer, int *fd, t_data *data)
 {
 	g_sig_status = 3;
 	close(fd[0]);
@@ -36,28 +36,32 @@ static int	child(char **buffer, int *fd, char **env)
 	if (*buffer)
 		ft_putendl_fd(*buffer, fd[1]);
 	free(*buffer);
-	free_array(env);
+	free_array(data->env);
+	free(*data->input);
+	ast_free(data->ast);
+	close(fd[1]);
 	exit(0);
 }
 
-int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
+int	get_buffer(char **buffer, int *nb_line, t_data *data)
 {
 	int		fd[2];
 	pid_t	pid;
 	int		tmp;
 
-	(void) env;
 	if (pipe(fd) < 0)
 		return (0);
 	pid = fork();
 	if (pid == 0)
-		child(buffer, fd, env);
+		child(buffer, fd, data);
 	close(fd[1]);
 	waitpid(pid, &tmp, 0);
-	*status = get_status(tmp);
-	if (*status == 130)
+	*data->status = get_status(tmp);
+	if (*data->status == 130)
 		return (g_sig_status = 4, close(fd[0]), 0);
 	*buffer = get_next_line(fd[0]);
+	while (get_next_line(fd[0]))
+		;
 	if (!(*buffer))
 		return (close(fd[0]), 0);
 	if (!ft_isin(*buffer, '\n'))

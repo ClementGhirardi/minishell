@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 15:54:52 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 17:30:48 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,42 +72,31 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
+typedef struct s_var
+{
+	t_token	*current;
+	t_token	*previous;
+
+	char	*value;
+	char	*new_value;
+
+	int		len;
+	char	*line;
+}	t_var;
+
 typedef struct s_data
 {
-	t_token	**tokens;
+	char	**env;
+	int		*status;
 	char	**input;
-	char	*limiter;
+	t_ast	*ast;
 }	t_data;
-
-typedef struct s_var
-{
-	t_token	*current;
-	t_token	*previous;
-
-	char	*value;
-	char	*new_value;
-
-	int		len;
-	char	*line;
-}	t_var;
-
-typedef struct s_var
-{
-	t_token	*current;
-	t_token	*previous;
-
-	char	*value;
-	char	*new_value;
-
-	int		len;
-	char	*line;
-}	t_var;
 
 extern volatile sig_atomic_t	g_sig_status;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
 
-char		*here_doc_word(char **input, char limiter, int *status, char **env);
+char		*here_doc_word(char limiter, t_data *data);
 
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
@@ -118,18 +107,17 @@ void		handle_last_pipe(char **input, int *status, char **env);
 t_token		*lexer(char **input, int *status, char **env);
 
 t_ast		*create_redir_node(t_token_type r_type, int *status, char **env,
-				t_data *data);
-
+				t_token *tokens);
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env,
-				t_data *data);
+				t_token *tokens);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
 char		*ft_gethole_fd(int fd);
 
-t_ast		*parser(t_token *tokens, int *status, char **env, char **input);
+t_ast		*parser(t_token *tokens, int *status, char **env);
 
 char		*ft_getenv(char **env, const char *name);
 
@@ -139,9 +127,9 @@ void		expander(t_ast *node, int status, char **env);
 
 int			idx_to_next_line(char *str);
 
-int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
+int			get_buffer(char **buffer, int *nb_line, t_data *data);
 
-int			here_doc(t_data *data, int *status, char **env);
+int			here_doc(char *limiter, t_data *data);
 
 char		*get_path(char *cmd, char **envp);
 

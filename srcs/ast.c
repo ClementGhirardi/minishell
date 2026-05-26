@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 15:33:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 17:26:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ t_ast	*ast_new_cmd(char **args)
 }
 
 t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
-		t_data *data)
+		t_token *tokens)
 {
 	t_ast	*node;
 
-	node = create_redir_node(r_type, status, env, data);
+	node = create_redir_node(r_type, status, env, tokens);
 	if (!node)
 		return (NULL);
 	node->args = NULL;
@@ -44,15 +44,8 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 	if (r_type == TOKEN_APPEND)
 		node->type = NODE_APPEND;
 	if (r_type == TOKEN_HEREDOC)
-	{
 		node->type = NODE_HEREDOC;
-		data->limiter = node->file;
-		node->fd = here_doc(data, status, env);
-		if (node->fd == -1)
-			return (free(node->file), free(node), NULL);
-	}
-	else
-		node->fd = -1;
+	node->fd = -1;
 	return (node->left = NULL, node->right = NULL, node);
 }
 

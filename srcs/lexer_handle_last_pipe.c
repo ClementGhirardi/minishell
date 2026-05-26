@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 15:27:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 17:30:53 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static int	only_one_pipe(char *input)
 
 void	handle_last_pipe(char **input, int *status, char **env)
 {
+	t_data	data;
 	int		i;
 
 	if (!(*input) || g_sig_status == 4)
@@ -70,7 +71,11 @@ void	handle_last_pipe(char **input, int *status, char **env)
 		i--;
 	if (i >= 0 && (*input)[i] == '|')
 	{
-		here_doc_word(input, '\n', status, env);
+		data.env = env;
+		data.status = status;
+		data.input = input;
+		data.ast = NULL;
+		here_doc_word('\n', &data);
 		handle_last_pipe(input, status, env);
 	}
 	if (g_sig_status == 4)

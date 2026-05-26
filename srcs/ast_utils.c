@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 15:51:01 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 15:20:02 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 17:26:19 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,25 +70,25 @@ static char	*expand_only_quotes(char *str)
 }
 
 t_ast	*create_redir_node(t_token_type r_type, int *status, char **env,
-		t_data *data)
+		t_token *tokens)
 {
 	t_ast	*node;
 	char	*str;
 
-	if (!(*data->tokens)->value)
+	if (!tokens->value)
 		return (error_syntax("`newline'", status), NULL);
 	node = malloc(1 * sizeof(t_ast));
 	if (!node)
 		return (error_syntax("`newline'", status), NULL);
-	if ((*data->tokens)->type != TOKEN_WORD)
+	if (tokens->type != TOKEN_WORD)
 	{
-		str = ft_typetostr((*data->tokens)->type);
+		str = ft_typetostr(tokens->type);
 		error_syntax(str, status);
 		if (str)
 			free(str);
 		return (free(node), NULL);
 	}
-	node->file = ft_strdup((*data->tokens)->value);
+	node->file = ft_strdup(tokens->value);
 	if (r_type == TOKEN_HEREDOC)
 		node->file = expand_only_quotes(node->file);
 	else
