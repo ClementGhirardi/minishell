@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 11:35:34 by adbarth           #+#    #+#             */
-/*   Updated: 2026/05/26 11:46:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:01:28 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	execute_cmd(t_ast *node, t_ast *root,  int status, char ***env)
 	pid_t	pid;
 	char	*path;
 
+	ft_printf("0|%s|\n", node->args[0]);
 	if (!node || !node->args || !node->args[0])
 		return (0);
 	if (node->args[0][0] && error_exec_cmd(node->args[0], &status, *env)) //retirer 1ere condition
@@ -27,13 +28,17 @@ int	execute_cmd(t_ast *node, t_ast *root,  int status, char ***env)
 		return (run_builtin(node, node->args, env, status));
 	else
 	{
+		ft_printf("1|%s|\n", node->args[0]);
 		pid = fork();
 		if (pid == 0)
 		{
+			ft_printf("2|%s|\n", node->args[0]);
 			path = get_path(node->args[0], *env);
+			ft_printf("3|%s|\n", node->args[0]);
 			if (!path)
 				return (error_command(node->args[0]), free_array(*env),
 						ast_free(root), exit(127), 127);
+			ft_printf("4|%s|\n", node->args[0]);
 			execve(path, node->args, *env);
 			free(path);
 			return (ft_putstr_fd("minishell: ", 2),

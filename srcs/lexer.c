@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 11:35:12 by adbarth           #+#    #+#             */
-/*   Updated: 2026/04/17 11:35:14 by adbarth          ###   ########.fr       */
+/*   Updated: 2026/05/26 14:38:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,16 +88,12 @@ void	handle_word(char *input, t_token **tokens, int *i)
 	start = *i;
 	if (input[*i] == '&')
 		(*i)++;
-	while (input[*i] && input[*i] != ' ' && input[*i] != '|' && input[*i] != '<'
-		&& input[*i] != '>' && input[*i] != '&' && input[*i] != '('
-		&& input[*i] != ')')
+	while (input[*i] && !ft_is_in(input[*i], " |<>&()"))
 	{
 		quote = ' ';
 		while (input[*i] && input[*i] != quote && input[*i] != '\n')
 		{
-			if (quote == ' '
-				&& (input[*i] == '|' || input[*i] == '<' || input[*i] == '>'
-				|| input[*i] == '&' || input[*i] == '(' || input[*i] == ')'))
+			if (quote == ' ' && (ft_is_in(input[*i], "|<>&()")))
 				break ;
 			if (quote == ' ' && (input[*i] == '\'' || input[*i] == '\"'))
 				quote = input[*i];
@@ -143,15 +139,11 @@ void	handle_word(char *input, t_token **tokens, int *i)
 // 	create_word(input, tokens, *i, start);
 // }
 
-t_token	*lexer2(char **input, int *status, char **env)
+t_token	*lexer2(char **input)
 {
 	t_token	*tokens;
 	int		i;
 
-	// handle_quotes(input, status, env);
-	//add_history(*input);
-	(void)status;
-	(void)env;
 	if (handle_quotes(input))
 		return (NULL);
 	tokens = NULL;
@@ -181,7 +173,7 @@ t_token	*lexer(char **input, int *status, char **env)
 	t_token	*tokens;
 	t_token	*end;
 
-	tokens = lexer2(input, status, env);
+	tokens = lexer2(input);
 	if (!syntax_analyzer(tokens, status))
 	{
 		free_token(tokens);

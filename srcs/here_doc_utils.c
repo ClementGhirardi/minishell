@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   here_doc_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/26 14:15:11 by cghirard          #+#    #+#             */
+/*   Updated: 2026/05/26 14:15:35 by cghirard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 // void	*ft_realloc(void *ptr, size_t size)
@@ -82,22 +94,16 @@ int	ft_heredoc_strncmp(char *s1, char *s2, size_t size)
 		return (s1[0]);
 	if (!s1)
 		return (-s2[0]);
-	ft_printf("dans heredocstrncmp\n");
-	ft_printf("size/bufferlen = %d\n", size);
-	ft_printf("s2/limiter = %s\n", s2);
 	while (s1[i] && i < size - 1)
 	{
-		ft_printf("dans le while\n");
 		if (s1[i] == '\n' && !s2[i])
 			return (0);
 		if (s1[i] != s2[i])
 			return (s1[i] - s2[i]);
 		i++;
 	}
-	ft_printf("sortie de while\n");
 	if (s1[i] == '\n' && !s2[i])
 		return (0);
-	ft_printf("dernier return\n");
 	return (s1[i] - s2[i]);
 }
 

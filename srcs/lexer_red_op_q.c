@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
+/*   lexer_red_op_q.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 13:18:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:13:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void	handle_word(char *input, t_token **tokens, int *i);
 
-t_token	*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **env)
+t_token	*handle_last_pipe_op(char *input, t_token *tokens, int *status,
+		char **env)
 {
 	t_token	*tmp;
 	t_token	*end_token;
@@ -35,8 +36,6 @@ t_token	*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **e
 		free(heredoc_output);
 		return (end_token);
 	}
-	// if (status == -42 || status == 130)
-	// 	add_history(input);
 	return (NULL);
 }
 

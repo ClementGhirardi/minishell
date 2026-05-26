@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 11:11:42 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:07:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,50 +28,8 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-static char	*expand_quotes(char *str, int *i)
-{
-	char	quote;
-	char	*tmp;
-	char	*var;
-
-	quote = str[(*i)++];
-	tmp = ft_strdup("");
-	if (!tmp)
-		return (NULL);
-	while (str[*i] && str[*i] != quote)
-	{
-		var = ft_substr(str, (*i)++, 1);
-		if (!var)
-			return ((*i)++, free(tmp), NULL);
-		tmp = ft_strjoin_and_free(tmp, var);
-	}
-	if (str[*i])
-		(*i)++;
-	return (tmp);
-}
-
-char	*expand_quotes_heredoc(char *str)
-{
-	char	*result;
-	char	*tmp;
-	int		i;
-
-	result = ft_strdup("");
-	if (!result)
-		return (free(str), NULL);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"')
-			tmp = expand_quotes(str, &i);
-		else
-			tmp = ft_substr(str, i++, 1);
-		result = ft_strjoin_and_free(result, tmp);
-	}
-	return (free(str), result);
-}
-
-t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
+t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
+		t_data *data)
 {
 	t_ast		*node;
 
@@ -87,7 +45,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
-		node->file = expand_quotes_heredoc(node->file);
+		node->file = expand_file(node->file);
 		data->limiter = node->file;
 		node->fd = here_doc(data, status, env);
 		if (node->fd == -1)
@@ -95,11 +53,8 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 	}
 	else
 		node->fd = -1;
-	node->args = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
-	// return (node->left = NULL, node->right = NULL, node);
+	return (node->args = NULL, node->left = NULL, node->right = NULL,
+		node);
 }
 
 t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
@@ -115,7 +70,7 @@ t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
 		node->type = NODE_OR;
 	else
 		node->type = NODE_PIPE;
-	node->args = NULL; //iniialiser
+	node->args = NULL;
 	node->file = NULL;
 	node->fd = -1;
 	node->left = left;

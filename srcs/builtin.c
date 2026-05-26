@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:43:08 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:13:05 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ int	run_builtin(t_ast *ast, char **args, char ***env, int status)
 	if (!ft_strcmp(args[0], "env"))
 		return (ft_env(env));
 	if (!ft_strcmp(args[0], "exit"))
-		return (ft_exit(ast, env, status)); //ast pour free
-		// return (ft_exit(args, env, status)); //ast pour free
+		return (ft_exit(ast, env, status));
 	if (!ft_strcmp(args[0], "echo"))
 		return (ft_echo(args));
 	return (1);

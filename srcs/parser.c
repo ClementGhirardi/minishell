@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/17 14:42:21 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 14:28:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,15 @@ static t_ast	*parse_instructions(t_token **tokens, t_infos *infos)
 		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
 		return (NULL);
 	if ((*tokens)->type == TOKEN_WORD && (*tokens)->bracket)
-	{
-		tmp = (*tokens)->bracket;
-		*tokens = (*tokens)->next;
-		instr = parse(&tmp, infos->status, infos->env, infos->input);
-	}
+		return (tmp = (*tokens)->bracket,
+			*tokens = (*tokens)->next,
+			instr = parse(&tmp, infos->status, infos->env, infos->input),
+			instr);
 	else if ((*tokens)->type == TOKEN_WORD)
-	{
-		cmd = parse_command(tokens);
-		instr = parse_instructions(tokens, infos);
-		ast_add_end(&instr, cmd);
-	}
+		return (cmd = parse_command(tokens),
+			instr = parse_instructions(tokens, infos),
+			ast_add_end(&instr, cmd),
+			instr);
 	else
 	{
 		instr = parse_redirection(tokens, infos);

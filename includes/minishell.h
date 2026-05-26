@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 10:37:22 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:29:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ typedef struct s_infos
 {
 	char	**env;
 	char	**input;
-	int 	*status;
+	int		*status;
 }	t_infos;
 
 typedef struct s_data
@@ -118,7 +118,7 @@ void		*ctrld_heredoc(char **history, char *limiter,
 
 char		*here_doc_word(char limiter, int *status, char **env);
 int			ft_strcmp(char *s1, char *s2);
-int 		ft_heredoc_strncmp(char *s1, char *s2, size_t size);
+int			ft_heredoc_strncmp(char *s1, char *s2, size_t size);
 size_t		ft_safe_strlen(char *s);
 int			ft_is_in(char c, char *str);
 
@@ -129,7 +129,8 @@ void		free_token(t_token *tokens);
 t_token		*lexer(char **input, int *status, char **env);
 t_token		*lexer2(char **input, int *status, char **env);
 //void		handle_quotes(char **input, int *status, char **env);
-t_token		*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **env);
+t_token		*handle_last_pipe_op(char *input, t_token *tokens, int *status,
+				char **env);
 int			handle_quotes(char **input);
 
 void		handle_pipe(char *input, t_token **tokens, int *i);
@@ -138,20 +139,27 @@ void		handle_redir(char *input, t_token **tokens, int *i, int dir);
 
 void		*syntax_error(char *str, int *status);
 
+int			syntax_after_cbracket(t_token *tokens);
+int			syntax_after_obracket(t_token *tokens);
+int			syntax_after_redir(t_token *tokens);
+int			syntax_after_token(t_token *tokens);
+
 int			syntax_analyzer(t_token *tokens, int *status);
 
 t_token		*split_bracket(t_token **tokens);
 void		ft_tokadd_back(t_token **lst, t_token *new);
 
+char		*expand_file(char *str);
+t_ast		*create_redir_node(int *status, char **env, t_data *data);
+
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data);
+t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env,
+				t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
-
-t_ast		*create_redir_node(int *status, char **env, t_data *data);
 
 char		*ft_gethole_fd(int fd);
 

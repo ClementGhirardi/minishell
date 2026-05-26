@@ -41,8 +41,11 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/execute_ast.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/ft_echo.c \
-	$(SRCS_DIR)/error.c \
+	$(SRCS_DIR)/error0.c \
+	$(SRCS_DIR)/error1.c \
+	$(SRCS_DIR)/error2.c \
 	$(SRCS_DIR)/ft_gethole_fd.c \
+	$(SRCS_DIR)/syntax_after.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
 	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/heredoc_pipe_operator.c \

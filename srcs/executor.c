@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 17:26:13 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:11:27 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,26 +73,15 @@ int	executor(t_ast *ast, t_ast *root, int status, char ***env)
 	if (g_sig_status == 2)
 		return (130);
 	if (ast && ast->type == NODE_CMD)
-		return (expander(ast, status, *env), execute_cmd(ast, root, status, env));
+		return (expander(ast, status, *env),
+			execute_cmd(ast, root, status, env));
 	else if (ast && ast->type == NODE_PIPE)
 		return (execute_pipe(ast, root, status, env));
 	else if (ast && (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
 		if (ast->file && ast->type != NODE_HEREDOC)
-		{
 			expander(ast, status, *env);
-		}
-		// if (ast->file)
-		// {
-		// 	expander(ast, status, *env);
-		// 	// if (!ast->file)
-		// 	// 	return (error_file())
-		// 	if (!ast->file) // && ast->fd == -1)
-		// 		return (ft_putstr_fd("minishell: ", 2),
-		// 			ft_putstr_fd(ast->file, 2),
-		// 			ft_putendl_fd(": ambiguous redirect", 2), 2);
-		// }
 		return (execute_redir(ast, root, status, env));
 	}
 	else if (ast && (ast->type == NODE_AND || ast->type == NODE_OR))

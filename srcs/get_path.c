@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:39:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/24 10:40:07 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:16:10 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp;
 	char	*full;
 
-	if (!cmd) //retirer 2e condiotn
+	if (!cmd)
 		return (NULL);
 	if (existing_path(cmd))
 		return (ft_strdup(cmd));

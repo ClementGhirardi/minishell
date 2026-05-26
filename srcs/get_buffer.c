@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 11:21:52 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:15:58 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
 		;
 	if (!ft_isin(*buffer, '\n'))
 		return (close(fd[0]), free(*buffer), 0);
-	// if (*nb_line != -1)
-	// 	*buffer = expand_string(*buffer, *status, env);
 	(*nb_line)++;
 	return (close(fd[0]), 1);
 }

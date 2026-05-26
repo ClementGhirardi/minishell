@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 11:44:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:04:01 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,55 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
-void	ast_show(t_ast *ast)
-{
-	int	i;
+// void	ast_show(t_ast *ast)
+// {
+// 	int	i;
 
-	if (!ast)
-		return ;
-	if (ast->type == NODE_PIPE)
-		ft_printf("PIPE(");
-	else if (ast->type == NODE_OR)
-		ft_printf("OR(");
-	else if (ast->type == NODE_AND)
-		ft_printf("AND(");
-	else if (ast->type == NODE_CMD)
-		ft_printf("CMD(");
-	else if (ast->type == NODE_REDIR_IN)
-		ft_printf("REDIR_IN(");
-	else if (ast->type == NODE_REDIR_OUT)
-		ft_printf("REDIR_OUT(");
-	else if (ast->type == NODE_APPEND)
-		ft_printf("APPEND(");
-	else if (ast->type == NODE_HEREDOC)
-		ft_printf("HEREDOC(");
-	else
-		ft_printf("REDIR(");
-	if (ast->args)
-	{
-		i = 0;
-		while (ast->args[i])
-		{
-			ft_printf("|%s|", ast->args[i]);
-			i++;
-			if (ast->args[i])
-				ft_printf(", ");
-		}
-	}
-	if (ast->type == NODE_REDIR_IN)
-	{
-		ft_printf("-%s-: ", ast->file);
-		ast_show(ast->left);
-	}
-	else
-	{
-		ast_show(ast->left);
-		if (ast->right)
-			ft_printf(", ");
-		ast_show(ast->right);
-	}
-	ft_printf(")");
-}
+// 	if (!ast)
+// 		return ;
+// 	if (ast->type == NODE_PIPE)
+// 		ft_printf("PIPE(");
+// 	else if (ast->type == NODE_OR)
+// 		ft_printf("OR(");
+// 	else if (ast->type == NODE_AND)
+// 		ft_printf("AND(");
+// 	else if (ast->type == NODE_CMD)
+// 		ft_printf("CMD(");
+// 	else if (ast->type == NODE_REDIR_IN)
+// 		ft_printf("REDIR_IN(");
+// 	else if (ast->type == NODE_REDIR_OUT)
+// 		ft_printf("REDIR_OUT(");
+// 	else if (ast->type == NODE_APPEND)
+// 		ft_printf("APPEND(");
+// 	else if (ast->type == NODE_HEREDOC)
+// 		ft_printf("HEREDOC(");
+// 	else
+// 		ft_printf("REDIR(");
+// 	if (ast->args)
+// 	{
+// 		i = 0;
+// 		while (ast->args[i])
+// 		{
+// 			ft_printf("|%s|", ast->args[i]);
+// 			i++;
+// 			if (ast->args[i])
+// 				ft_printf(", ");
+// 		}
+// 	}
+// 	if (ast->type == NODE_REDIR_IN)
+// 	{
+// 		ft_printf("-%s-: ", ast->file);
+// 		ast_show(ast->left);
+// 	}
+// 	else
+// 	{
+// 		ast_show(ast->left);
+// 		if (ast->right)
+// 			ft_printf(", ");
+// 		ast_show(ast->right);
+// 	}
+// 	ft_printf(")\n");
+// }
 
 // // BEGIN TESTS
 // // TEST LEXER
@@ -145,9 +145,8 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	env = dup_array(envp);
 	if (!env)
-		return (1); //1 ou 0 ?
+		return (1);
 	status = 0;
-	g_sig_status = 0;
 	init_signals();
 	while (1)
 	{
@@ -163,5 +162,4 @@ int	main(int ac, char **av, char **envp)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, &env, status);
 }
