@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 14:36:51 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 15:33:54 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 {
 	t_ast	*node;
 
-	node = create_redir_node(status, env, data);
+	node = create_redir_node(r_type, status, env, data);
 	if (!node)
 		return (NULL);
 	node->args = NULL;

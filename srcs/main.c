@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 13:53:20 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 15:23:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ volatile sig_atomic_t	g_sig_status = 0;
 static void	sigint_handler(int sig)
 {
 	(void) sig;
+	if (g_sig_status == -1)
+		g_sig_status = 0;
 	if (g_sig_status == 1)
 	{
 		g_sig_status = 2;
@@ -98,10 +100,15 @@ static void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
-static void	init_signals(void)
+static int	init_var(int *status, char ***env, char **envp)
 {
+	*env = dup_array(envp);
+	if (!(*env))
+		return (0);
+	*status = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
+	return (1);
 }
 
 void	handle_exit(t_ast *ast, int status, char **input, char ***env)
@@ -151,15 +158,14 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	env = dup_array(envp);
-	if (!env)
+	if (!init_var(&status, &env, envp))
 		return (error_creating_env());
-	status = 0;
-	init_signals();
 	while (1)
 	{
-		g_sig_status = 0;
+		g_sig_status = -1;
 		input = readline("minishell$ ");
+		if (g_sig_status == 0)
+			status = 130;
 		if (!input)
 			return (free_array(env), ft_putendl_fd("exit", 1), 0);
 		g_sig_status = 1;

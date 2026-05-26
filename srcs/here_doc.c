@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/20 11:48:03 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 15:55:20 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,33 @@ static int	read_previous(t_data *data, int status, char **env, int *fd)
 		add_history(*data->input), 0);
 }
 
+
+
+
+
+
+
+char	*expand_only_var(char *str, int status, char **env)
+{
+	char	*result;
+	char	*tmp;
+	int		i;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			tmp = extract_var_name(str, &i, status, env);
+		else
+			tmp = ft_substr(str, i++, 1);
+		result = ft_strjoin_and_free(result, tmp);
+	}
+	return (free(str), result);
+}
+
 static int	last_here_doc(t_data *data)
 {
 	t_token	*current;
@@ -90,21 +117,28 @@ int	here_doc(t_data *data, int *status, char **env)
 	static int	nb_line;
 	char		*buffer;
 	int			fd[2];
+	char		*tmp;
 
-	if (pipe(fd) < 0 || g_sig_status == 4)
+	if (g_sig_status == 4)
+		return (-1);
+	if (pipe(fd) < 0)
 		return (-1);
 	if (read_previous(data, *status, env, fd))
 		return (close(fd[1]), fd[0]);
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
 	if (!get_buffer(&buffer, &nb_line, status, env))
 		return (error_here_doc(fd, nb_line, data->limiter, *status));
-	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	// ft_printf("buffer:%s\n", buffer);
 	while ((ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1)
 			|| !ft_strncmp(buffer, "\n", 1))
 		&& g_sig_status != 4)
 	{
-		ft_putstr_fd(buffer, fd[1]);
-		*data->input = ft_strjoin_and_free(*data->input, buffer);
+		tmp = ft_strdup(buffer);
+		*data->input = ft_strjoin_and_free(*data->input, tmp);
 		add_history(*data->input);
+		buffer = expand_only_var(buffer, *status, env);
+		// ft_printf("buffer:%s\n", buffer);
+		ft_putstr_fd(buffer, fd[1]);
 		if (!get_buffer(&buffer, &nb_line, status, env))
 			return (error_here_doc(fd, nb_line, data->limiter, *status));
 	}

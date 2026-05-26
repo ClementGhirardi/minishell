@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 13:47:20 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 15:54:52 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,18 @@ typedef struct s_var
 	char	*line;
 }	t_var;
 
+typedef struct s_var
+{
+	t_token	*current;
+	t_token	*previous;
+
+	char	*value;
+	char	*new_value;
+
+	int		len;
+	char	*line;
+}	t_var;
+
 extern volatile sig_atomic_t	g_sig_status;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
@@ -105,7 +117,8 @@ void		handle_last_pipe(char **input, int *status, char **env);
 
 t_token		*lexer(char **input, int *status, char **env);
 
-t_ast		*create_redir_node(int *status, char **env, t_data *data);
+t_ast		*create_redir_node(t_token_type r_type, int *status, char **env,
+				t_data *data);
 
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env,
