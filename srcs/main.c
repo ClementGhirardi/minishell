@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 12:55:16 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 13:53:20 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,26 @@ static void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+void	handle_exit(t_ast *ast, int status, char **input, char ***env)
+{
+	if (!ast)
+		return ;
+	if (!ast->args)
+		return ;
+	if (!ast->args[0])
+		return ;
+	if (ast->type == NODE_CMD
+		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+	{
+		free(*input);
+		free_array(*env);
+		ft_putendl_fd("exit", 1);
+		status = ft_exit(ast->args, status);
+		ast_free(ast);
+		exit(status);
+	}
+}
+
 static void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
@@ -116,33 +136,11 @@ static void	minishell(int *status, char **input, char ***env)
 		free_token(tokens);
 		if (ast && g_sig_status != 4)
 		{
+			handle_exit(ast, *status, input, env);
 			*status = executor(ast, *status, env, ast);
 			ast_free(ast);
 		}
 	}
-}
-
-int	is_exit(char *input)
-{
-	int	i;
-
-	if (!input)
-		return (1);
-	i = 0;
-	while (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
-		i++;
-	if (!ft_strncmp(&input[i], "exit", 4))
-	{
-		while (input[i])
-		{
-			if (input[i] == '|')
-				return (0);
-			i++;
-		}
-		free(input);
-		return (1);
-	}
-	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -157,19 +155,18 @@ int	main(int ac, char **av, char **envp)
 	if (!env)
 		return (error_creating_env());
 	status = 0;
-	g_sig_status = 0;
 	init_signals();
 	while (1)
 	{
 		g_sig_status = 0;
 		input = readline("minishell$ ");
-		if (is_exit(input))
-			ft_exit(NULL, &env, status);
+		if (!input)
+			return (free_array(env), ft_putendl_fd("exit", 1), 0);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, &env, status);
+	return (free_array(env), ft_putendl_fd("exit", 1), 0);
 }

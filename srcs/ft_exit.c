@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 12:56:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 13:47:47 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@ static void	error_num(char *arg, int *status)
 	*status = 2;
 }
 
-static int	error_too_many_args(int *status)
+static void	error_too_many_args(int *status)
 {
 	ft_putendl_fd("minishell: exit: too many arguments", 2);
 	*status = 1;
-	return (*status);
 }
 
 static int	ft_strslen(char **strs)
@@ -55,24 +54,19 @@ static int	ft_is_str_digit(char *str)
 	return (1);
 }
 
-int	ft_exit(char **args, char ***env, int status)
+int	ft_exit(char **args, int status)
 {
 	int	len;
 
 	if (!args)
-	{
-		ft_putendl_fd("exit", 1);
-		rl_clear_history();
-		free_array(*env);
-		exit(status);
-	}
+		return (status);
 	len = ft_strslen(args);
 	if (len >= 2)
 	{
 		if (!ft_is_str_digit(args[1]))
 			error_num(args[1], &status);
 		else if (len > 2)
-			return (error_too_many_args(&status));
+			error_too_many_args(&status);
 		else
 			status = ft_atoi(args[1]);
 	}
