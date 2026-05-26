@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/20 11:58:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:41:23 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,29 @@ static void	minishell(int *status, char **input, char ***env)
 	}
 }
 
+int	is_exit(char *input)
+{
+	int	i;
+
+	if (!input)
+		return (1);
+	i = 0;
+	while (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
+		i++;
+	if (!ft_strncmp(&input[i], "exit", 4))
+	{
+		while (input[i])
+		{
+			if (input[i] == '|')
+				return (0);
+			i++;
+		}
+		free(input);
+		return (1);
+	}
+	return (0);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	int		status;
@@ -140,7 +163,7 @@ int	main(int ac, char **av, char **envp)
 	{
 		g_sig_status = 0;
 		input = readline("minishell$ ");
-		if (!input)
+		if (is_exit(input))
 			ft_exit(NULL, &env, status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);

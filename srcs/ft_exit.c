@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:24:09 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 12:37:09 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,13 @@ int	ft_exit(char **args, char ***env, int status)
 {
 	int	len;
 
+	if (!args)
+	{
+		ft_putendl_fd("exit", 1);
+		rl_clear_history();
+		free_array(*env);
+		exit(status);
+	}
 	len = ft_strslen(args);
 	if (len >= 2)
 	{
@@ -69,13 +76,14 @@ int	ft_exit(char **args, char ***env, int status)
 		else
 			status = ft_atoi(args[1]);
 	}
-	if (wait(NULL) != -1)
-		return (status);
-	exit(status);
-	if (wait(NULL) != -1)
-		return (status);
-	ft_putendl_fd("exit", 1);
-	rl_clear_history();
-	free_array(*env);
-	exit(status);
+	return (status);
+	
+
+	// exit(status);
+	// if (wait(NULL) != -1)
+	// 	return (status);
+	// ft_putendl_fd("exit", 1);
+	// rl_clear_history();
+	// free_array(*env);
+	// exit(status);
 }
