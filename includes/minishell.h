@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 14:29:22 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 16:01:13 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
 t_token		*lexer(char **input, int *status, char **env);
-t_token		*lexer2(char **input, int *status, char **env);
+t_token		*lexer2(char **input);
 //void		handle_quotes(char **input, int *status, char **env);
 t_token		*handle_last_pipe_op(char *input, t_token *tokens, int *status,
 				char **env);
