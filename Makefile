@@ -41,6 +41,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/executor.c \
 	$(SRCS_DIR)/errors0.c \
 	$(SRCS_DIR)/errors1.c \
+	$(SRCS_DIR)/syntax_analyzer.c \
 
 SRCS_BONUS = 
 

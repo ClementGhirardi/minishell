@@ -20,7 +20,7 @@ static int	is_valid_id(char *arg)
 	if (!(('a' <= arg[i] && arg[i] <= 'z')
 			|| ('A' <= arg[i] && arg[i] <= 'Z')
 			|| (arg[i] == '_')))
-		return (ft_putstr_fd("minishell: export: `", 2),
+		return (ft_putstr_fd("minishells: export: `", 2),
 			ft_putstr_fd(arg, 2),
 			ft_putendl_fd("': not a valid identifier", 2), 0);
 	while (arg[i])
@@ -43,10 +43,16 @@ static char	*get_name(char *arg)
 	char	*name;
 
 	len = 0;
-	while (arg[len] && arg[len] != '=')
-		len++;
-	if (len == 0 && !is_valid_id(arg))
-		return (NULL);
+	if (arg[0] == '=')
+	{
+		while (arg[len])
+			len++;
+	}
+	else
+	{
+		while (arg[len] && arg[len] != '=')
+			len++;
+	}
 	name = ft_substr(arg, 0, len);
 	if (!name)
 		return (NULL);

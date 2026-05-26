@@ -78,7 +78,7 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
-static void	sigint_handler(int sig)
+static void	sigint_handler(int sig) //STATIC
 {
 	(void) sig;
 	if (g_sig_status == 1)
@@ -106,33 +106,41 @@ static void	init_signals(void)
 
 static void	minishell(int *status, char **input, char ***env)
 {
+	t_token	*tmp;
 	t_token	*tokens;
 	t_ast	*ast;
 
+	if (!input || !*input || !**input)
+		return ;
 	tokens = lexer(input, status, *env);
+	tmp = tokens;
+	// tokens = split_bracket(&tokens);
+	// free_token(tmp);
+	// tmp = tokens;
 	if (tokens)
 	{
 		ast = parser(tokens, status, *env, input);
+		free_token(tmp);
 		if (ast && g_sig_status != 4)
 		{
-			*status = executor(ast, *status, env);
+			*status = executor(ast, ast, *status, env);
 			ast_free(ast);
 		}
-		free_token(tokens);
+		// free_token(tokens);
 	}
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	int		status;
 	char	*input;
 	char	**env;
+	int		status;
 
 	(void)ac;
 	(void)av;
 	env = dup_array(envp);
 	if (!env)
-		return (error_creating_env());
+		return (1); //1 ou 0 ?
 	status = 0;
 	g_sig_status = 0;
 	init_signals();
