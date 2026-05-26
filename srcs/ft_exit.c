@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 12:37:09 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:56:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,4 @@ int	ft_exit(char **args, char ***env, int status)
 			status = ft_atoi(args[1]);
 	}
 	return (status);
-	
-
-	// exit(status);
-	// if (wait(NULL) != -1)
-	// 	return (status);
-	// ft_putendl_fd("exit", 1);
-	// rl_clear_history();
-	// free_array(*env);
-	// exit(status);
 }

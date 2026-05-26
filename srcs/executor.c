@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 12:55:07 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:58:53 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,18 @@ static int	execute_pipe(t_ast *node, int status, char ***env, t_ast *root)
 		return (1);
 	pid[0] = fork();
 	if (pid[0] == 0)
-	{
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-		status = executor(node->left, status, env, root);
-		return (ast_free(root), free_array(*env), exit(status), status);
-	}
+		return (
+			close(fd[0]), dup2(fd[1], STDOUT_FILENO), close(fd[1]),
+			status = executor(node->left, status, env, root),
+			ast_free(root), free_array(*env),
+			exit(status), status);
 	pid[1] = fork();
 	if (pid[1] == 0)
-	{
-		close(fd[1]);
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
-		status = executor(node->right, status, env, root);
-		return (ast_free(root), free_array(*env), exit(status), status);
-	}
+		return (
+			close(fd[1]), dup2(fd[0], STDIN_FILENO), close(fd[0]),
+			status = executor(node->right, status, env, root),
+			ast_free(root), free_array(*env),
+			exit(status), status);
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),
 		get_status(status));
