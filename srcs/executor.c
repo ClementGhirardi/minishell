@@ -6,13 +6,13 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 15:08:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:55:07 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	executor(t_ast *ast, int status, char ***env);
+int	executor(t_ast *ast, int status, char ***env, t_ast *root);
 
 static int	execute_cmd(t_ast *node, int status, char ***env)
 {
@@ -42,7 +42,7 @@ static int	execute_cmd(t_ast *node, int status, char ***env)
 	}
 }
 
-static int	execute_pipe(t_ast *node, int status, char ***env)
+static int	execute_pipe(t_ast *node, int status, char ***env, t_ast *root)
 {
 	int		fd[2];
 	pid_t	pid[2];
@@ -55,7 +55,8 @@ static int	execute_pipe(t_ast *node, int status, char ***env)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(executor(node->left, status, env));
+		status = executor(node->left, status, env, root);
+		return (ast_free(root), free_array(*env), exit(status), status);
 	}
 	pid[1] = fork();
 	if (pid[1] == 0)
@@ -63,7 +64,8 @@ static int	execute_pipe(t_ast *node, int status, char ***env)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(executor(node->right, status, env));
+		status = executor(node->right, status, env, root);
+		return (ast_free(root), free_array(*env), exit(status), status);
 	}
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),
@@ -86,7 +88,7 @@ static int	open_fd(t_ast *node, char *file)
 	return (fd);
 }
 
-static int	execute_redir(t_ast *node, int status, char ***env)
+static int	execute_redir(t_ast *node, int status, char ***env, t_ast *root)
 {
 	int	fd;
 	int	std[2];
@@ -104,7 +106,7 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 		std[1] = dup(STDOUT_FILENO);
 		dup2(fd, STDOUT_FILENO);
 	}
-	status = executor(node->left, status, env);
+	status = executor(node->left, status, env, root);
 	if (node->type == NODE_REDIR_IN || node->type == NODE_HEREDOC)
 		dup2(std[0], STDIN_FILENO);
 	else
@@ -112,7 +114,7 @@ static int	execute_redir(t_ast *node, int status, char ***env)
 	return (status);
 }
 
-int	executor(t_ast *ast, int status, char ***env)
+int	executor(t_ast *ast, int status, char ***env, t_ast *root)
 {
 	if (!ast)
 		return (1);
@@ -121,7 +123,7 @@ int	executor(t_ast *ast, int status, char ***env)
 	if (ast->type == NODE_CMD)
 		return (expander(ast, status, *env), execute_cmd(ast, status, env));
 	else if (ast->type == NODE_PIPE)
-		return (execute_pipe(ast, status, env));
+		return (execute_pipe(ast, status, env, root));
 	else if (ast->type == NODE_REDIR_IN || ast->type == NODE_REDIR_OUT
 		|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC)
 	{
@@ -135,7 +137,7 @@ int	executor(t_ast *ast, int status, char ***env)
 					ft_putstr_fd(ast->file, 2),
 					ft_putendl_fd(": ambiguous redirect", 2), 2);
 		}
-		return (execute_redir(ast, status, env));
+		return (execute_redir(ast, status, env, root));
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 12:41:23 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:55:16 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,12 +113,12 @@ static void	minishell(int *status, char **input, char ***env)
 	if (tokens)
 	{
 		ast = parser(tokens, status, *env, input);
+		free_token(tokens);
 		if (ast && g_sig_status != 4)
 		{
-			*status = executor(ast, *status, env);
+			*status = executor(ast, *status, env, ast);
 			ast_free(ast);
 		}
-		free_token(tokens);
 	}
 }
 
