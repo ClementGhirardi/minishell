@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_buffer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 15:30:59 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 11:21:52 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ static int	child(char **buffer, int *fd)
 {
 	g_sig_status = 3;
 	close(fd[0]);
-	ft_putstr_fd("> ", 1);
-	*buffer = get_next_line(STDIN_FILENO);
+	*buffer = readline("> ");
 	if (*buffer)
-		ft_putstr_fd(*buffer, fd[1]);
+		ft_putendl_fd(*buffer, fd[1]);
 	exit(0);
 }
 
@@ -45,6 +44,7 @@ int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
 	pid_t	pid;
 	int		tmp;
 
+	(void) env;
 	if (pipe(fd) < 0)
 		return (0);
 	pid = fork();
@@ -58,10 +58,12 @@ int	get_buffer(char **buffer, int *nb_line, int *status, char **env)
 	*buffer = get_next_line(fd[0]);
 	if (!(*buffer))
 		return (close(fd[0]), 0);
+	while (get_next_line(fd[0]))
+		;
 	if (!ft_isin(*buffer, '\n'))
 		return (close(fd[0]), free(*buffer), 0);
-	if (*nb_line != -1)
-		*buffer = expand_string(*buffer, *status, env);
+	// if (*nb_line != -1)
+	// 	*buffer = expand_string(*buffer, *status, env);
 	(*nb_line)++;
 	return (close(fd[0]), 1);
 }

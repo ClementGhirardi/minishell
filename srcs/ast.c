@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 14:32:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 11:11:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,49 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
+static char	*expand_quotes(char *str, int *i)
+{
+	char	quote;
+	char	*tmp;
+	char	*var;
+
+	quote = str[(*i)++];
+	tmp = ft_strdup("");
+	if (!tmp)
+		return (NULL);
+	while (str[*i] && str[*i] != quote)
+	{
+		var = ft_substr(str, (*i)++, 1);
+		if (!var)
+			return ((*i)++, free(tmp), NULL);
+		tmp = ft_strjoin_and_free(tmp, var);
+	}
+	if (str[*i])
+		(*i)++;
+	return (tmp);
+}
+
+char	*expand_quotes_heredoc(char *str)
+{
+	char	*result;
+	char	*tmp;
+	int		i;
+
+	result = ft_strdup("");
+	if (!result)
+		return (free(str), NULL);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '\"')
+			tmp = expand_quotes(str, &i);
+		else
+			tmp = ft_substr(str, i++, 1);
+		result = ft_strjoin_and_free(result, tmp);
+	}
+	return (free(str), result);
+}
+
 t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 {
 	t_ast		*node;
@@ -44,22 +87,17 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data)
 	if (r_type == TOKEN_HEREDOC)
 	{
 		node->type = NODE_HEREDOC;
+		node->file = expand_quotes_heredoc(node->file);
 		data->limiter = node->file;
 		node->fd = here_doc(data, status, env);
 		if (node->fd == -1)
 			return (free(node->file), free(node), NULL);
 	}
 	else
-	{
 		node->fd = -1;
-		node->args = NULL;
-		node->left = NULL;
-		node->right = NULL;
-	}
-	// node->args = NULL;
-	// node->file = file;
-	// node->left = NULL;
-	// node->right = NULL;
+	node->args = NULL;
+	node->left = NULL;
+	node->right = NULL;
 	return (node);
 	// return (node->left = NULL, node->right = NULL, node);
 }

@@ -5,10 +5,10 @@ valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=
 
 TESTS QUI ECHOUENT:
 
-<< '' (createword lexer, heredoc.c, get_path, execute_cmd, rm_emptyvar)
-<< ok ; o (LEAK)
-<< ok && ls
-<< ok | wc
+// << '' (createword lexer, heredoc.c, get_path, execute_cmd, rm_emptyvar)
+// << ok ; o (LEAK)
+// << ok && ls
+// << ok | wc
 << ok ; ctrlD direct
 cat | rev -> ctrlC -> heredoc -> sortie du heredoc (via limiter) -> ctrlD = segfault
 

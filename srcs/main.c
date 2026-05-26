@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/17 14:42:28 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 11:44:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,55 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
-// void	ast_show(t_ast *ast)
-// {
-// 	int	i;
+void	ast_show(t_ast *ast)
+{
+	int	i;
 
-// 	if (!ast)
-// 		return ;
-// 	if (ast->type == NODE_PIPE)
-// 		ft_printf("PIPE(");
-// 	else if (ast->type == NODE_OR)
-// 		ft_printf("OR(");
-// 	else if (ast->type == NODE_AND)
-// 		ft_printf("AND(");
-// 	else if (ast->type == NODE_CMD)
-// 		ft_printf("CMD(");
-// 	else if (ast->type == NODE_REDIR_IN)
-// 		ft_printf("REDIR_IN(");
-// 	else if (ast->type == NODE_REDIR_OUT)
-// 		ft_printf("REDIR_OUT(");
-// 	else if (ast->type == NODE_APPEND)
-// 		ft_printf("APPEND(");
-// 	else if (ast->type == NODE_HEREDOC)
-// 		ft_printf("HEREDOC(");
-// 	else
-// 		ft_printf("REDIR(");
-// 	if (ast->args)
-// 	{
-// 		i = 0;
-// 		while (ast->args[i])
-// 		{
-// 			ft_printf("|%s|", ast->args[i]);
-// 			i++;
-// 			if (ast->args[i])
-// 				ft_printf(", ");
-// 		}
-// 	}
-// 	if (ast->type == NODE_REDIR_IN)
-// 	{
-// 		ft_printf("-%s-: ", ast->file);
-// 		ast_show(ast->left);
-// 	}
-// 	else
-// 	{
-// 		ast_show(ast->left);
-// 		if (ast->right)
-// 			ft_printf(", ");
-// 		ast_show(ast->right);
-// 	}
-// 	ft_printf(")");
-// }
+	if (!ast)
+		return ;
+	if (ast->type == NODE_PIPE)
+		ft_printf("PIPE(");
+	else if (ast->type == NODE_OR)
+		ft_printf("OR(");
+	else if (ast->type == NODE_AND)
+		ft_printf("AND(");
+	else if (ast->type == NODE_CMD)
+		ft_printf("CMD(");
+	else if (ast->type == NODE_REDIR_IN)
+		ft_printf("REDIR_IN(");
+	else if (ast->type == NODE_REDIR_OUT)
+		ft_printf("REDIR_OUT(");
+	else if (ast->type == NODE_APPEND)
+		ft_printf("APPEND(");
+	else if (ast->type == NODE_HEREDOC)
+		ft_printf("HEREDOC(");
+	else
+		ft_printf("REDIR(");
+	if (ast->args)
+	{
+		i = 0;
+		while (ast->args[i])
+		{
+			ft_printf("|%s|", ast->args[i]);
+			i++;
+			if (ast->args[i])
+				ft_printf(", ");
+		}
+	}
+	if (ast->type == NODE_REDIR_IN)
+	{
+		ft_printf("-%s-: ", ast->file);
+		ast_show(ast->left);
+	}
+	else
+	{
+		ast_show(ast->left);
+		if (ast->right)
+			ft_printf(", ");
+		ast_show(ast->right);
+	}
+	ft_printf(")");
+}
 
 // // BEGIN TESTS
 // // TEST LEXER
@@ -85,6 +85,8 @@ volatile sig_atomic_t	g_sig_status = 0;
 static void	sigint_handler(int sig) //STATIC
 {
 	(void) sig;
+	if (g_sig_status == 0)
+		g_sig_status = -1;
 	if (g_sig_status == 1)
 	{
 		g_sig_status = 2;
@@ -153,6 +155,8 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 			ft_exit(NULL, &env, status);
+		if (g_sig_status == -1)
+			status = 130;
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)

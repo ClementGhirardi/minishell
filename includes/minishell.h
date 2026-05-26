@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/02 14:26:49 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/26 10:37:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,6 @@ char		*ft_strjoinsep_free(char *s1, char *s2, char c);
 
 // void		*ft_realloc(void *ptr, size_t size);
 char		*ft_strjoin_sep_realloc(char **array, char c);
-char		*expand_string_heredoc(char *str, char **env);
 void		*ctrld_heredoc(char **history, char *limiter,
 				int first_line, int j);
 

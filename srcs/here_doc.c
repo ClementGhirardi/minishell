@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:29:46 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 11:10:46 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,27 @@ static int	last_here_doc(t_data *data)
 	return (1);
 }
 
+char	*expand_buffer_heredoc(char *str, int status, char **env)
+{
+	char	*result;
+	char	*tmp;
+	int		i;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			tmp = extract_var_name(str, &i, status, env);
+		else
+			tmp = ft_substr(str, i++, 1);
+		result = ft_strjoin_and_free(result, tmp);
+	}
+	return (free(str), str = NULL, result);
+}
+
 int	here_doc(t_data *data, int *status, char **env)
 {
 	static int	nb_line;
@@ -97,9 +118,10 @@ int	here_doc(t_data *data, int *status, char **env)
 		return (error_here_doc(fd, nb_line, data->limiter, *status));
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
 	while ((ft_strncmp(buffer, data->limiter, ft_strlen(buffer) - 1) //((ft_strcmp(buffer, data->limiter)
-			|| !ft_strncmp(buffer, "\n", 1))
+			|| (!ft_strncmp(buffer, "\n", 1) && data->limiter[0]))
 		&& g_sig_status != 4)
 	{
+		buffer = expand_buffer_heredoc(buffer, *status, env);
 		ft_putstr_fd(buffer, fd[1]);
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
 		if (!get_buffer(&buffer, &nb_line, status, env))
