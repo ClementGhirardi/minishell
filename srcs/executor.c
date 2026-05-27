@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 10:45:23 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 12:09:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,14 @@ static int	execute_pipe(t_ast *node, int status, char ***env, t_data *data)
 		return (
 			close(fd[0]), dup2(fd[1], STDOUT_FILENO), close(fd[1]),
 			status = executor(node->left, status, env, data),
-			free_array(*env), free(*data->input), ast_free(data->ast),
+			free_data(data),
 			exit(status), status);
 	pid[1] = fork();
 	if (pid[1] == 0)
 		return (
 			close(fd[1]), dup2(fd[0], STDIN_FILENO), close(fd[0]),
 			status = executor(node->right, status, env, data),
-			free_array(*env), free(*data->input), ast_free(data->ast),
+			free_data(data),
 			exit(status), status);
 	return (close(fd[0]), close(fd[1]),
 		waitpid(pid[0], &status, 0), waitpid(pid[1], &status, 0),

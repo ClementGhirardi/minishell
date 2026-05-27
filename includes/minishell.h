@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 10:48:41 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:36:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,29 +72,20 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
-typedef struct s_var
-{
-	t_token	*current;
-	t_token	*previous;
-
-	char	*value;
-	char	*new_value;
-
-	int		len;
-	char	*line;
-}	t_var;
-
 typedef struct s_data
 {
 	char	**env;
 	int		*status;
 	char	**input;
+	char	*other_lines;
 	t_ast	*ast;
 }	t_data;
 
 extern volatile sig_atomic_t	g_sig_status;
 
 char		*ft_strjoin_and_free(char *s1, char *s2);
+
+void		free_data(t_data *data);
 
 char		*here_doc_word(char limiter, t_data *data);
 
@@ -107,6 +98,8 @@ void		free_token(t_token *tokens);
 void		handle_last_pipe(char **input, int *status, char **env);
 
 t_token		*lexer(char **input, int *status, char **env);
+
+void		lexer_handle_other_lines(t_token *tokens, t_data *data);
 
 t_ast		*create_redir_node(t_token_type r_type, int *status, char **env,
 				t_token *tokens);
@@ -131,7 +124,10 @@ int			idx_to_next_line(char *str);
 
 int			get_buffer(char **buffer, int *nb_line, t_data *data);
 
-int			here_doc(char *limiter, t_data *data);
+char		*get_one_line(char *lines, int *i);
+char		*expand_only_var(char *str, int status, char **env);
+
+int			here_doc(char *limiter, t_data *data, t_ast *current);
 
 char		*get_path(char *cmd, char **envp);
 
@@ -160,7 +156,7 @@ int			ft_exit(char **args, int status);
 int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env, int status);
 
-int			executor(t_ast *ast, int status, char ***env, t_data * data);
+int			executor(t_ast *ast, int status, char ***env, t_data *data);
 
 int			error_creating_env(void);
 int			error_here_doc(int *fd, int nb_line, char *limiter, int status);

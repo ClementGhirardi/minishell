@@ -6,143 +6,96 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 17:23:38 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:27:41 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// static int	begin(t_data *data, t_var *v)
-// {
-// 	v->current = *data->tokens;
-// 	if (!v->current)
-// 		return (0);
-// 	v->previous = v->current;
-// 	v->current = (v->current)->next;
-// 	while (v->current && !ft_strchr((v->current)->value, '\n'))
-// 	{
-// 		v->previous = v->current;
-// 		v->current = (v->current)->next;
-// 	}
-// 	if (!v->current)
-// 		return (0);
-// 	v->value = (v->current)->value;
-// 	if (ft_strlen(v->value) == 0)
-// 		return (0);
-// 	return (1);
-// }
-
-// static int	when_find_limiter(size_t i, t_var *v)
-// {
-// 	if (i == ft_strlen(v->value))
-// 		return (free_token(v->current), (v->previous)->next = NULL, 1);
-// 	v->new_value = ft_substr(v->value, i, ft_strlen(v->value) - i);
-// 	if (!v->new_value)
-// 		return (1);
-// 	return (free(v->value), (v->current)->value = v->new_value, 1);
-// }
-
-// static int	read_previous(t_data *data, int status, char **env, int *fd)
-// {
-// 	t_var	v;
-// 	size_t	i;
-
-// 	if (!begin(data, &v))
-// 		return (add_history(*data->input), 0);
-// 	i = 0;
-// 	while ((v.value)[i])
-// 	{
-// 		v.len = idx_to_next_line(&(v.value)[i]);
-// 		if (v.len == 0)
-// 			return (free_token(v.current), (v.previous)->next = NULL,
-// 				add_history(*data->input), 0);
-// 		v.line = ft_substr(v.value, i, v.len);
-// 		if (!v.line)
-// 			return (add_history(*data->input), 1);
-// 		i += v.len;
-// 		if (!ft_strncmp(data->limiter, v.line, v.len - 1) && v.len != 1)
-// 			return (add_history(*data->input), when_find_limiter(i, &v));
-// 		ft_putstr_fd(expand_string(v.line, status, env), fd[1]);
-// 	}
-// 	return (ft_putstr_fd("\n", fd[1]),
-// 		free_token(v.current), (v.previous)->next = NULL,
-// 		add_history(*data->input), 0);
-// }
-
-
-
-
-
-
-
-char	*expand_only_var(char *str, int status, char **env)
+static int	read_previous(char *limiter, t_data *data, int *fd)
 {
-	char	*result;
-	char	*tmp;
+	char	*line;
 	int		i;
+	char	*tmp;
 
-	result = ft_strdup("");
-	if (!result)
-		return (NULL);
+	if (!data->other_lines)
+		return (0);
 	i = 0;
-	while (str[i])
+	line = get_one_line(data->other_lines, &i);
+	while (line)
 	{
-		if (str[i] == '$')
-			tmp = extract_var_name(str, &i, status, env);
-		else
-			tmp = ft_substr(str, i++, 1);
-		result = ft_strjoin_and_free(result, tmp);
+		if (!ft_strncmp(line, limiter, ft_strlen(limiter))
+			&& ft_strlen(limiter) == ft_strlen(line) - 1)
+		{
+			free(line);
+			if (i >= (int) ft_strlen(data->other_lines))
+				return (free(data->other_lines), 1);
+			return (tmp = ft_substr(data->other_lines,
+					i, ft_strlen(data->other_lines) - i),
+				free(data->other_lines), data->other_lines = tmp, 1);
+		}
+		ft_putstr_fd(line, fd[1]);
+		free(line);
+		line = get_one_line(data->other_lines, &i);
 	}
-	return (free(str), result);
+	return (free(data->other_lines), data->other_lines = NULL, 0);
 }
 
-// static int	last_here_doc(t_data *data)
-// {
-// 	t_token	*current;
+static int	condition(char *limiter, char *buffer)
+{
+	return ((ft_strncmp(buffer, limiter, ft_strlen(limiter))
+			|| ft_strlen(limiter) != ft_strlen(buffer) - 1
+			|| !ft_strncmp(buffer, "\n", 1)) && g_sig_status != 4);
+}
 
-// 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(data->limiter));
-// 	current = *data->tokens;
-// 	while (current)
-// 	{
-// 		if (current->type == TOKEN_HEREDOC)
-// 			return (0);
-// 		current = current->next;
-// 	}
-// 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-// 	return (1);
-// }
+static void	write_buffer(t_data *data, char *buffer, int *fd)
+{
+	char	*tmp;
 
-int	here_doc(char *limiter, t_data *data)
+	tmp = ft_strdup(buffer);
+	*data->input = ft_strjoin_and_free(*data->input, tmp);
+	add_history(*data->input);
+	buffer = expand_only_var(buffer, *data->status, data->env);
+	ft_putstr_fd(buffer, fd[1]);
+	free(buffer);
+}
+
+static int	last_here_doc(t_data *data, t_ast *current, char *buffer, int *fd)
+{
+	current = current->left;
+	while (current)
+	{
+		if (current->type == NODE_HEREDOC)
+			break ;
+		current = current->left;
+	}
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	if (g_sig_status == 4)
+		return (free(buffer), close(fd[1]), close(fd[0]), -1);
+	return (free(buffer), close(fd[1]), fd[0]);
+}
+
+int	here_doc(char *limiter, t_data *data, t_ast *current)
 {
 	static int	nb_line;
 	char		*buffer;
 	int			fd[2];
-	char		*tmp;
 
 	if (g_sig_status == 4)
 		return (-1);
 	if (pipe(fd) < 0)
 		return (-1);
-	// if (read_previous(data, *status, env, fd))
-	// 	return (close(fd[1]), fd[0]);
+	if (read_previous(limiter, data, fd))
+		return (close(fd[1]), fd[0]);
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
 	if (!get_buffer(&buffer, &nb_line, data))
 		return (error_here_doc(fd, nb_line, limiter, *data->status));
-	while ((ft_strncmp(buffer, limiter, ft_strlen(buffer) - 1)
-			|| !ft_strncmp(buffer, "\n", 1))
-		&& g_sig_status != 4)
+	while (condition(limiter, buffer))
 	{
-		tmp = ft_strdup(buffer);
-		*data->input = ft_strjoin_and_free(*data->input, tmp);
-		add_history(*data->input);
-		buffer = expand_only_var(buffer, *data->status, data->env);
-		ft_putstr_fd(buffer, fd[1]);
-		free(buffer);
+		write_buffer(data, buffer, fd);
 		if (!get_buffer(&buffer, &nb_line, data))
 			return (error_here_doc(fd, nb_line, limiter, *data->status));
 	}
-	// last_here_doc(data);
-	if (g_sig_status == 4)
-		return (free(buffer), close(fd[1]), close(fd[0]), -1);
-	return (free(buffer), close(fd[1]), fd[0]);
+	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(limiter));
+	return (last_here_doc(data, current, buffer, fd));
 }

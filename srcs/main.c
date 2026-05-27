@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 10:49:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:39:01 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,22 +131,25 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 	}
 }
 
-static void	minishell(int *status, char **input, char ***env)
+static int	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
 	t_data	data;
 
+	data.env = *env;
+	data.status = status;
+	data.input = input;
 	tokens = lexer(input, status, *env);
+	lexer_handle_other_lines(tokens, &data);
 	if (tokens)
 	{
 		ast = parser(tokens, status, *env);
 		free_token(tokens);
-		data.env = *env;
-		data.status = status;
-		data.input = input;
 		data.ast = ast;
 		browse_ast_for_heredoc(data.ast, &data);
+		if (ast && g_sig_status == 4)
+			return (ast_free(ast), 1);
 		if (ast && g_sig_status != 4)
 		{
 			handle_exit(ast, *status, input, env);
@@ -154,6 +157,7 @@ static void	minishell(int *status, char **input, char ***env)
 			ast_free(ast);
 		}
 	}
+	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
