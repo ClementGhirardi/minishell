@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 17:30:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 10:48:41 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ char		*ft_strjoin_and_free(char *s1, char *s2);
 
 char		*here_doc_word(char limiter, t_data *data);
 
+void		browse_ast_for_heredoc(t_ast *ast, t_data *data);
+
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
@@ -158,7 +160,7 @@ int			ft_exit(char **args, int status);
 int			is_builtin(char *cmd);
 int			run_builtin(char **args, char ***env, int status);
 
-int			executor(t_ast *ast, int status, char ***env, t_ast *root);
+int			executor(t_ast *ast, int status, char ***env, t_data * data);
 
 int			error_creating_env(void);
 int			error_here_doc(int *fd, int nb_line, char *limiter, int status);

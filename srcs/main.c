@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 17:22:16 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/27 10:49:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ static int	init_var(int *status, char ***env, char **envp)
 	return (1);
 }
 
-void	handle_exit(t_ast *ast, int status, char **input, char ***env)
+static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 {
 	if (!ast)
 		return ;
@@ -131,51 +131,26 @@ void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 	}
 }
 
-void	browse_ast(t_ast *ast, t_data *data)
-{
-	if (!ast)
-		return ;
-	if (ast->type == NODE_HEREDOC)
-	{
-		if (!ast->file)
-			return ;
-		ast->fd = here_doc(ast->file, data);
-		if (ast->fd == -1)
-		{
-			free(ast->file);
-			return ;
-		}
-	}
-	browse_ast(ast->left, data);
-	browse_ast(ast->right, data);
-}
-
-void	handle_heredoc(t_ast *ast, char **input, char **env, int *status)
-{
-	t_data	data;
-
-	data.env = env;
-	data.status = status;
-	data.input = input;
-	data.ast = ast;
-	browse_ast(ast, &data);
-}
-
 static void	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
+	t_data	data;
 
 	tokens = lexer(input, status, *env);
 	if (tokens)
 	{
 		ast = parser(tokens, status, *env);
 		free_token(tokens);
-		handle_heredoc(ast, input, *env, status);
+		data.env = *env;
+		data.status = status;
+		data.input = input;
+		data.ast = ast;
+		browse_ast_for_heredoc(data.ast, &data);
 		if (ast && g_sig_status != 4)
 		{
 			handle_exit(ast, *status, input, env);
-			*status = executor(ast, *status, env, ast);
+			*status = executor(ast, *status, env, &data);
 			ast_free(ast);
 		}
 	}

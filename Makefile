@@ -13,6 +13,7 @@ SRCS_DIR = srcs
 SRCS_BONUS_DIR = srcs/srcs_bonus
 
 SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
+	$(SRCS_DIR)/browse_ast_for_heredoc.c \
 	$(SRCS_DIR)/here_doc_word.c \
 	$(SRCS_DIR)/token.c \
 	$(SRCS_DIR)/lexer_handle_last_pipe.c \
