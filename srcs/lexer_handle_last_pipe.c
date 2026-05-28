@@ -57,69 +57,81 @@
 // 	return (0);
 // }
 
-// void	handle_last_pipe(char **input, int *status, char **env)
-// {
-// 	int		i;
+void	handle_last_pipe(char **input, int *status, char **env)
+{
+	t_data	data;
+	int		i;
 
-// 	if (!input || !(*input) || g_sig_status == 4)
+	if (!input || !(*input) || g_sig_status == 4)
+		return ;
+	// if (consecutive_pipe(*input) || only_one_pipe(*input))
+	// 	return ;
+	i = ft_strlen(*input) - 1;
+	while (i >= 0 && (*input)[i] && (*input)[i] == ' ')
+		i--;
+	if (i >= 0 && (*input)[i] == '|')
+	{
+		data.env = env;
+		data.status = status;
+		data.input = input;
+		data.ast = NULL;
+		data.other_lines = NULL;
+		here_doc_word('\n', &data);
+		handle_last_pipe(input, status, env); //juste input seul
+	}
+	if (g_sig_status == 4)
+		add_history(*input);
+}
+
+
+
+
+
+
+// void	ft_tokadd_back(t_token **lst, t_token *new)
+// {
+// 	t_token	*current;
+
+// 	if (!lst || !new)
 // 		return ;
-// 	if (consecutive_pipe(*input) || only_one_pipe(*input))
-// 		return ;
-// 	i = ft_strlen(*input) - 1;
-// 	while (i >= 0 && (*input)[i] && (*input)[i] == ' ')
-// 		i--;
-// 	if (i >= 0 && (*input)[i] == '|')
+// 	if (!(*lst))
 // 	{
-// 		here_doc_word(input, '\n', status, env);
-// 		handle_last_pipe(input, status, env);
+// 		*lst = new;
+// 		return ;
 // 	}
-// 	if (g_sig_status == 4)
-// 		add_history(*input);
+// 	current = *lst;
+// 	while (current)
+// 	{
+// 		if (current->next == NULL)
+// 		{
+// 			current->next = new;
+// 			return ;
+// 		}
+// 		current = current->next;
+// 	}
+// 	return ;
 // }
 
+// // t_token	*last_pipe(char *input, t_token *tokens, int *status, char **env)
+// t_token	*last_pipe(t_token *tokens, t_data *data)
+// {
+// 	t_token	*tmp;
+// 	t_token	*end_token;
+// 	char	*heredoc_output;
 
-void	ft_tokadd_back(t_token **lst, t_token *new)
-{
-	t_token	*current;
-
-	if (!lst || !new)
-		return ;
-	if (!(*lst))
-	{
-		*lst = new;
-		return ;
-	}
-	current = *lst;
-	while (current)
-	{
-		if (current->next == NULL)
-		{
-			current->next = new;
-			return ;
-		}
-		current = current->next;
-	}
-	return ;
-}
-
-t_token	*last_pipe(char *input, t_token *tokens, int *status, char **env)
-{
-	t_token	*tmp;
-	t_token	*end_token;
-	char	*heredoc_output;
-
-	if (!tokens)
-		return (NULL);
-	tmp = tokens;
-	while (tmp->next)
-		tmp = tmp->next;
-	if (tmp->type == TOKEN_PIPE)
-	{
-		heredoc_output = ft_strjoin_and_free(ft_strdup(" "),
-				here_doc_word(&input, '\n', status, env));
-		end_token = lexer(&heredoc_output, status, env);
-		free(heredoc_output);
-		return (end_token);
-	}
-	return (NULL);
-}
+// 	if (!tokens || !data)
+// 		return (NULL);
+// 	tmp = tokens;
+// 	while (tmp->next)
+// 		tmp = tmp->next;
+// 	if (tmp->type == TOKEN_PIPE)
+// 	{
+// 		// heredoc_output = ft_strjoin_and_free(ft_strdup(" "),
+// 		// 		here_doc_word('\n', data));
+// 		heredoc_output = here_doc_word('\n', data);
+// 		end_token = lexer(data, &heredoc_output);
+// 		free(heredoc_output);
+// 		return (end_token);
+// 	}
+// 	return (NULL);
+// }

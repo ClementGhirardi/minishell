@@ -143,22 +143,22 @@ t_token	*lexer2(char **input, int *status, char **env)
 	return (tokens);
 }
 
-t_token	*lexer(char **input, int *status, char **env)
+// t_token	*lexer(char **input, int *status, char **env)
+t_token	*lexer(t_data *data, char **input)
 {
 	t_token	*tokens;
-	t_token	*end;
+	//t_token	*end;
 
-	// handle_last_pipe(input, status, env);
-	// if (handle_quotes(input))
-	// 	return (NULL);
-	tokens = lexer2(input, status, env);
-	if (!syntax_analyzer(tokens, status))
-	{
-		free_token(tokens);
+	handle_last_pipe(input, data->status, data->env);
+	if (!input || !*input || !**input)
 		return (NULL);
-	}
-	end = last_pipe(*input, tokens, status, env);
-	if (end)
-		ft_tokadd_back(&tokens, end);
+	if (handle_quotes(input))
+		return (NULL);
+	tokens = lexer2(input, data->status, data->env);
+	if (!syntax_analyzer(tokens, data->status))
+		return (free_token(tokens), NULL);
+	// end = last_pipe(tokens, data);
+	// if (end)
+	// 	ft_tokadd_back(&tokens, end);
 	return (tokens);
 }

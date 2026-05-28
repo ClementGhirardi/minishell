@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 13:52:19 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/26 17:18:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,29 +50,23 @@ static t_ast	*parse_command(t_token **tokens)
 	return (instr);
 }
 
-static t_ast	*parse_instructions(t_token **tokens, int *status, char **env,
-				char **input);
+static t_ast	*parse_instructions(t_token **tokens, int *status, char **env);
 
-static t_ast	*parse_redirection(t_token **tokens, int *status, char **env,
-	char **input)
+static t_ast	*parse_redirection(t_token **tokens, int *status, char **env)
 {
 	t_ast			*instr;
 	t_token_type	redir_type;
-	t_data			data;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	// if (!(*tokens))
 	// 	return (error_syntax("`newline'", status));
-	data.tokens = tokens;
-	data.input = input;
-	instr = ast_new_redir(redir_type, status, env, &data);
+	instr = ast_new_redir(redir_type, status, env, *tokens);
 	*tokens = (*tokens)->next;
 	return (instr);
 }
 
-static t_ast	*parse_instructions(t_token **tokens, int *status, char **env,
-	char **input)
+static t_ast	*parse_instructions(t_token **tokens, int *status, char **env)
 {
 	t_ast	*instr;
 	t_ast	*cmd;
@@ -84,20 +78,20 @@ static t_ast	*parse_instructions(t_token **tokens, int *status, char **env,
 		cmd = parse_command(tokens);
 		// if (!cmd)
 		// 	return (error_syntax("`|'", status));
-		instr = parse_instructions(tokens, status, env, input);
+		instr = parse_instructions(tokens, status, env);
 		ast_add_end(&instr, cmd);
 	}
 	else
 	{
-		instr = parse_redirection(tokens, status, env, input);
+		instr = parse_redirection(tokens, status, env);
 		if (!instr)
 			return (NULL);
-		instr->left = parse_instructions(tokens, status, env, input);
+		instr->left = parse_instructions(tokens, status, env);
 	}
 	return (instr);
 }
 
-t_ast	*parser(t_token *tokens, int *status, char **env, char **input)
+t_ast	*parser(t_token *tokens, int *status, char **env)
 {
 	t_ast	*left;
 	t_ast	*right;
@@ -107,13 +101,13 @@ t_ast	*parser(t_token *tokens, int *status, char **env, char **input)
 		return (NULL);
 	// if (tokens->type == TOKEN_PIPE)
 	// 	error_syntax("`|'", status);
-	left = parse_instructions(&tokens, status, env, input);
+	left = parse_instructions(&tokens, status, env);
 	if (!left)
 		return (NULL);
 	while (tokens && tokens->type == TOKEN_PIPE)
 	{
 		tokens = tokens->next;
-		right = parse_instructions(&tokens, status, env, input);
+		right = parse_instructions(&tokens, status, env);
 		if (left && !right)
 			return (ast_free(left), NULL);
 		new_ast = ast_new_pipe(left, right);

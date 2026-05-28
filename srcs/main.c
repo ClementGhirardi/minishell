@@ -81,6 +81,8 @@ volatile sig_atomic_t	g_sig_status = 0;
 static void	sigint_handler(int sig) //STATIC
 {
 	(void) sig;
+	if (g_sig_status == -1)
+		g_sig_status = 0;
 	if (g_sig_status == 1)
 	{
 		g_sig_status = 2;
@@ -98,36 +100,67 @@ static void	sigint_handler(int sig) //STATIC
 	rl_redisplay();
 }
 
-static void	init_signals(void)
+static int	init_var(int *status, char ***env, char **envp)
 {
+	// *env = dup_array(envp);
+	// if (!(*env))
+	// 	return (0);
+	(void)env;
+	(void)envp;
+	*status = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
+	return (1);
 }
 
-static void	minishell(int *status, char **input, char ***env)
+static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 {
-	t_token	*tmp;
+	if (!ast)
+		return ;
+	if (!ast->args)
+		return ;
+	if (!ast->args[0])
+		return ;
+	if (ast->type == NODE_CMD
+		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+	{
+		free(*input);
+		free_array(*env);
+		ft_putendl_fd("exit", 1);
+		status = ft_exit(ast, env, status);
+		exit(status);
+	}
+}
+
+static int	minishell(int *status, char **input, char ***env)
+{
 	t_token	*tokens;
 	t_ast	*ast;
+	t_data	data;
 
-	if (!input || !*input || !**input)
-		return ;
-	tokens = lexer(input, status, *env);
-	tmp = tokens;
-	// tokens = split_bracket(&tokens);
-	// free_token(tmp);
-	// tmp = tokens;
+	data.env = *env;
+	data.status = status;
+	data.input = input;
+	data.ast = NULL;
+	data.other_lines = NULL;
+	tokens = lexer(&data, input);
+	lexer_handle_other_lines(tokens, &data);
 	if (tokens)
 	{
-		ast = parser(tokens, status, *env, input);
-		free_token(tmp);
+		ast = parser(tokens, status, *env);
+		free_token(tokens);
+		data.ast = ast;
+		browse_ast_for_heredoc(data.ast, &data);
+		if (ast && g_sig_status == 4)
+			return (ast_free(ast), 1);
 		if (ast && g_sig_status != 4)
 		{
-			*status = executor(ast, ast, *status, env);
+			handle_exit(ast, *status, input, env);
+			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
 			ast_free(ast);
 		}
-		// free_token(tokens);
 	}
+	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -138,16 +171,18 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
+	env = NULL;
 	env = dup_array(envp);
-	if (!env)
-		return (1); //1 ou 0 ?
-	status = 0;
-	g_sig_status = 0;
-	init_signals();
+	if (!(env))
+		return (0);
+	if (!init_var(&status, &env, envp))
+		return (error_creating_env());
 	while (1)
 	{
-		g_sig_status = 0;
+		g_sig_status = -1;
 		input = readline("minishell$ ");
+		if (g_sig_status == 0)
+			status = 130;
 		if (!input)
 			ft_exit(NULL, &env, status);
 		g_sig_status = 1;

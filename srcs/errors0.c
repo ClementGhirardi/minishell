@@ -12,6 +12,12 @@
 
 #include "../includes/minishell.h"
 
+int	error_creating_env(void)
+{
+	ft_putendl_fd("minishell: can't create new environment", 2);
+	return (0);
+}
+
 static int	is_an_env_var(char *path, char **env)
 {
 	int	i;

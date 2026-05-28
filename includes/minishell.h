@@ -72,11 +72,20 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
+// typedef struct s_data
+// {
+// 	t_token	**tokens;
+// 	char	**input;
+// 	char	*limiter;
+// }	t_data;
+
 typedef struct s_data
 {
-	t_token	**tokens;
+	char	**env;
+	int		*status;
 	char	**input;
-	char	*limiter;
+	char	*other_lines;
+	t_ast	*ast;
 }	t_data;
 
 typedef struct s_var
@@ -98,7 +107,7 @@ char		*ft_strjoin_and_free(char *s1, char *s2);
 // void		*ft_realloc(void *ptr, size_t size);
 
 // char		*here_doc_word(char limiter, int *status, char **env);
-char		*here_doc_word(char **input, char limiter, int *status, char **env);
+//char		*here_doc_word(char **input, char limiter, int *status, char **env);
 int			ft_strcmp(char *s1, char *s2);
 int 		ft_heredoc_strncmp(char *s1, char *s2, size_t size);
 size_t		ft_safe_strlen(char *s);
@@ -108,39 +117,48 @@ t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **list, t_token *new);
 void		free_token(t_token *tokens);
 
-t_token		*lexer(char **input, int *status, char **env);
+// t_token		*lexer(char **input, int *status, char **env);
+t_token		*lexer(t_data *data, char **input);
 t_token		*lexer2(char **input, int *status, char **env);
 //void		handle_quotes(char **input, int *status, char **env);
 t_token		*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **env);
 int			handle_quotes(char **input);
+// void		handle_last_pipe(char **input, int *status, char **env);
 void		handle_last_pipe(char **input, int *status, char **env);
 
 void		handle_pipe(t_token **tokens, int *i);
 void		handle_and(char *input, t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
 
+void		free_data(t_data *data);
+
 void		*syntax_error(char *str, int *status);
 
 int			syntax_analyzer(t_token *tokens, int *status);
 
-t_token		*last_pipe(char *input, t_token *tokens, int *status, char **env);
+t_token		*last_pipe(t_token *tokens, t_data *data);
 
 t_token		*split_bracket(t_token **tokens);
 void		ft_tokadd_back(t_token **lst, t_token *new);
 
 t_ast		*ast_new_cmd(char **args);
-t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data);
+t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
+		t_token *tokens);
+// t_ast		*ast_new_redir(t_token_type r_type, int *status, char **env, t_data *data);
 t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 t_ast		*ast_new_operator(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
 
-t_ast		*create_redir_node(int *status, char **env, t_data *data);
+// t_ast		*create_redir_node(int *status, char **env, t_data *data);
+t_ast	*create_redir_node(t_token_type r_type, int *status, char **env,
+		t_token *tokens);
 
 char		*ft_gethole_fd(int fd);
 
-t_ast		*parser(t_token *tokens, int *status, char **env, char **input);
+// t_ast		*parser(t_token *tokens, int *status, char **env, char **input);
+t_ast	*parser(t_token *tokens, int *status, char **env);
 
 char		*ft_getenv(char **env, const char *name);
 
@@ -149,12 +167,21 @@ void		expander(t_ast *node, int status, char **env);
 char		*expand_string(char *str, int status, char **env);
 char		**remove_empty_var(char **args, int status, char **env);
 
-int			here_doc(t_data *data, int *status, char **env);
+int			here_doc(char *limiter, t_data *data, t_ast *current);
+// int			here_doc(t_data *data, int *status, char **env);
+void		here_doc_word(char limiter, t_data *data);
 char		*here_doc_pipe_op(char *input_begining, int *status, char **env);
 
 int			idx_to_next_line(char *str);
 
-int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
+char		*get_one_line(char *lines, int *i);
+char		*expand_only_var(char *str, int status, char **env);
+
+//int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
+int			get_buffer(char **buffer, int *nb_line, t_data *data);
+
+void		browse_ast_for_heredoc(t_ast *ast, t_data *data);
+void		lexer_handle_other_lines(t_token *tokens, t_data *data);
 
 char		*get_path(char *cmd, char **envp);
 int			existing_path(char *cmd);
@@ -184,11 +211,13 @@ int			ft_exit(t_ast *ast, char ***env, int status);
 int			is_builtin(char *cmd);
 int			run_builtin(t_ast *ast, char **args, char ***env, int status);
 
-int			executor(t_ast *ast, t_ast *root, int status, char ***env);
-int			execute_operator(t_ast *ast, t_ast *root, int status, char ***env);
-int			execute_redir(t_ast *node, t_ast *root, int status, char ***env);
-int			execute_pipe(t_ast *node, t_ast *root, int status, char ***env);
-int			execute_cmd(t_ast *node, t_ast *root, int status, char ***env);
+// int	executor(t_ast *ast, int status, char ***env, t_data *data);
+int	executor(t_ast *ast, t_data *data, int fd_in, int fd_out);
+// int			executor(t_ast *ast, t_ast *root, int status, char ***env);
+// int			execute_operator(t_ast *ast, t_ast *root, int status, char ***env);
+// int			execute_redir(t_ast *node, t_ast *root, int status, char ***env);
+// int			execute_pipe(t_ast *node, t_ast *root, int status, char ***env);
+// int			execute_cmd(t_ast *node, t_ast *root, int status, char ***env);
 
 void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, int status, char **env);
@@ -198,6 +227,7 @@ void		error_file(char *file);
 int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
 int			error_exec_cmd(char *arg, int *status, char **env);
 int			error_exec_cmd(char *arg, int *status, char **env);
+int			error_creating_env(void);
 
 
 // char		*ft_strjoin_and_free(char *s1, char *s2);

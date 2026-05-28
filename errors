@@ -1,0 +1,66 @@
+							PARTIE A JOUR
+
+faire heredoc, en sortir avec limiter, fleche du haut puis entrer : ctrlD ne marche plus
+ls | pour creer heredoc, entrer '' : probleme file descriptors
+fd ouverts dans heredoc
+heredoc : leaks si << limiter | cmd (surtout si cmd = exit)
+
+leak dans heredoc word
+
+exit | cmd
+cmd | exit
+exit > file
+
+wc | ls : fd ouverts
+
+path doit afficher no such file or directory
+
+export ne marche plus (???)
+
+
+
+valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp
+
+
+							FIN DE LA PARTIIE A JOUR
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+TESTS QUI ECHOUENT:
+
+<< '' (createword lexer, heredoc.c, get_path, execute_cmd, rm_emptyvar)
+<< ok ; o (LEAK)
+<< ok && ls
+<< ok | wc
+<< ok ; ctrlD direct
+
+wc | ls (LEAKS)
+
+leaks redirections (FD):
+ls > $file'ls'
+ls > $file
+ls > $rien$file$rien
+ls > out
+
+echo '' '' '' | cat -e (ERROR)
+
+export arg=oui ; export $arg=ok ; echo $arg ; echo $oui (LEAK, ERROR)
+
+exit > out (ERROR)
+exit | sleep 2 (LEAK)
+sleep 2 | exit (LEAK)
+ls | exit (LEAK)
+
+ctrl+C -> echo $? (ERROR, devrait afficher 130)
+
+--------------------------------------------------------------------------
+
+TESTS MANQUANTS :
+- heredoc
+- redirections
+- buitins (sauf echo, export, exit)
+- commandes complexes avec &&, ||, (), |, <
+- quotes
+- points
+- ulimit

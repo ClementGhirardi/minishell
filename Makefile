@@ -42,6 +42,10 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/errors0.c \
 	$(SRCS_DIR)/errors1.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
+	$(SRCS_DIR)/browse_ast_for_heredoc.c \
+	$(SRCS_DIR)/lexer_handle_other_lines.c \
+	$(SRCS_DIR)/here_doc_utils.c \
+	$(SRCS_DIR)/data.c \
 
 SRCS_BONUS = 
 
