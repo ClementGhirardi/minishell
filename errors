@@ -11,9 +11,7 @@ exit | cmd
 cmd | exit
 exit > file
 
-wc | ls : fd ouverts
-
-path doit afficher no such file or directory
+$SHELL affiche rien dans bash (?)
 
 
 

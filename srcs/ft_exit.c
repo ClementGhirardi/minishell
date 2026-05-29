@@ -76,6 +76,13 @@ int	ft_exit(t_ast *ast, char ***env, int status)
 	// 	return (ast_free(ast), free_array(*env), status);
 	// if (wait(NULL) != -1)
 	// 	return (ast_free(ast), free_array(*env), status);
+	
+	
+	// if ((!ast->left && !ast->right)
+	// 	|| (!ast->right && ast->left->type != NODE_PIPE)
+	// 	|| (!ast->left && ast->right->type != NODE_PIPE)
+	// 	|| (ast->left->type != NODE_PIPE
+	// 		&& !ast->left && ast->right->type != NODE_PIPE))
 	ft_putendl_fd("exit", 1);
 	free_array(*env);
 	ast_free(ast);

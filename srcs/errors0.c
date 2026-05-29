@@ -43,17 +43,17 @@ static int	error_exec_cmd_slash(char *arg, int *status, char **env)
 	if (arg[0] == '/')
 	{
 		*status = 126;
-		if (is_an_env_var(arg, env))
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(arg, 2);
-			ft_putendl_fd(": Is a directory", 2);
-		}
-		else if (!existing_path(arg))
+		if (!existing_path(arg))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(arg, 2);
 			ft_putendl_fd(": No such file or directory", 2);
+		}
+		else if (is_an_env_var(arg, env))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(arg, 2);
+			ft_putendl_fd(": Is a directory", 2);
 		}
 		else
 			return (0);
