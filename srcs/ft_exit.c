@@ -71,13 +71,14 @@ int	ft_exit(t_ast *ast, char ***env, int status)
 	// 	else
 	// 		status = ft_atoi(ast->args[1]);
 	// }
-	if (wait(NULL) != -1)
-		return (ast_free(ast), free_array(*env), status);
-	if (wait(NULL) != -1)
-		return (ast_free(ast), free_array(*env), status);
+
+	// if (wait(NULL) != -1)
+	// 	return (ast_free(ast), free_array(*env), status);
+	// if (wait(NULL) != -1)
+	// 	return (ast_free(ast), free_array(*env), status);
 	ft_putendl_fd("exit", 1);
-	rl_clear_history();
 	free_array(*env);
 	ast_free(ast);
+	rl_clear_history();
 	exit(status);
 }

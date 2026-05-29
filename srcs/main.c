@@ -113,24 +113,24 @@ static int	init_var(int *status, char ***env, char **envp)
 	return (1);
 }
 
-static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
-{
-	if (!ast)
-		return ;
-	if (!ast->args)
-		return ;
-	if (!ast->args[0])
-		return ;
-	if (ast->type == NODE_CMD
-		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
-	{
-		free(*input);
-		free_array(*env);
-		ft_putendl_fd("exit", 1);
-		status = ft_exit(ast, env, status);
-		exit(status);
-	}
-}
+// static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
+// {
+// 	if (!ast)
+// 		return ;
+// 	if (!ast->args)
+// 		return ;
+// 	if (!ast->args[0])
+// 		return ;
+// 	if (ast->type == NODE_CMD
+// 		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+// 	{
+// 		free(*input);
+// 		free_array(*env);
+// 		ft_putendl_fd("exit", 1);
+// 		status = ft_exit(ast, env, status);
+// 		exit(status);
+// 	}
+// }
 
 static int	minishell(int *status, char **input, char ***env)
 {
@@ -155,8 +155,9 @@ static int	minishell(int *status, char **input, char ***env)
 			return (ast_free(ast), 1);
 		if (ast && g_sig_status != 4)
 		{
-			handle_exit(ast, *status, input, env);
+			// handle_exit(ast, *status, input, env);
 			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
+			*env = data.env;
 			ast_free(ast);
 		}
 	}
@@ -171,7 +172,6 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	env = NULL;
 	env = dup_array(envp);
 	if (!(env))
 		return (0);

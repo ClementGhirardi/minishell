@@ -38,7 +38,7 @@ char	**dup_array(char **array)
 	size = 0;
 	while (array[size])
 		size++;
-	new_array = (char **)malloc((size + 1) * sizeof(char *));
+	new_array = malloc((size + 1) * sizeof(char *));
 	if (!new_array)
 		return (NULL);
 	i = 0;

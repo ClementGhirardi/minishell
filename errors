@@ -15,8 +15,6 @@ wc | ls : fd ouverts
 
 path doit afficher no such file or directory
 
-export ne marche plus (???)
-
 
 
 valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp

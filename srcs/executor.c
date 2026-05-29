@@ -20,7 +20,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
-	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env)) //retirer 1ere condition
+	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node, node->args, &data->env, *data->status));
