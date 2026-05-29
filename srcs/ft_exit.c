@@ -55,37 +55,53 @@
 // 	return (1);
 // }
 
-int	ft_exit(t_ast *ast, char ***env, int status)
+int	ft_exit(t_data *data, int status, int fd_in, int fd_out)
 {
-	//int	len;
+	// int	len;
 
-	//len = 0;
-	// if (ast)
-	// 	len = ft_strslen(ast->args);
+	// len = 0;
+	// if (data->ast)
+	// 	len = ft_strslen(data->ast->args);
 	// if (len >= 2)
 	// {
-	// 	if (!ft_is_str_digit(ast->args[1]))
-	// 		error_num(ast->args[1], &status);
+	// 	if (!ft_is_str_digit(data->ast->args[1]))
+	// 		error_num(data->ast->args[1], &status);
 	// 	else if (len > 2)
 	// 		return (error_too_many_args(&status));
 	// 	else
-	// 		status = ft_atoi(ast->args[1]);
+	// 		status = ft_atoi(data->ast->args[1]);
 	// }
-
-	// if (wait(NULL) != -1)
-	// 	return (ast_free(ast), free_array(*env), status);
-	// if (wait(NULL) != -1)
-	// 	return (ast_free(ast), free_array(*env), status);
-	
-	
-	// if ((!ast->left && !ast->right)
-	// 	|| (!ast->right && ast->left->type != NODE_PIPE)
-	// 	|| (!ast->left && ast->right->type != NODE_PIPE)
-	// 	|| (ast->left->type != NODE_PIPE
-	// 		&& !ast->left && ast->right->type != NODE_PIPE))
-	ft_putendl_fd("exit", 1);
-	free_array(*env);
-	ast_free(ast);
+	if (wait(NULL) != -1)
+	{
+		if (data)
+			ast_free(data->ast);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		return (free_array(data->env), status);
+	}
+	if (wait(NULL) != -1)
+	{
+		if (data)
+			ast_free(data->ast);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		return (free_array(data->env), status);
+	}
+	if (fd_in != STDIN_FILENO)
+		close(fd_in);
+	if (fd_out != STDOUT_FILENO)
+		close(fd_out);
+	if (data) // passer env en argument pour pouvoir le free meme si !data
+	{
+		ast_free(data->ast);
+		data->ast = NULL;
+		free_array(data->env);
+		data->env = NULL;
+	}
 	rl_clear_history();
 	exit(status);
 }

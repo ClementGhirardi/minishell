@@ -7,12 +7,21 @@ heredoc : leaks si << limiter | cmd (surtout si cmd = exit)
 
 leak dans heredoc word
 
+(a tester : heredoc entre pipes)
+
 exit | cmd
 cmd | exit
-exit > file
+
+export | ls
+export | wc : affiche pas les memes nombres que dans bash (a cause de execve sleep?)
+echo $arg | exit
+exit | export | echo ok
+
+./Makefile : message d'erreur mal affiche
+
+arguments de exit
 
 $SHELL affiche rien dans bash (?)
-
 
 
 valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp

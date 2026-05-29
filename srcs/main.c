@@ -127,8 +127,11 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 		free(*input);
 		free_array(*env);
 		ast_free(ast);
+		*env = NULL;
+		*input = NULL;
+		ast = NULL;
 		ft_putendl_fd("exit", 1);
-		status = ft_exit(ast, env, status);
+		//status = ft_exit(ast, env, status);
 		exit(status);
 	}
 }
@@ -185,12 +188,12 @@ int	main(int ac, char **av, char **envp)
 		if (g_sig_status == 0)
 			status = 130;
 		if (!input)
-			ft_exit(NULL, &env, status);
+			ft_exit(NULL, STDIN_FILENO, status, STDOUT_FILENO);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, &env, status);
+	ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO);
 }

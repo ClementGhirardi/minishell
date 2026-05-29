@@ -25,7 +25,7 @@ void	update_pwd(char ***env)
 		ft_setenv(env, "PWD", cwd);
 }
 
-int	ft_cd(char **args, char ***env)
+int	ft_cd(char **args, char ***env, int fd_out)
 {
 	char	*path;
 
@@ -33,22 +33,22 @@ int	ft_cd(char **args, char ***env)
 	{
 		path = ft_getenv(*env, "HOME");
 		if (!path)
-			return (ft_putendl_fd("minishell: cd: HOME not set", 2), 1);
+			return (ft_putendl_fd("minishell: cd: HOME not set", fd_out), 1);
 	}
 	else if (!ft_strncmp(args[1], "-", ft_strlen(args[1])))
 	{
 		path = ft_getenv(*env, "OLDPWD");
 		if (!path)
-			return (ft_putendl_fd("minishell: cd: OLDPWD not set", 2), 1);
-		ft_putstr_fd(path, 1);
-		ft_putchar_fd('\n', 1);
+			return (ft_putendl_fd("minishell: cd: OLDPWD not set", fd_out), 1);
+		ft_putstr_fd(path, fd_out);
+		ft_putchar_fd('\n', fd_out);
 	}
 	else
 		path = ft_strdup(args[1]);
 	if (chdir(path) == -1)
-		return (ft_putstr_fd("minishell: cd: ", 2),
-			ft_putstr_fd(path, 2),
-			ft_putendl_fd(": no such file or directory", 2), free(path), 1);
+		return (ft_putstr_fd("minishell: cd: ", fd_out),
+			ft_putstr_fd(path, fd_out),
+			ft_putendl_fd(": no such file or directory", fd_out), free(path), 1);
 	update_pwd(env);
 	return (free(path), 0);
 }

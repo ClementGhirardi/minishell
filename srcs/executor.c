@@ -12,7 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
 int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 {
 	pid_t	pid;
@@ -23,7 +22,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node, node->args, &data->env, *data->status));
+		return (run_builtin(node->args, data, fd_in, fd_out));
 	else
 	{
 		pid = fork();
@@ -50,8 +49,8 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 					": Permission denied", 2), free_array(data->env), ast_free(data->ast),
 				exit(126), 126);
 		}
-		return (waitpid(pid, data->status, 0), get_status(*data->status));
 	}
+	return (waitpid(pid, data->status, 0), get_status(*data->status));
 }
 
 // static int	execute_cmd(t_ast *node, int status, char ***env, t_data *data)
