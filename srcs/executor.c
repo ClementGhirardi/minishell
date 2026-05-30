@@ -15,7 +15,7 @@
 int	execute_builtin_with_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 {
 	pid_t	pid;
-	int 	code;
+	int		code;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
@@ -48,7 +48,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 		return (0);
 	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
-	else if (is_builtin(node->args[0]))
+	if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, data, fd_in, fd_out));
 	else
 	{
@@ -179,9 +179,7 @@ int	executor(t_ast *ast, t_data *data, int fd_in, int fd_out)
 			|| ast->type == NODE_APPEND || ast->type == NODE_HEREDOC))
 	{
 		if (ast->file && ast->type != NODE_HEREDOC)
-		{
 			expander(ast, *data->status, data->env);
-		}
 		// if (ast->file)
 		// {
 		// 	expander(ast, status, *env);

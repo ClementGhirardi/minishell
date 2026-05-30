@@ -176,9 +176,10 @@ int			idx_to_next_line(char *str);
 
 char		*get_one_line(char *lines, int *i);
 char		*expand_only_var(char *str, int status, char **env);
+char	*remove_limiters_quotes(char *file);
 
 //int			get_buffer(char **buffer, int *nb_line, int *status, char **env);
-int			get_buffer(char **buffer, int *nb_line, t_data *data);
+int			get_buffer(char **buffer, int *nb_line, t_data *data, int *to_close_fds);
 
 void		browse_ast_for_heredoc(t_ast *ast, t_data *data);
 void		lexer_handle_other_lines(t_token *tokens, t_data *data);

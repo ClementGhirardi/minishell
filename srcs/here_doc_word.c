@@ -38,7 +38,7 @@ void	here_doc_word(char limiter, t_data *data)
 		return ;
 	add_history(*data->input);
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(" "));
-	if (!get_buffer(&buffer, &nb_line, data))
+	if (!get_buffer(&buffer, &nb_line, data, NULL))
 	{
 		free(*data->input);
 		return ;
@@ -47,7 +47,7 @@ void	here_doc_word(char limiter, t_data *data)
 	while (!ft_isin(limiter, buffer) && g_sig_status != 4)
 	{
 		*data->input = ft_strjoin_and_free(*data->input, buffer);
-		if (!get_buffer(&buffer, &nb_line, data))
+		if (!get_buffer(&buffer, &nb_line, data, NULL))
 		{
 			return ;
 		}

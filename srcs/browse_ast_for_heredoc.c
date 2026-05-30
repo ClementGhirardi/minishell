@@ -18,6 +18,7 @@ void	browse_ast_for_heredoc(t_ast *ast, t_data *data)
 		return ;
 	if (ast->type == NODE_HEREDOC)
 	{
+		ast->file = remove_limiters_quotes(ast->file);
 		if (!ast->file)
 			return ;
 		ast->fd = here_doc(ast->file, data, ast);

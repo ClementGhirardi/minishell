@@ -82,9 +82,13 @@ static int	ft_isin(char *str, char c)
 	return (0);
 }
 
-static int	child(char **buffer, int *fd, t_data *data)
+static int	child(char **buffer, int *fd, t_data *data, int *to_close_fds)
 {
 	g_sig_status = 3;
+	if (to_close_fds && to_close_fds[0] != -1)
+		close(to_close_fds[0]);
+	if (to_close_fds && to_close_fds[1] != -1)
+		close(to_close_fds[1]);
 	close(fd[0]);
 	free_data(data);
 	*buffer = readline("> ");
@@ -95,7 +99,7 @@ static int	child(char **buffer, int *fd, t_data *data)
 	exit(0);
 }
 
-int	get_buffer(char **buffer, int *nb_line, t_data *data)
+int	get_buffer(char **buffer, int *nb_line, t_data *data, int *to_close_fds)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -105,7 +109,7 @@ int	get_buffer(char **buffer, int *nb_line, t_data *data)
 		return (0);
 	pid = fork();
 	if (pid == 0)
-		child(buffer, fd, data);
+		child(buffer, fd, data, to_close_fds);
 	close(fd[1]);
 	waitpid(pid, &tmp, 0);
 	*data->status = get_status(tmp);

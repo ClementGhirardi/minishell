@@ -4,12 +4,27 @@ faire heredoc, en sortir avec limiter, fleche du haut puis entrer : ctrlD ne mar
 ls | pour creer heredoc, entrer '' : probleme file descriptors
 fd ouverts dans heredoc
 heredoc : leaks si << limiter | cmd (surtout si cmd = exit)
+maximum 16 heredocs imbriques ?
 
 leak dans heredoc word
 
-(a tester : heredoc entre pipes)
+ERRORS
+heredoc + sortie par limiter : probleme historique avec fleche du haut
 
-export | wc : affiche pas les memes nombres que dans bash (a cause de execve sleep?)
+LEAKS
+<< limiter | wc
+<< limiter1 | << limiter2
+
+FDs
+heredoc + ctrlC
+<< limiter | wc
+<< limiter1 | << limiter2
+
+
+
+
+
+export | wc : affiche pas les memes nombres que dans bash (normal?)
 
 ./Makefile : message d'erreur mal affiche
 
@@ -19,6 +34,13 @@ $SHELL affiche rien dans bash (?)
 
 
 valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp
+
+
+
+
+A TESTER
+
+- ./minishell | ./minishell
 
 
 							FIN DE LA PARTIIE A JOUR

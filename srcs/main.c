@@ -156,7 +156,7 @@ static int	minishell(int *status, char **input, char ***env)
 		data.ast = ast;
 		browse_ast_for_heredoc(data.ast, &data);
 		if (ast && g_sig_status == 4)
-			return (ast_free(ast), 1);
+			return (ast_free(ast), free(*data.input), *data.input = NULL, 1);
 		if (ast && g_sig_status != 4)
 		{
 			handle_exit(ast, *status, input, env);
