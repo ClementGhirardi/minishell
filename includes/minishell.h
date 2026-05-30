@@ -211,6 +211,7 @@ int			is_builtin(char *cmd);
 int			run_builtin(char **args, t_data *data, int fd_in, int fd_out);
 
 int			executor(t_ast *ast, t_data *data, int fd_in, int fd_out);
+int execute_builtin_with_pipe(t_ast *node, t_data *data, int fd_in, int fd_out);
 
 void		error_heredoc(int i, char *limiter);
 void		error_heredocword(char limiter, int status, char **env);

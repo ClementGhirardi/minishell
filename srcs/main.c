@@ -102,11 +102,11 @@ static void	sigint_handler(int sig) //STATIC
 
 static int	init_var(int *status, char ***env, char **envp)
 {
-	// *env = dup_array(envp);
-	// if (!(*env))
-	// 	return (0);
-	(void)env;
-	(void)envp;
+	*env = dup_array(envp);
+	if (!(*env))
+		return (0);
+	// (void)env;
+	// (void)envp;
 	*status = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
@@ -176,9 +176,7 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	env = dup_array(envp);
-	if (!(env))
-		return (0);
+	env = NULL;
 	if (!init_var(&status, &env, envp))
 		return (error_creating_env());
 	while (1)
@@ -188,12 +186,12 @@ int	main(int ac, char **av, char **envp)
 		if (g_sig_status == 0)
 			status = 130;
 		if (!input)
-			ft_exit(NULL, STDIN_FILENO, status, STDOUT_FILENO);
+			return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO);
+	return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 }

@@ -9,13 +9,7 @@ leak dans heredoc word
 
 (a tester : heredoc entre pipes)
 
-exit | cmd
-cmd | exit
-
-export | ls
 export | wc : affiche pas les memes nombres que dans bash (a cause de execve sleep?)
-echo $arg | exit
-exit | export | echo ok
 
 ./Makefile : message d'erreur mal affiche
 

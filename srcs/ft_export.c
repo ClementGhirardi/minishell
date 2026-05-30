@@ -94,20 +94,15 @@ static int	print_export(char **env, int fd_out)
 			return (1);
 		ft_putstr_fd("export ", fd_out);
 		ft_putstr_fd(name, fd_out);
-		// ft_putstr_fd("export ", 1);
-		// ft_putstr_fd(name, 1);
 		value = get_value(env[i]);
 		if (value)
 		{
 			ft_putstr_fd("=\"", fd_out);
 			ft_putstr_fd(value, fd_out);
 			ft_putstr_fd("\"", fd_out);
-			// ft_putstr_fd("=\"", 1);
-			// ft_putstr_fd(value, 1);
-			// ft_putstr_fd("\"", 1);
 			free(value);
 		}
-		ft_putendl_fd("", fd_out); // ft_putendl_fd("", 1);
+		ft_putendl_fd("", fd_out);
 		free(name);
 		i++;
 	}
@@ -127,7 +122,7 @@ int	ft_export(char **args, char ***env, int status, int fd_out)
 	{
 		name = get_name(args[i]);
 		if (!name)
-			status = 1;
+			return (status = 1);
 		value = get_value(args[i]);
 		if (ft_setenv(env, name, value))
 		{
