@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/05 14:36:51 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/01 16:50:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ void	ast_free(t_ast *ast)
 		}
 		if (ast->file)
 			free(ast->file);
+		if (ast->type == NODE_HEREDOC && ast->fd != -1)
+			close(ast->fd);
 		ast_free(ast->left);
 		ast_free(ast->right);
 		free(ast);

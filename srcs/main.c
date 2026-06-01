@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 14:55:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 17:08:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ static void	sigint_handler(int sig) //STATIC
 		g_sig_status = 4;
 		rl_replace_line("", 0);
 		rl_done = 1;
+		return ;
 	}
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
@@ -108,7 +109,6 @@ int	event(void)
 
 static int	init_var(int *status, char ***env, char **envp)
 {
-	rl_event_hook = event;
 	*env = dup_array(envp);
 	if (!(*env))
 		return (0);
@@ -117,6 +117,7 @@ static int	init_var(int *status, char ***env, char **envp)
 	*status = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
+	rl_event_hook = event;
 	return (1);
 }
 
@@ -138,7 +139,6 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 		*input = NULL;
 		ast = NULL;
 		ft_putendl_fd("exit", 1);
-		//status = ft_exit(ast, env, status);
 		exit(status);
 	}
 }

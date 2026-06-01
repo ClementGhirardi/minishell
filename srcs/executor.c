@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 12:24:26 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 16:53:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,8 @@ static int	execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out)
 	{
 		*data->status = executor(node->left, data, fd_in, fd);
 	}
+	if (node->type == NODE_HEREDOC)
+		return (*data->status);
 	return (close(fd), *data->status);
 }
 
