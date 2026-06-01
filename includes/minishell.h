@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 15:21:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 11:56:48 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,5 +223,7 @@ int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
 int			error_exec_cmd(char *arg, int *status, char **env);
 int			error_exec_cmd(char *arg, int *status, char **env);
 int			error_creating_env(void);
+
+void		check_nb_heredoc(t_ast *ast, t_data *data);
 
 #endif

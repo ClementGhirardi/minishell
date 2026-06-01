@@ -1,31 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   browse_ast_for_heredoc.c                           :+:      :+:    :+:   */
+/*   check_nb_heredoc.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/27 10:48:16 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 11:56:29 by cghirard         ###   ########.fr       */
+/*   Created: 2026/06/01 11:44:08 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/01 12:02:58 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	browse_ast_for_heredoc(t_ast *ast, t_data *data)
+static void	recursive(t_ast *ast, int *count)
 {
 	if (!ast)
 		return ;
-	check_nb_heredoc(ast, data);
 	if (ast->type == NODE_HEREDOC)
+		(*count)++;
+	recursive(ast->left, count);
+	recursive(ast->right, count);
+}
+
+void	check_nb_heredoc(t_ast *ast, t_data *data)
+{
+	int	count;
+
+	count = 0;
+	recursive(ast, &count);
+	if (count > 16)
 	{
-		ast->file = remove_limiters_quotes(ast->file);
-		if (!ast->file)
-			return ;
-		ast->fd = here_doc(ast->file, data, ast);
-		if (ast->fd == -1)
-			return ;
+		ft_putendl_fd("minishell: maximum here-document count exceeded", 2);
+		free(*data->input);
+		free_array(data->env);
+		ast_free(ast);
+		exit(2);
 	}
-	browse_ast_for_heredoc(ast->left, data);
-	browse_ast_for_heredoc(ast->right, data);
 }

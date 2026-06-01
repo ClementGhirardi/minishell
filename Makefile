@@ -46,6 +46,7 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/lexer_handle_other_lines.c \
 	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/data.c \
+	$(SRCS_DIR)/check_nb_heredoc.c \
 
 SRCS_BONUS = 
 
