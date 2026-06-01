@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/12 15:08:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 12:24:26 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 			close(fd_in);
 		ast_free(data->ast);
 		free_array(data->env);
+		free(*data->input);
 		exit(*data->status);
 	}
 	pid[1] = fork();
@@ -121,6 +122,7 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 			close(fd_out);
 		ast_free(data->ast);
 		free_array(data->env);
+		free(*data->input);
 		exit(*data->status);
 	}
 	return (close(fd[0]), close(fd[1]), waitpid(pid[0], data->status, 0),

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/20 11:58:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 14:55:55 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,8 @@ static void	sigint_handler(int sig) //STATIC
 	if (g_sig_status == 3)
 	{
 		g_sig_status = 4;
-		exit(130);
+		rl_replace_line("", 0);
+		rl_done = 1;
 	}
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
@@ -100,8 +101,14 @@ static void	sigint_handler(int sig) //STATIC
 	rl_redisplay();
 }
 
+int	event(void)
+{
+	return (0);
+}
+
 static int	init_var(int *status, char ***env, char **envp)
 {
+	rl_event_hook = event;
 	*env = dup_array(envp);
 	if (!(*env))
 		return (0);
@@ -185,7 +192,7 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (g_sig_status == 0)
 			status = 130;
-		if (!input)
+		if (!input && g_sig_status == -1)
 			return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);

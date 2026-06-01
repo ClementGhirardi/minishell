@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 15:00:38 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 14:54:52 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,13 @@ static int	child(char **buffer, int *fd, t_data *data, int *to_close_fds)
 	close(fd[0]);
 	free_data(data);
 	*buffer = readline("> ");
+	if (g_sig_status == 4)
+	{
+		*data->status = 130;
+		free(*buffer);
+		close(fd[1]);
+		exit(0);
+	}
 	if (*buffer)
 		ft_putendl_fd(*buffer, fd[1]);
 	free(*buffer);
