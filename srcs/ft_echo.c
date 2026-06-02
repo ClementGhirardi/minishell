@@ -17,9 +17,11 @@ static int	check_first_arg(char *s)
 	int	i;
 
 	i = 2;
+	if (!s)
+		return (0);
 	if (s[0] != '-' || s[1] != 'n')
 		return (0);
-	while (s[i])
+	while (s && s[i])
 	{
 		if (s[i] != 'n')
 			return (0);
@@ -28,43 +30,46 @@ static int	check_first_arg(char *s)
 	return (1);
 }
 
-static void	ft_display(char **args)
+static void	ft_display(char **args, int fd_out)
 {
 	int	i;
 
-	i = -1;
-	while (args[++i])
+	i = 0;
+	while (args && args[i])
 	{
 		if (!args[i][0])
-			ft_printf(" ");
+			ft_putstr_fd(" ", fd_out);
 		else
 		{
-			ft_printf("%s", args[i]);
+			ft_putstr_fd(args[i], fd_out);
 			if (args[i + 1] && args[i + 1][0])
-				ft_printf(" ");
+				ft_putstr_fd(" ", fd_out);
 		}
+		i++;
 	}
 }
 
-int	ft_echo(char **args)
+int	ft_echo(char **args, int fd_out)
 {
 	int	i;
 
 	i = 2;
-	if (!args[1])
-		return (ft_printf("\n"), 0);
+	if (!args || !*args || !args[1])
+		return (ft_putstr_fd("\n", fd_out), 0);
 	if (check_first_arg(args[1]))
 	{
 		if (!args[2])
 			return (0);
 		while (check_first_arg(args[i]))
 			i++;
-		ft_display(&args[i]);
+		if (!args[i])
+			return (0);
+		ft_display(&args[i], fd_out);
 	}
 	else
 	{
-		ft_display(&args[1]);
-		ft_printf("\n");
+		ft_display(&args[1], fd_out);
+		ft_putstr_fd("\n", fd_out);
 	}
 	return (0);
 }

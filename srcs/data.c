@@ -22,4 +22,8 @@ void	free_data(t_data *data)
 		free(data->other_lines);
 	if (data->ast)
 		ast_free(data->ast);
+	data->env = NULL;
+	data->input = NULL;
+	data->other_lines = NULL;
+	data->ast = NULL;
 }

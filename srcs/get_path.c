@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static int	existing_path(char *cmd)
+int	existing_path(char *cmd)
 {
 	if (!access(cmd, F_OK))
 	{
@@ -61,24 +61,25 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp;
 	char	*full;
 
+	if (!cmd) //retirer 2e condiotn
+		return (NULL);
 	if (existing_path(cmd))
 		return (ft_strdup(cmd));
 	paths = get_env_paths(envp);
 	if (!paths)
 		return (NULL);
-	i = 0;
-	while (paths[i])
+	i = -1;
+	while (paths[++i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
-		if (!cmd)
+		if (!cmd ||!*cmd)
 			return (free(tmp), free_strs(paths), NULL);
 		full = ft_strjoin(tmp, cmd);
 		free(tmp);
 		if (!access(full, X_OK))
 			return (free_strs(paths), full);
 		free(full);
-		i++;
 	}
-	free_strs(paths);
-	return (NULL);
+	return (free_strs(paths), NULL);
 }
+

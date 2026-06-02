@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 14:27:41 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 12:17:00 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,19 @@ static int	condition(char *limiter, char *buffer)
 	return ((ft_strncmp(buffer, limiter, ft_strlen(limiter))
 			|| ft_strlen(limiter) != ft_strlen(buffer) - 1
 			|| !ft_strncmp(buffer, "\n", 1)) && g_sig_status != 4);
+}
+
+void	add_history_noendl(char *str)
+{
+	char	*tmp;
+
+	if (!str)
+		return ;
+	if (ft_strlen(str) < 2)
+		return ;
+	tmp = ft_substr(str, 0 , ft_strlen(str) - 1);
+	add_history(tmp);
+	free(tmp);
 }
 
 static void	write_buffer(t_data *data, char *buffer, int *fd)
@@ -88,12 +101,13 @@ int	here_doc(char *limiter, t_data *data, t_ast *current)
 	if (read_previous(limiter, data, fd))
 		return (close(fd[1]), fd[0]);
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	if (!get_buffer(&buffer, &nb_line, data))
+	add_history_noendl(*data->input);
+	if (!get_buffer(&buffer, &nb_line, data, fd))
 		return (error_here_doc(fd, nb_line, limiter, *data->status));
-	while (condition(limiter, buffer))
+	while (condition(limiter, buffer) && ((*limiter) || *buffer != '\n'))
 	{
 		write_buffer(data, buffer, fd);
-		if (!get_buffer(&buffer, &nb_line, data))
+		if (!get_buffer(&buffer, &nb_line, data, fd))
 			return (error_here_doc(fd, nb_line, limiter, *data->status));
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(limiter));

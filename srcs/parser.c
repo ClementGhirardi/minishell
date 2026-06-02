@@ -59,8 +59,8 @@ static t_ast	*parse_redirection(t_token **tokens, int *status, char **env)
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (!(*tokens))
-		return (error_syntax("`newline'", status));
+	// if (!(*tokens))
+	// 	return (error_syntax("`newline'", status));
 	instr = ast_new_redir(redir_type, status, env, *tokens);
 	*tokens = (*tokens)->next;
 	return (instr);
@@ -76,8 +76,8 @@ static t_ast	*parse_instructions(t_token **tokens, int *status, char **env)
 	if ((*tokens)->type == TOKEN_WORD)
 	{
 		cmd = parse_command(tokens);
-		if (!cmd)
-			return (error_syntax("`|'", status));
+		// if (!cmd)
+		// 	return (error_syntax("`|'", status));
 		instr = parse_instructions(tokens, status, env);
 		ast_add_end(&instr, cmd);
 	}
@@ -99,8 +99,8 @@ t_ast	*parser(t_token *tokens, int *status, char **env)
 
 	if (!tokens)
 		return (NULL);
-	if (tokens->type == TOKEN_PIPE)
-		error_syntax("`|'", status);
+	// if (tokens->type == TOKEN_PIPE)
+	// 	error_syntax("`|'", status);
 	left = parse_instructions(&tokens, status, env);
 	if (!left)
 		return (NULL);

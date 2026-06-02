@@ -12,6 +12,33 @@
 
 #include "../includes/minishell.h"
 
+char	*remove_limiters_quotes(char *file)
+{
+	char	*new_filename;
+	int		i;
+	char	quote;
+
+	if (!file)
+		return (NULL);
+	i = 1;
+	if (file[0] == '\'' || file[0] == '"')
+	{
+		quote = file[0];
+		while (file[i] && file[i] != quote)
+			i++;
+		if (i == 1)
+			return (free(file), ft_strdup(""));
+	}
+	else
+	{
+		new_filename = ft_strdup(file);
+		free(file);
+		return (new_filename);
+	}
+	new_filename = ft_substr(file, 1, i - 1);
+	return (free(file), new_filename);
+}
+
 char	*get_one_line(char *lines, int *i)
 {
 	int	start;

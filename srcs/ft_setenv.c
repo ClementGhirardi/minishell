@@ -37,8 +37,6 @@ static int	find_env_index(char **env, const char *name)
 	size_t	name_len;
 	int		i;
 
-	if (!name)
-		return (-1);
 	name_len = ft_strlen(name);
 	i = 0;
 	while (env[i])

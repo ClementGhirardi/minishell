@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 14:39:01 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 17:08:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
-static void	sigint_handler(int sig)
+static void	sigint_handler(int sig) //STATIC
 {
 	(void) sig;
 	if (g_sig_status == -1)
@@ -92,7 +92,9 @@ static void	sigint_handler(int sig)
 	if (g_sig_status == 3)
 	{
 		g_sig_status = 4;
-		exit(130);
+		rl_replace_line("", 0);
+		rl_done = 1;
+		return ;
 	}
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
@@ -100,14 +102,22 @@ static void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
+int	event(void)
+{
+	return (0);
+}
+
 static int	init_var(int *status, char ***env, char **envp)
 {
 	*env = dup_array(envp);
 	if (!(*env))
 		return (0);
+	// (void)env;
+	// (void)envp;
 	*status = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
+	rl_event_hook = event;
 	return (1);
 }
 
@@ -124,9 +134,11 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 	{
 		free(*input);
 		free_array(*env);
-		ft_putendl_fd("exit", 1);
-		status = ft_exit(ast->args, status);
 		ast_free(ast);
+		*env = NULL;
+		*input = NULL;
+		ast = NULL;
+		ft_putendl_fd("exit", 1);
 		exit(status);
 	}
 }
@@ -140,7 +152,9 @@ static int	minishell(int *status, char **input, char ***env)
 	data.env = *env;
 	data.status = status;
 	data.input = input;
-	tokens = lexer(input, status, *env);
+	data.ast = NULL;
+	data.other_lines = NULL;
+	tokens = lexer(&data, input);
 	lexer_handle_other_lines(tokens, &data);
 	if (tokens)
 	{
@@ -149,11 +163,12 @@ static int	minishell(int *status, char **input, char ***env)
 		data.ast = ast;
 		browse_ast_for_heredoc(data.ast, &data);
 		if (ast && g_sig_status == 4)
-			return (ast_free(ast), 1);
+			return (ast_free(ast), free(*data.input), *data.input = NULL, 1);
 		if (ast && g_sig_status != 4)
 		{
 			handle_exit(ast, *status, input, env);
-			*status = executor(ast, *status, env, &data);
+			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
+			*env = data.env;
 			ast_free(ast);
 		}
 	}
@@ -162,12 +177,13 @@ static int	minishell(int *status, char **input, char ***env)
 
 int	main(int ac, char **av, char **envp)
 {
-	int		status;
 	char	*input;
 	char	**env;
+	int		status;
 
 	(void)ac;
 	(void)av;
+	env = NULL;
 	if (!init_var(&status, &env, envp))
 		return (error_creating_env());
 	while (1)
@@ -176,13 +192,13 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (g_sig_status == 0)
 			status = 130;
-		if (!input)
-			return (free_array(env), ft_putendl_fd("exit", 1), 0);
+		if (!input && g_sig_status == -1)
+			return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	return (free_array(env), ft_putendl_fd("exit", 1), 0);
+	return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 }

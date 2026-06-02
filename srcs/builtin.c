@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 13:47:28 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/12 13:34:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,31 @@
 
 int	is_builtin(char *cmd)
 {
-	return (!ft_strncmp(cmd, "echo", 4) || !ft_strncmp(cmd, "cd", 2)
-		|| !ft_strncmp(cmd, "pwd", 3) || !ft_strncmp(cmd, "export", 6)
-		|| !ft_strncmp(cmd, "unset", 5) || !ft_strncmp(cmd, "env", 3)
-		|| !ft_strncmp(cmd, "exit", 4));
+	return (!ft_strcmp(cmd, "echo")
+		|| !ft_strcmp(cmd, "cd")
+		|| !ft_strcmp(cmd, "pwd")
+		|| !ft_strcmp(cmd, "export")
+		|| !ft_strcmp(cmd, "unset")
+		|| !ft_strcmp(cmd, "env")
+		|| !ft_strcmp(cmd, "exit"));
 }
 
-int	run_builtin(char **args, char ***env, int status)
+int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
 {
-	if (!ft_strncmp(args[0], "echo", 4))
-		return (ft_echo(args));
-	if (!ft_strncmp(args[0], "pwd", 3))
-		return (ft_pwd());
-	if (!ft_strncmp(args[0], "cd", 2))
-		return (ft_cd(args, env));
-	if (!ft_strncmp(args[0], "export", 6))
-		return (ft_export(args, env, status));
-	if (!ft_strncmp(args[0], "unset", 5))
-		return (ft_unset(args, env));
-	if (!ft_strncmp(args[0], "env", 3))
-		return (ft_env(env));
-	if (!ft_strncmp(args[0], "exit", 4))
-		return (ft_exit(args, status));
+	if (!ft_strcmp(args[0], "pwd"))
+		return (ft_pwd(fd_out));
+	if (!ft_strcmp(args[0], "cd"))
+		return (ft_cd(args, &data->env, fd_out));
+	if (!ft_strcmp(args[0], "export"))
+		return (ft_export(args, &data->env, *data->status, fd_out));
+	if (!ft_strcmp(args[0], "unset"))
+		return (ft_unset(args, &data->env));
+	if (!ft_strcmp(args[0], "env"))
+		return (ft_env(&data->env, fd_out));
+	if (!ft_strcmp(args[0], "exit"))
+		return (ft_exit(data, *data->status, fd_in, fd_out)); //ast pour free
+		// return (ft_exit(args, env, status)); //ast pour free
+	if (!ft_strcmp(args[0], "echo"))
+		return (ft_echo(args, fd_out));
 	return (1);
 }

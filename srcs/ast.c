@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 13:39:43 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/01 16:50:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 	if (r_type == TOKEN_HEREDOC)
 		node->type = NODE_HEREDOC;
 	node->fd = -1;
-	return (node->left = NULL, node->right = NULL, node);
+	return (node->left = NULL, node->right = NULL, node->args = NULL, node);
 }
 
 t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
@@ -107,6 +107,8 @@ void	ast_free(t_ast *ast)
 		}
 		if (ast->file)
 			free(ast->file);
+		if (ast->type == NODE_HEREDOC && ast->fd != -1)
+			close(ast->fd);
 		ast_free(ast->left);
 		ast_free(ast->right);
 		free(ast);
