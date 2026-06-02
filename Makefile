@@ -18,16 +18,18 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/lexer_handle_end_with_pipe.c \
 	$(SRCS_DIR)/here_doc_word.c \
 	$(SRCS_DIR)/lexer_handler.c \
+	$(SRCS_DIR)/lexer_syntax_analyzer.c \
 	$(SRCS_DIR)/lexer_handle_other_lines.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ast.c \
 	$(SRCS_DIR)/parser_browse_ast_for_heredoc.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/here_doc_utils.c \
+ 	$(SRCS_DIR)/expander.c \
+ 	$(SRCS_DIR)/expander_remove_empty.c \
+ 	$(SRCS_DIR)/expander_extract.c \
 	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/ft_getenv.c \
- 	$(SRCS_DIR)/expander.c \
-	$(SRCS_DIR)/idx_to_next_line.c \
 	$(SRCS_DIR)/get_buffer.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \
@@ -43,11 +45,11 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
 	$(SRCS_DIR)/errors0.c \
-	$(SRCS_DIR)/errors1.c \
-	$(SRCS_DIR)/syntax_analyzer.c \
 	$(SRCS_DIR)/data.c \
 	$(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_isin.c \
+	$(SRCS_DIR)/ft_realloc.c \
+	$(SRCS_DIR)/ft_strcmp.c \
 
 SRCS_BONUS = 
 

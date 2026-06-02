@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:49:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 16:48:03 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,34 +104,13 @@ typedef struct s_var
 
 extern volatile sig_atomic_t	g_sig_status;
 
-int			ft_strcmp(char *s1, char *s2);
-int			ft_is_in(char c, char *str);
 
-t_token		*new_token(t_token_type type, char *value);
-void		add_token(t_token **list, t_token *new);
-void		free_token(t_token *tokens);
 
 void		free_data(t_data *data);
 
 void		*syntax_error(char *str, int *status);
 
-int			syntax_analyzer(t_token *tokens, int *status);
-
 char		*ft_gethole_fd(int fd);
-
-char		*ft_getenv(char **env, const char *name);
-
-char		*extract_var_name(char *str, int *i, int status, char **env);
-void		expander(t_ast *node, int status, char **env);
-char		*expand_string(char *str, int status, char **env);
-char		**remove_empty_var(char **args, int status, char **env);
-
-int			idx_to_next_line(char *str);
-
-char		*get_one_line(char *lines, int *i);
-char		*expand_only_var(char *str, int status, char **env);
-
-int			get_buffer(char **buffer, int *nb_line, t_data *data, int *to_close_fds);
 
 char		*get_path(char *cmd, char **envp);
 int			existing_path(char *cmd);
@@ -178,7 +157,6 @@ int			error_creating_env(void);
 
 int			minishell(int *status, char **input, char ***env);
 
-
 /* LEXER */
 t_token		*lexer(char **input, t_data *data);
 
@@ -194,8 +172,9 @@ void		handle_pipe(t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
 void		handle_word(char *input, t_token **tokens, int *i);
 
-void		lexer_handle_other_lines(t_token *tokens, t_data *data);
+int			syntax_analyzer(t_token *tokens, int *status);
 
+void		lexer_handle_other_lines(t_token *tokens, t_data *data);
 
 /* PARSER */
 t_ast		*parser(t_token *tokens, t_data *data);
@@ -212,19 +191,24 @@ char		*get_one_line(char *lines, int *i);
 char		*expand_only_var(char *str, int status, char **env);
 void		add_history_noendl(char *str);
 
-
 /* EXPANDER*/
+void		expander(t_ast *node, int status, char **env);
 
+char		*expand_string(char *str, int status, char **env);
+char		**remove_empty_var(char **args, int status, char **env);
+char		*extract_var_name(char *str, int *i, int status, char **env);
+char		*extract_quotevar_name(char *str, int *i, int status, char **env);
 
 /* EXECUTOR */
 int			executor(t_ast *ast, t_data *data, int fd_in, int fd_out);
-
 
 /* UTILS */
 int			ft_isin(char c, char *str);
 char		*ft_strjoin_and_free(char *s1, char *s2);
 int			get_buffer(char **buffer, int *nb_line, t_data *data, int *fds);
 int			get_status(int status);
-
+char		*ft_getenv(char **env, const char *name);
+char		**ft_realloc(void **ptr, size_t size);
+int			ft_strcmp(char *s1, char *s2);
 
 #endif

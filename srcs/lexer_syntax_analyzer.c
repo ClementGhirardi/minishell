@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_syntax_analyzer.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/02 16:41:38 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/02 16:42:32 by cghirard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	syntax_after_redir(t_token *tokens)
+static int	syntax_after_redir(t_token *tokens)
 {
 	if (!tokens)
 		return (0);
@@ -13,7 +24,7 @@ int	syntax_after_redir(t_token *tokens)
 	return (1);
 }
 
-int	syntax_after_token(t_token *tokens)
+static int	syntax_after_token(t_token *tokens)
 {
 	if (!tokens)
 		return (1);
@@ -22,7 +33,7 @@ int	syntax_after_token(t_token *tokens)
 	return (1);
 }
 
-int	dispatch(t_token *tokens)
+static int	dispatch(t_token *tokens)
 {
 	if (tokens->type != TOKEN_WORD
 		&& !syntax_after_token(tokens->next))
@@ -36,7 +47,7 @@ int	dispatch(t_token *tokens)
 	return (1);
 }
 
-int	syntax_first_token(t_token *tokens, int *status)
+static int	syntax_first_token(t_token *tokens, int *status)
 {
 	if (!tokens)
 		return (0);

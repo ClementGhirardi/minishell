@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 14:02:56 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 16:45:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void	error_command(char *command)
 {
 	char	*new_command;
 
-	if (command && ft_is_in('\n', command))
+	if (command && ft_isin('\n', command))
 		new_command = newline_replace(command);
 	else
 		new_command = ft_strdup(command);

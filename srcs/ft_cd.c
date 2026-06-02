@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 20:50:19 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/06 16:22:54 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/02 16:49:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int	ft_cd(char **args, char ***env, int fd_out)
 	if (chdir(path) == -1)
 		return (ft_putstr_fd("minishell: cd: ", fd_out),
 			ft_putstr_fd(path, fd_out),
-			ft_putendl_fd(": no such file or directory", fd_out), free(path), 1);
+			ft_putendl_fd(": no such file or directory", fd_out),
+			free(path), 1);
 	update_pwd(env);
 	return (free(path), 0);
 }
