@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   browse_ast_for_heredoc.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/01 14:17:53 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:24:32 by cghirard         ###   ########.fr       */
+/*   Created: 2026/05/27 10:48:16 by cghirard          #+#    #+#             */
+/*   Updated: 2026/05/27 13:51:32 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_env(char ***env, int fd_out)
+void	browse_ast_for_heredoc(t_ast *ast, t_data *data)
 {
-	int		i;
-
-	i = 0;
-	while ((*env)[i])
+	if (!ast)
+		return ;
+	if (ast->type == NODE_HEREDOC)
 	{
-		ft_putendl_fd((*env)[i], fd_out);
-		i++;
+		ast->file = remove_limiters_quotes(ast->file);
+		if (!ast->file)
+			return ;
+		ast->fd = here_doc(ast->file, data, ast);
+		if (ast->fd == -1)
+			return ;
 	}
-	return (0);
+	browse_ast_for_heredoc(ast->left, data);
+	browse_ast_for_heredoc(ast->right, data);
 }

@@ -1,17 +1,7 @@
+
 #include "../includes/minishell.h"
 
-int	syntax_after_cbracket(t_token *tokens)
-{
-	if (!tokens)
-		return (1);
-	if (tokens->type != TOKEN_WORD
-		&& tokens->type != TOKEN_O_BRACK
-		&& tokens->type != TOKEN_C_BRACK)
-		return (0);
-	return (1);
-}
-
-int	syntax_after_obracket(t_token *tokens)
+static int	syntax_after_obracket(t_token *tokens)
 {
 	if (!tokens)
 		return (0);
@@ -22,7 +12,7 @@ int	syntax_after_obracket(t_token *tokens)
 	return (1);
 }
 
-int	syntax_after_redir(t_token *tokens)
+static int	syntax_after_redir(t_token *tokens)
 {
 	if (!tokens)
 		return (0);
@@ -34,7 +24,7 @@ int	syntax_after_redir(t_token *tokens)
 	return (1);
 }
 
-int	syntax_after_token(t_token *tokens)
+static int	syntax_after_token(t_token *tokens)
 {
 	if (!tokens)
 		return (1);
@@ -45,7 +35,7 @@ int	syntax_after_token(t_token *tokens)
 	return (1);
 }
 
-int	dispatch(t_token *tokens)
+static int	dispatch(t_token *tokens)
 {
 	if (tokens->type != TOKEN_WORD
 		&& tokens->type != TOKEN_O_BRACK
@@ -60,7 +50,7 @@ int	dispatch(t_token *tokens)
 		return (0);
 	if (tokens->type == TOKEN_O_BRACK)
 	{
-		if (tokens->next->type == TOKEN_C_BRACK)
+		if (tokens->next && tokens->next->type == TOKEN_C_BRACK)
 			return (0);
 		return (syntax_after_obracket(tokens->next));
 	}
@@ -89,13 +79,10 @@ static t_token	*check_brackets(t_token	*tokens, int *status)
 			return (syntax_error(")", status));
 		tmp = tmp->next;
 	}
-	if (o_brack == c_brack)
-		return (tokens);
-	else
-		return (syntax_error("(", status));
+	return (tokens);
 }
 
-int	syntax_first_token(t_token *tokens, int *status)
+static int	syntax_first_token(t_token *tokens, int *status)
 {
 	if (!tokens)
 		return (0);

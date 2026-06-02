@@ -52,19 +52,16 @@ t_ast	*parse_command(t_token **tokens)
 	return (instr);
 }
 
-t_ast	*parse_redirection(t_token **tokens, t_infos *infos)
+t_ast	*parse_redirection(t_token **tokens, t_data *data)
 {
 	t_ast			*instr;
 	t_token_type	redir_type;
-	t_data			data;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
-		return (ast_new_redir(redir_type, infos->status, infos->env, &data));
-	data.tokens = tokens;
-	data.input = infos->input;
-	instr = ast_new_redir(redir_type, infos->status, infos->env, &data);
+		return (ast_new_redir(redir_type, data->status, data->env, *tokens));
+	instr = ast_new_redir(redir_type, data->status, data->env, *tokens);
 	*tokens = (*tokens)->next;
 	return (instr);
 }

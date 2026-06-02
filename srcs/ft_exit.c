@@ -3,137 +3,105 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:36:39 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/05/06 16:24:09 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// char	*expand_string(char *str, char **env);
+// static void	error_num(char *arg, int *status)
+// {
+// 	ft_putstr_fd("minishell: exit: ", 2);
+// 	ft_putstr_fd(arg, 2);
+// 	ft_putendl_fd(": numeric argument required", 2);
+// 	*status = 2;
+// }
 
-// int	isnumber(char *s)
+// static int	error_too_many_args(int *status)
+// {
+// 	ft_putendl_fd("minishell: exit: too many arguments", 2);
+// 	*status = 1;
+// 	return (*status);
+// }
+
+// static int	ft_strslen(char **strs)
+// {
+// 	int	len;
+
+// 	len = 0;
+// 	if (!strs)
+// 		return (len);
+// 	while (strs[len])
+// 		len++;
+// 	return (len);
+// }
+
+// static int	ft_is_str_digit(char *str)
 // {
 // 	int	i;
 
+// 	if (!str)
+// 		return (0);
 // 	i = 0;
-// 	while (s[i])
+// 	while (str[i])
 // 	{
-// 		if (!isdigit(s[i]))
+// 		if (!ft_isdigit(str[i]))
 // 			return (0);
 // 		i++;
 // 	}
 // 	return (1);
 // }
 
-// int	ft_exit(t_ast **ast, char ***env)
-// {
-// 	ft_printf("exit\n");
-// 	if (ast)
-// 		ast_free(*ast);
-// 	rl_clear_history();
-// 	free_array(*env);
-// 	exit(status);
-// }
-
-
-
-
-
-static void	error_num(char *arg, int *status)
+int	ft_exit(t_data *data, int status, int fd_in, int fd_out)
 {
-	ft_putstr_fd("minishell: exit: ", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putendl_fd(": numeric argument required", 2);
-	*status = 2;
-}
+	// int	len;
 
-static int	error_too_many_args(int *status)
-{
-	ft_putendl_fd("minishell: exit: too many arguments", 2);
-	*status = 1;
-	return (*status);
-}
-
-static int	ft_strslen(char **strs)
-{
-	int	len;
-
-	len = 0;
-	if (!strs)
-		return (len);
-	while (strs[len])
-		len++;
-	return (len);
-}
-
-static int	ft_is_str_digit(char *str)
-{
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
+	// len = 0;
+	// if (data->ast)
+	// 	len = ft_strslen(data->ast->args);
+	// if (len >= 2)
+	// {
+	// 	if (!ft_is_str_digit(data->ast->args[1]))
+	// 		error_num(data->ast->args[1], &status);
+	// 	else if (len > 2)
+	// 		return (error_too_many_args(&status));
+	// 	else
+	// 		status = ft_atoi(data->ast->args[1]);
+	// }
+	if (wait(NULL) != -1)
 	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-// int	ft_exit(char **args, char ***env, int status) //ast pour le free
-// {
-// 	int	len;
-
-// 	len = ft_strslen(args);
-// 	if (len >= 2)
-// 	{
-// 		if (!ft_is_str_digit(args[1]))
-// 			error_num(args[1], &status);
-// 		else if (len > 2)
-// 			return (error_too_many_args(&status));
-// 		else
-// 			status = ft_atoi(args[1]);
-// 	}
-// 	if (wait(NULL) != -1)
-// 		return (status);
-// 	//exit(status);
-// 	if (wait(NULL) != -1)
-// 		return (status);
-// 	ft_putendl_fd("exit", 1);
-// 	rl_clear_history();
-// 	free_array(*env);
-// 	exit(status);
-// }
-
-int	ft_exit(t_ast *ast, char ***env, int status) //ast pour le free
-{
-	int	len;
-
-	len = 0;
-	if (ast)
-		len = ft_strslen(ast->args);
-	if (len >= 2)
-	{
-		if (!ft_is_str_digit(ast->args[1]))
-			error_num(ast->args[1], &status);
-		else if (len > 2)
-			return (error_too_many_args(&status));
-		else
-			status = ft_atoi(ast->args[1]);
+		if (data)
+			ast_free(data->ast);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		return (free_array(data->env), status);
 	}
 	if (wait(NULL) != -1)
-		return (status);
-	//exit(status);
-	if (wait(NULL) != -1)
-		return (status);
-	ft_putendl_fd("exit", 1);
+	{
+		if (data)
+			ast_free(data->ast);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		return (free_array(data->env), status);
+	}
+	if (fd_in != STDIN_FILENO)
+		close(fd_in);
+	if (fd_out != STDOUT_FILENO)
+		close(fd_out);
+	if (data) // passer env en argument pour pouvoir le free meme si !data
+	{
+		ast_free(data->ast);
+		data->ast = NULL;
+		free_array(data->env);
+		data->env = NULL;
+	}
 	rl_clear_history();
-	free_array(*env);
-	ast_free(ast);
 	exit(status);
 }

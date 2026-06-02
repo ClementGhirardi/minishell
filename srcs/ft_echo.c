@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 14:29:14 by adbarth           #+#    #+#             */
-/*   Updated: 2026/04/09 14:29:23 by adbarth          ###   ########.fr       */
+/*   Updated: 2026/05/06 16:23:14 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_arg(char *s)
+static int	check_first_arg(char *s)
 {
 	int	i;
 
@@ -30,7 +30,7 @@ int	check_first_arg(char *s)
 	return (1);
 }
 
-void	ft_display(char **args)
+static void	ft_display(char **args, int fd_out)
 {
 	int	i;
 
@@ -38,24 +38,24 @@ void	ft_display(char **args)
 	while (args && args[i])
 	{
 		if (!args[i][0])
-			ft_printf(" ");
+			ft_putstr_fd(" ", fd_out);
 		else
 		{
-			ft_printf("%s", args[i]);
+			ft_putstr_fd(args[i], fd_out);
 			if (args[i + 1] && args[i + 1][0])
-				ft_printf(" ");
+				ft_putstr_fd(" ", fd_out);
 		}
 		i++;
 	}
 }
 
-int	ft_echo(char **args)
+int	ft_echo(char **args, int fd_out)
 {
 	int	i;
 
 	i = 2;
 	if (!args || !*args || !args[1])
-		return (ft_printf("\n"), 0);
+		return (ft_putstr_fd("\n", fd_out), 0);
 	if (check_first_arg(args[1]))
 	{
 		if (!args[2])
@@ -64,12 +64,12 @@ int	ft_echo(char **args)
 			i++;
 		if (!args[i])
 			return (0);
-		ft_display(&args[i]);
+		ft_display(&args[i], fd_out);
 	}
 	else
 	{
-		ft_display(&args[1]);
-		ft_printf("\n");
+		ft_display(&args[1], fd_out);
+		ft_putstr_fd("\n", fd_out);
 	}
 	return (0);
 }

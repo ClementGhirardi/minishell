@@ -1,16 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   errors0.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/17 11:38:37 by adbarth           #+#    #+#             */
-/*   Updated: 2026/04/17 11:38:39 by adbarth          ###   ########.fr       */
+/*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
+/*   Updated: 2026/05/20 12:08:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	error_creating_env(void)
+{
+	ft_putendl_fd("minishell: can't create new environment", 2);
+	return (0);
+}
 
 static int	is_an_env_var(char *path, char **env)
 {
@@ -37,17 +43,17 @@ static int	error_exec_cmd_slash(char *arg, int *status, char **env)
 	if (arg[0] == '/')
 	{
 		*status = 126;
-		if (is_an_env_var(arg, env))
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(arg, 2);
-			ft_putendl_fd(": Is a directory", 2);
-		}
-		else if (!existing_path(arg))
+		if (!existing_path(arg))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(arg, 2);
 			ft_putendl_fd(": No such file or directory", 2);
+		}
+		else if (is_an_env_var(arg, env))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(arg, 2);
+			ft_putendl_fd(": Is a directory", 2);
 		}
 		else
 			return (0);
@@ -188,24 +194,24 @@ int	error_open(char *file)
 		ft_putendl_fd(": open failed", 2), 1);
 }
 
-void	error_heredocword(char limiter, int status, char **env)
-{
-	if (limiter == '\'' || limiter == '"')
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
-		ft_putchar_fd(limiter, 2);
-		ft_putchar_fd('\'', 2);
-		ft_putendl_fd("", 2);
-		status = 2;
-		ft_exit(NULL, &env, status);
-	}
-	else
-	{
-		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
-		ft_exit(NULL, &env, status);
-	}
-}
+// void	error_heredocword(char limiter, int status, char **env)
+// {
+// 	if (limiter == '\'' || limiter == '"')
+// 	{
+// 		ft_putstr_fd("minishell: ", 2);
+// 		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
+// 		ft_putchar_fd(limiter, 2);
+// 		ft_putchar_fd('\'', 2);
+// 		ft_putendl_fd("", 2);
+// 		status = 2;
+// 		ft_exit(NULL, &env, status, STDIN_FILENO, STDIN_FILENO);
+// 	}
+// 	else
+// 	{
+// 		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+// 		ft_exit(NULL, &env, status, STDIN_FILENO, STDIN_FILENO);
+// 	}
+// }
 
 void	error_heredoc(int i, char *limiter)
 {
@@ -225,7 +231,8 @@ void	*syntax_error(char *str, int *status)
 {
 	*status = 2;
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	ft_putstr_fd(str, 2);
+	if (str)
+		ft_putstr_fd(str, 2);
 	ft_putendl_fd("'", 2);
 	return (NULL);
 }

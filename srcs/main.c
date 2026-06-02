@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/17 14:42:28 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/01 17:08:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-volatile sig_atomic_t	g_sig_status = 0;
 
 // void	ast_show(t_ast *ast)
 // {
@@ -22,10 +20,6 @@ volatile sig_atomic_t	g_sig_status = 0;
 // 		return ;
 // 	if (ast->type == NODE_PIPE)
 // 		ft_printf("PIPE(");
-// 	else if (ast->type == NODE_OR)
-// 		ft_printf("OR(");
-// 	else if (ast->type == NODE_AND)
-// 		ft_printf("AND(");
 // 	else if (ast->type == NODE_CMD)
 // 		ft_printf("CMD(");
 // 	else if (ast->type == NODE_REDIR_IN)
@@ -49,7 +43,7 @@ volatile sig_atomic_t	g_sig_status = 0;
 // 				ft_printf(", ");
 // 		}
 // 	}
-// 	if (ast->type == NODE_REDIR_IN)
+// 	if (ast->file)
 // 	{
 // 		ft_printf("-%s-: ", ast->file);
 // 		ast_show(ast->left);
@@ -82,9 +76,13 @@ volatile sig_atomic_t	g_sig_status = 0;
 // ft_printf("\n\n");
 // // END TESTS
 
+volatile sig_atomic_t	g_sig_status = 0;
+
 static void	sigint_handler(int sig) //STATIC
 {
 	(void) sig;
+	if (g_sig_status == -1)
+		g_sig_status = 0;
 	if (g_sig_status == 1)
 	{
 		g_sig_status = 2;
@@ -94,7 +92,9 @@ static void	sigint_handler(int sig) //STATIC
 	if (g_sig_status == 3)
 	{
 		g_sig_status = 4;
-		exit(130);
+		rl_replace_line("", 0);
+		rl_done = 1;
+		return ;
 	}
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
@@ -102,35 +102,82 @@ static void	sigint_handler(int sig) //STATIC
 	rl_redisplay();
 }
 
-static void	init_signals(void)
+int	event(void)
 {
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	return (0);
 }
 
-static void	minishell(int *status, char **input, char ***env)
+static int	init_var(int *status, char ***env, char **envp)
 {
-	t_token	*tmp;
-	t_token	*tokens;
-	t_ast	*ast;
+	*env = dup_array(envp);
+	if (!(*env))
+		return (0);
+	// (void)env;
+	// (void)envp;
+	*status = 0;
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	rl_event_hook = event;
+	return (1);
+}
 
-	if (!input || !*input || !**input)
+static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
+{
+	if (!ast)
 		return ;
-	tokens = lexer(input, status, *env);
+	if (!ast->args)
+		return ;
+	if (!ast->args[0])
+		return ;
+	if (ast->type == NODE_CMD
+		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+	{
+		free(*input);
+		free_array(*env);
+		ast_free(ast);
+		*env = NULL;
+		*input = NULL;
+		ast = NULL;
+		ft_putendl_fd("exit", 1);
+		exit(status);
+	}
+}
+
+static int	minishell(int *status, char **input, char ***env)
+{
+	t_token	*tokens;
+	t_token	*tmp;
+	t_ast	*ast;
+	t_data	data;
+
+	data.env = *env;
+	data.status = status;
+	data.input = input;
+	data.ast = NULL;
+	data.other_lines = NULL;
+	tokens = lexer(&data, input);
+	lexer_handle_other_lines(tokens, &data);
 	tmp = tokens;
 	tokens = split_bracket(&tokens);
 	free_token(tmp);
 	tmp = tokens;
 	if (tokens)
 	{
-		ast = parse(&tokens, status, *env, input);
+		ast = parser(&tokens, &data);
 		free_token(tmp);
+		data.ast = ast;
+		browse_ast_for_heredoc(data.ast, &data);
+		if (ast && g_sig_status == 4)
+			return (ast_free(ast), free(*data.input), *data.input = NULL, 1);
 		if (ast && g_sig_status != 4)
 		{
-			*status = executor(ast, ast, *status, env);
+			handle_exit(ast, *status, input, env);
+			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
+			*env = data.env;
 			ast_free(ast);
 		}
 	}
+	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -141,23 +188,22 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	env = dup_array(envp);
-	if (!env)
-		return (1); //1 ou 0 ?
-	status = 0;
-	g_sig_status = 0;
-	init_signals();
+	env = NULL;
+	if (!init_var(&status, &env, envp))
+		return (error_creating_env());
 	while (1)
 	{
-		g_sig_status = 0;
+		g_sig_status = -1;
 		input = readline("minishell$ ");
-		if (!input)
-			ft_exit(NULL, &env, status);
+		if (g_sig_status == 0)
+			status = 130;
+		if (!input && g_sig_status == -1)
+			return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 		g_sig_status = 1;
 		minishell(&status, &input, &env);
 		if (status != 130)
 			add_history(input);
 		free(input);
 	}
-	ft_exit(NULL, &env, status);
+	return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 }
