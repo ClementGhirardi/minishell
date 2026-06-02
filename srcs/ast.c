@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 16:50:51 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:43:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,14 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
-		t_token *tokens)
+t_ast	*ast_new_redir(t_token_type r_type, t_token *tokens)
 {
 	t_ast	*node;
 
-	node = create_redir_node(r_type, status, env, tokens);
+	node = malloc(1 * sizeof(t_ast));
+	node->file = ft_strdup(tokens->value);
+	if (!node->file)
+		return (free(node), NULL);
 	if (!node)
 		return (NULL);
 	node->args = NULL;

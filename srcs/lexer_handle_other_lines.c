@@ -6,25 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 14:33:21 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 13:19:57 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:16:29 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static int	ft_isin(char c, char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			return (1);
-		i ++;
-	}
-	return (0);
-}
 
 void	lexer_handle_other_lines(t_token *tokens, t_data *data)
 {

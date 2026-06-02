@@ -6,27 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 12:26:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 13:47:53 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:18:09 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static int	ft_isin(char c, char *str)
-{
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			return (1);
-		i++;
-	}
-	return (0);
-}
 
 void	here_doc_word(char limiter, t_data *data)
 {
@@ -53,7 +37,4 @@ void	here_doc_word(char limiter, t_data *data)
 				ft_substr(buffer, 0, ft_strlen(buffer) - 1));
 	}
 	free(buffer);
-	// *data->input = ft_strjoin_and_free(*data->input,
-	// 		ft_substr(buffer, 0, ft_strlen(buffer) - 1));
-	// free(buffer);
 }

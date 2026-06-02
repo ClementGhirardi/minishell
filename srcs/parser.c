@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 17:18:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:44:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,14 @@ static t_ast	*parse_command(t_token **tokens)
 
 static t_ast	*parse_instructions(t_token **tokens, int *status, char **env);
 
-static t_ast	*parse_redirection(t_token **tokens, int *status, char **env)
+static t_ast	*parse_redirection(t_token **tokens)
 {
 	t_ast			*instr;
 	t_token_type	redir_type;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	// if (!(*tokens))
-	// 	return (error_syntax("`newline'", status));
-	instr = ast_new_redir(redir_type, status, env, *tokens);
+	instr = ast_new_redir(redir_type, *tokens);
 	*tokens = (*tokens)->next;
 	return (instr);
 }
@@ -76,14 +74,12 @@ static t_ast	*parse_instructions(t_token **tokens, int *status, char **env)
 	if ((*tokens)->type == TOKEN_WORD)
 	{
 		cmd = parse_command(tokens);
-		// if (!cmd)
-		// 	return (error_syntax("`|'", status));
 		instr = parse_instructions(tokens, status, env);
 		ast_add_end(&instr, cmd);
 	}
 	else
 	{
-		instr = parse_redirection(tokens, status, env);
+		instr = parse_redirection(tokens);
 		if (!instr)
 			return (NULL);
 		instr->left = parse_instructions(tokens, status, env);
@@ -91,23 +87,19 @@ static t_ast	*parse_instructions(t_token **tokens, int *status, char **env)
 	return (instr);
 }
 
-t_ast	*parser(t_token *tokens, int *status, char **env)
+t_ast	*parser(t_token *tokens, t_data *data)
 {
 	t_ast	*left;
 	t_ast	*right;
 	t_ast	*new_ast;
 
-	if (!tokens)
-		return (NULL);
-	// if (tokens->type == TOKEN_PIPE)
-	// 	error_syntax("`|'", status);
-	left = parse_instructions(&tokens, status, env);
+	left = parse_instructions(&tokens, data->status, data->env);
 	if (!left)
 		return (NULL);
 	while (tokens && tokens->type == TOKEN_PIPE)
 	{
 		tokens = tokens->next;
-		right = parse_instructions(&tokens, status, env);
+		right = parse_instructions(&tokens, data->status, data->env);
 		if (left && !right)
 			return (ast_free(left), NULL);
 		new_ast = ast_new_pipe(left, right);
@@ -115,5 +107,11 @@ t_ast	*parser(t_token *tokens, int *status, char **env)
 			return (ast_free(left), ast_free(right), NULL);
 		left = new_ast;
 	}
+	free_token(data->tokens);
+	data->ast = left;
+	browse_ast_for_heredoc(left, data);
+	if (left && g_sig_status == 4)
+		return (ast_free(left),
+			free(*data->input), *data->input = NULL, NULL);
 	return (left);
 }

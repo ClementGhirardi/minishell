@@ -51,7 +51,7 @@ int	syntax_first_token(t_token *tokens, int *status)
 int	syntax_analyzer(t_token *tokens, int *status)
 {
 	if (!syntax_first_token(tokens, status))
-		return (0);
+		return (1);
 	while (tokens)
 	{
 		if (!dispatch(tokens))
@@ -60,9 +60,9 @@ int	syntax_analyzer(t_token *tokens, int *status)
 				syntax_error(tokens->next->value, status);
 			else
 				syntax_error("newline", status);
-			return (0);
+			return (1);
 		}
 		tokens = tokens->next;
 	}
-	return (1);
+	return (0);
 }

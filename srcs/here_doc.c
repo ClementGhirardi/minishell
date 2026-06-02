@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 12:17:00 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:45:09 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,6 @@ static int	condition(char *limiter, char *buffer)
 	return ((ft_strncmp(buffer, limiter, ft_strlen(limiter))
 			|| ft_strlen(limiter) != ft_strlen(buffer) - 1
 			|| !ft_strncmp(buffer, "\n", 1)) && g_sig_status != 4);
-}
-
-void	add_history_noendl(char *str)
-{
-	char	*tmp;
-
-	if (!str)
-		return ;
-	if (ft_strlen(str) < 2)
-		return ;
-	tmp = ft_substr(str, 0 , ft_strlen(str) - 1);
-	add_history(tmp);
-	free(tmp);
 }
 
 static void	write_buffer(t_data *data, char *buffer, int *fd)

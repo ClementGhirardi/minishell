@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_handle_last_pipe.c                           :+:      :+:    :+:   */
+/*   lexer_handle_end_with_pipe.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 13:50:30 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:47:25 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static int	end_with_pipe(char *input)
 	return (0);
 }
 
-void	handle_last_pipe(char **input, t_data *data)
+void	handle_end_with_pipe(char **input, t_data *data)
 {
 	if (!input || !(*input) || g_sig_status == 4)
 		return ;
@@ -78,59 +78,6 @@ void	handle_last_pipe(char **input, t_data *data)
 	if (end_with_pipe(*input))
 	{
 		here_doc_word('\n', data);
-		handle_last_pipe(input, data);
+		handle_end_with_pipe(input, data);
 	}
 }
-
-
-
-
-
-
-// void	ft_tokadd_back(t_token **lst, t_token *new)
-// {
-// 	t_token	*current;
-
-// 	if (!lst || !new)
-// 		return ;
-// 	if (!(*lst))
-// 	{
-// 		*lst = new;
-// 		return ;
-// 	}
-// 	current = *lst;
-// 	while (current)
-// 	{
-// 		if (current->next == NULL)
-// 		{
-// 			current->next = new;
-// 			return ;
-// 		}
-// 		current = current->next;
-// 	}
-// 	return ;
-// }
-
-// // t_token	*last_pipe(char *input, t_token *tokens, int *status, char **env)
-// t_token	*last_pipe(t_token *tokens, t_data *data)
-// {
-// 	t_token	*tmp;
-// 	t_token	*end_token;
-// 	char	*heredoc_output;
-
-// 	if (!tokens || !data)
-// 		return (NULL);
-// 	tmp = tokens;
-// 	while (tmp->next)
-// 		tmp = tmp->next;
-// 	if (tmp->type == TOKEN_PIPE)
-// 	{
-// 		// heredoc_output = ft_strjoin_and_free(ft_strdup(" "),
-// 		// 		here_doc_word('\n', data));
-// 		heredoc_output = here_doc_word('\n', data);
-// 		end_token = lexer(data, &heredoc_output);
-// 		free(heredoc_output);
-// 		return (end_token);
-// 	}
-// 	return (NULL);
-// }

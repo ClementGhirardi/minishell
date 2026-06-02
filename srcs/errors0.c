@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/20 12:08:12 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 14:02:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	error_creating_env(void)
 {
 	ft_putendl_fd("minishell: can't create new environment", 2);
-	return (0);
+	return (1);
 }
 
 static int	is_an_env_var(char *path, char **env)

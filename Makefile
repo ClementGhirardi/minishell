@@ -12,20 +12,23 @@ SRCS_DIR = srcs
 
 SRCS_BONUS_DIR = srcs/srcs_bonus
 
-SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
-	$(SRCS_DIR)/here_doc_word.c \
-	$(SRCS_DIR)/token.c \
-	$(SRCS_DIR)/lexer_handle_last_pipe.c \
+SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/lexer.c \
-	$(SRCS_DIR)/ast_utils.c \
-	$(SRCS_DIR)/ast.c \
-	$(SRCS_DIR)/ft_gethole_fd.c \
+	$(SRCS_DIR)/token.c \
+	$(SRCS_DIR)/lexer_handle_end_with_pipe.c \
+	$(SRCS_DIR)/here_doc_word.c \
+	$(SRCS_DIR)/lexer_handler.c \
+	$(SRCS_DIR)/lexer_handle_other_lines.c \
 	$(SRCS_DIR)/parser.c \
+	$(SRCS_DIR)/ast.c \
+	$(SRCS_DIR)/parser_browse_ast_for_heredoc.c \
+	$(SRCS_DIR)/here_doc.c \
+	$(SRCS_DIR)/here_doc_utils.c \
+	$(SRCS_DIR)/ft_gethole_fd.c \
 	$(SRCS_DIR)/ft_getenv.c \
  	$(SRCS_DIR)/expander.c \
 	$(SRCS_DIR)/idx_to_next_line.c \
 	$(SRCS_DIR)/get_buffer.c \
-	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/get_path.c \
 	$(SRCS_DIR)/get_status.c \
 	$(SRCS_DIR)/array.c \
@@ -42,10 +45,9 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/errors0.c \
 	$(SRCS_DIR)/errors1.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
-	$(SRCS_DIR)/browse_ast_for_heredoc.c \
-	$(SRCS_DIR)/lexer_handle_other_lines.c \
-	$(SRCS_DIR)/here_doc_utils.c \
 	$(SRCS_DIR)/data.c \
+	$(SRCS_DIR)/ft_strjoin_and_free.c \
+	$(SRCS_DIR)/ft_isin.c \
 
 SRCS_BONUS = 
 

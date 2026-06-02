@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 14:30:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 14:30:28 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 14:53:19 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	free_data(t_data *data)
 	if (data->ast)
 		ast_free(data->ast);
 	data->env = NULL;
-	data->input = NULL;
+	*data->input = NULL;
 	data->other_lines = NULL;
 	data->ast = NULL;
 }

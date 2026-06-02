@@ -6,79 +6,15 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 13:50:03 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 15:04:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// void	ast_show(t_ast *ast)
-// {
-// 	int	i;
-
-// 	if (!ast)
-// 		return ;
-// 	if (ast->type == NODE_PIPE)
-// 		ft_printf("PIPE(");
-// 	else if (ast->type == NODE_CMD)
-// 		ft_printf("CMD(");
-// 	else if (ast->type == NODE_REDIR_IN)
-// 		ft_printf("REDIR_IN(");
-// 	else if (ast->type == NODE_REDIR_OUT)
-// 		ft_printf("REDIR_OUT(");
-// 	else if (ast->type == NODE_APPEND)
-// 		ft_printf("APPEND(");
-// 	else if (ast->type == NODE_HEREDOC)
-// 		ft_printf("HEREDOC(");
-// 	else
-// 		ft_printf("REDIR(");
-// 	if (ast->args)
-// 	{
-// 		i = 0;
-// 		while (ast->args[i])
-// 		{
-// 			ft_printf("|%s|", ast->args[i]);
-// 			i++;
-// 			if (ast->args[i])
-// 				ft_printf(", ");
-// 		}
-// 	}
-// 	if (ast->file)
-// 	{
-// 		ft_printf("-%s-: ", ast->file);
-// 		ast_show(ast->left);
-// 	}
-// 	else
-// 	{
-// 		ast_show(ast->left);
-// 		if (ast->right)
-// 			ft_printf(", ");
-// 		ast_show(ast->right);
-// 	}
-// 	ft_printf(")");
-// }
-
-// // BEGIN TESTS
-// // TEST LEXER
-// t_token *tokens = lexer(input);
-// ft_printf("--TEST LEXER--\n");
-// t_token *current = tokens;
-// while (current)
-// {
-// 	ft_printf("%d: |%s|\n", current->type, current->value);
-// 	current = current->next;
-// }
-// ft_printf("\n");
-// // TEST PARSER
-// ft_printf("--TEST PARSER--\n");
-// t_ast *ast = parse(tokens);
-// ast_show(ast);
-// ft_printf("\n\n");
-// // END TESTS
-
 volatile sig_atomic_t	g_sig_status = 0;
 
-static void	sigint_handler(int sig) //STATIC
+static void	sigint_handler(int sig)
 {
 	(void) sig;
 	if (g_sig_status == -1)
@@ -104,78 +40,29 @@ static void	sigint_handler(int sig) //STATIC
 	rl_redisplay();
 }
 
-int	event(void)
+static int	exit_on_sigquit(int status, char **env)
+{
+	free_array(env);
+	ft_putendl_fd("exit", 1);
+	ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO);
+	return (status);
+}
+
+static int	event(void)
 {
 	return (0);
 }
 
 static int	init_var(int *status, char ***env, char **envp)
 {
+	*status = 0;
 	*env = dup_array(envp);
 	if (!(*env))
-		return (0);
-	// (void)env;
-	// (void)envp;
-	*status = 0;
+		return (*status = error_creating_env(), *status);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	rl_event_hook = event;
 	return (1);
-}
-
-static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
-{
-	if (!ast)
-		return ;
-	if (!ast->args)
-		return ;
-	if (!ast->args[0])
-		return ;
-	if (ast->type == NODE_CMD
-		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
-	{
-		free(*input);
-		free_array(*env);
-		ast_free(ast);
-		*env = NULL;
-		*input = NULL;
-		ast = NULL;
-		ft_putendl_fd("exit", 1);
-		exit(status);
-	}
-}
-
-int	minishell(int *status, char **input, char ***env)
-{
-	t_token	*tokens;
-	t_ast	*ast;
-	t_data	data;
-
-	data.env = *env;
-	data.status = status;
-	data.input = input;
-	data.ast = NULL;
-	data.other_lines = NULL;
-	data.update_history = 1;
-	tokens = lexer(&data, input);
-	lexer_handle_other_lines(tokens, &data);
-	if (tokens)
-	{
-		ast = parser(tokens, status, *env);
-		free_token(tokens);
-		data.ast = ast;
-		browse_ast_for_heredoc(data.ast, &data);
-		if (ast && g_sig_status == 4)
-			return (ast_free(ast), free(*data.input), *data.input = NULL, 1);
-		if (ast && g_sig_status != 4)
-		{
-			handle_exit(ast, *status, input, env);
-			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
-			*env = data.env;
-			ast_free(ast);
-		}
-	}
-	return (data.update_history);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -187,9 +74,8 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	env = NULL;
 	if (!init_var(&status, &env, envp))
-		return (error_creating_env());
+		return (status);
 	while (1)
 	{
 		g_sig_status = -1;
@@ -197,13 +83,12 @@ int	main(int ac, char **av, char **envp)
 		if (g_sig_status == 0)
 			status = 130;
 		if (!input)
-			return (free_array(env), ft_putendl_fd("exit", 1),
-				ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
+			return (exit_on_sigquit(status, env));
 		g_sig_status = 1;
 		update_history = minishell(&status, &input, &env);
-		if (status != 130 && update_history)
+		if (update_history)
 			add_history(input);
 		free(input);
 	}
-	return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
+	return (exit_on_sigquit(status, env));
 }

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 10:53:18 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 16:53:22 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 14:56:32 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,16 +184,6 @@ int	executor(t_ast *ast, t_data *data, int fd_in, int fd_out)
 	{
 		if (ast->file && ast->type != NODE_HEREDOC)
 			expander(ast, *data->status, data->env);
-		// if (ast->file)
-		// {
-		// 	expander(ast, status, *env);
-		// 	// if (!ast->file)
-		// 	// 	return (error_file())
-		// 	if (!ast->file) // && ast->fd == -1)
-		// 		return (ft_putstr_fd("minishell: ", 2),
-		// 			ft_putstr_fd(ast->file, 2),
-		// 			ft_putendl_fd(": ambiguous redirect", 2), 2);
-		// }
 		return (execute_redir(ast, data, fd_in, fd_out));
 	}
 	return (1);
