@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 15:21:31 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:46:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ typedef struct s_data
 	char	**input;
 	char	*other_lines;
 	t_ast	*ast;
+	int		update_history;
 }	t_data;
 
 typedef struct s_var
@@ -124,7 +125,7 @@ t_token		*lexer2(char **input, int *status, char **env);
 t_token		*handle_last_pipe_op(char *input, t_token *tokens, int *status, char **env);
 int			handle_quotes(char **input);
 // void		handle_last_pipe(char **input, int *status, char **env);
-void		handle_last_pipe(char **input, int *status, char **env);
+void		handle_last_pipe(char **input, t_data *data);
 
 void		handle_pipe(t_token **tokens, int *i);
 void		handle_and(char *input, t_token **tokens, int *i);

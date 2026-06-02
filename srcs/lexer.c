@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/20 11:58:56 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:45:22 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,13 +143,11 @@ t_token	*lexer2(char **input, int *status, char **env)
 	return (tokens);
 }
 
-// t_token	*lexer(char **input, int *status, char **env)
 t_token	*lexer(t_data *data, char **input)
 {
 	t_token	*tokens;
-	//t_token	*end;
 
-	handle_last_pipe(input, data->status, data->env);
+	handle_last_pipe(input, data);
 	if (!input || !*input || !**input)
 		return (NULL);
 	if (handle_quotes(input))
@@ -157,8 +155,5 @@ t_token	*lexer(t_data *data, char **input)
 	tokens = lexer2(input, data->status, data->env);
 	if (!syntax_analyzer(tokens, data->status))
 		return (free_token(tokens), NULL);
-	// end = last_pipe(tokens, data);
-	// if (end)
-	// 	ft_tokadd_back(&tokens, end);
 	return (tokens);
 }

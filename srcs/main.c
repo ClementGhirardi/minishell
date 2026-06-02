@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 17:08:57 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:50:03 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ static void	sigint_handler(int sig) //STATIC
 		rl_done = 1;
 		return ;
 	}
+	if (g_sig_status == 5)
+		return ;
 	ft_putendl_fd("", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -143,7 +145,7 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 	}
 }
 
-static int	minishell(int *status, char **input, char ***env)
+int	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
 	t_ast	*ast;
@@ -154,6 +156,7 @@ static int	minishell(int *status, char **input, char ***env)
 	data.input = input;
 	data.ast = NULL;
 	data.other_lines = NULL;
+	data.update_history = 1;
 	tokens = lexer(&data, input);
 	lexer_handle_other_lines(tokens, &data);
 	if (tokens)
@@ -172,7 +175,7 @@ static int	minishell(int *status, char **input, char ***env)
 			ast_free(ast);
 		}
 	}
-	return (0);
+	return (data.update_history);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -180,6 +183,7 @@ int	main(int ac, char **av, char **envp)
 	char	*input;
 	char	**env;
 	int		status;
+	int		update_history;
 
 	(void)ac;
 	(void)av;
@@ -192,11 +196,12 @@ int	main(int ac, char **av, char **envp)
 		input = readline("minishell$ ");
 		if (g_sig_status == 0)
 			status = 130;
-		if (!input && g_sig_status == -1)
-			return (free_array(env), ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
+		if (!input)
+			return (free_array(env), ft_putendl_fd("exit", 1),
+				ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO), status);
 		g_sig_status = 1;
-		minishell(&status, &input, &env);
-		if (status != 130)
+		update_history = minishell(&status, &input, &env);
+		if (status != 130 && update_history)
 			add_history(input);
 		free(input);
 	}

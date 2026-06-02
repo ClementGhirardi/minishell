@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:12:40 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/01 17:08:44 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:26:21 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ static int	ft_isin(char *str, char c)
 
 static int	child(char **buffer, int *fd, t_data *data, int *to_close_fds)
 {
+	g_sig_status = 3;
 	if (to_close_fds && to_close_fds[0] != -1)
 		close(to_close_fds[0]);
 	if (to_close_fds && to_close_fds[1] != -1)
@@ -112,12 +113,13 @@ int	get_buffer(char **buffer, int *nb_line, t_data *data, int *to_close_fds)
 
 	if (pipe(fd) < 0)
 		return (0);
-	g_sig_status = 3;
+	g_sig_status = 5;
 	pid = fork();
 	if (pid == 0)
 		child(buffer, fd, data, to_close_fds);
 	close(fd[1]);
 	waitpid(pid, &tmp, 0);
+	g_sig_status = 1;
 	*data->status = get_status(tmp);
 	if (*data->status == 130)
 		return (g_sig_status = 4, close(fd[0]), 0);

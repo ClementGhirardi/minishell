@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 14:33:21 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/27 14:33:35 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:19:57 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ void	lexer_handle_other_lines(t_token *tokens, t_data *data)
 	t_token	*current;
 	t_token	*previous;
 
-	data->other_lines = NULL;
 	if (!tokens)
 		return ;
+	data->other_lines = NULL;
 	previous = tokens;
 	current = tokens->next;
 	while (current)

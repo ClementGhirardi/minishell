@@ -6,81 +6,80 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/13 15:27:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/02 13:50:30 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// static int	consecutive_pipe(char *input)
-// {
-// 	int	consecutive;
-// 	int	i;
-
-// 	consecutive = 0;
-// 	i = 0;
-// 	while (input[i])
-// 	{
-// 		if (input[i] == '|')
-// 		{
-// 			if (consecutive == 0)
-// 				consecutive = 1;
-// 			else if (consecutive == 1)
-// 				return (1);
-// 		}
-// 		else if (input[i] != ' ')
-// 			consecutive = 0;
-// 		i++;
-// 	}
-// 	return (0);
-// }
-
-// static int	only_one_pipe(char *input)
-// {
-// 	int	pipe;
-// 	int	c;
-// 	int	i;
-
-// 	pipe = 0;
-// 	c = 0;
-// 	i = 0;
-// 	while (input[i])
-// 	{
-// 		if (input[i] == '|')
-// 			pipe++;
-// 		else if (input[i] != ' ')
-// 			c = 1;
-// 		i++;
-// 	}
-// 	if (pipe == 1 && c == 0)
-// 		return (1);
-// 	return (0);
-// }
-
-void	handle_last_pipe(char **input, int *status, char **env)
+static int	consecutive_pipe(char *input)
 {
-	t_data	data;
+	int	consecutive;
+	int	i;
+
+	consecutive = 0;
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '|')
+		{
+			if (consecutive == 0)
+				consecutive = 1;
+			else if (consecutive == 1)
+				return (1);
+		}
+		else if (input[i] != ' ')
+			consecutive = 0;
+		i++;
+	}
+	return (0);
+}
+
+static int	only_one_pipe(char *input)
+{
+	int	pipe;
+	int	c;
+	int	i;
+
+	pipe = 0;
+	c = 0;
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '|')
+			pipe++;
+		else if (input[i] != ' ')
+			c = 1;
+		i++;
+	}
+	if (pipe == 1 && c == 0)
+		return (1);
+	return (0);
+}
+
+static int	end_with_pipe(char *input)
+{
 	int		i;
 
+	i = ft_strlen(input) - 1;
+	while (i >= 0 && input[i] && input[i] == ' ')
+		i--;
+	if (i >= 0 && input[i] == '|')
+		return (1);
+	return (0);
+}
+
+void	handle_last_pipe(char **input, t_data *data)
+{
 	if (!input || !(*input) || g_sig_status == 4)
 		return ;
-	// if (consecutive_pipe(*input) || only_one_pipe(*input))
-	// 	return ;
-	i = ft_strlen(*input) - 1;
-	while (i >= 0 && (*input)[i] && (*input)[i] == ' ')
-		i--;
-	if (i >= 0 && (*input)[i] == '|')
+	if (consecutive_pipe(*input) || only_one_pipe(*input))
+		return ;
+	if (end_with_pipe(*input))
 	{
-		data.env = env;
-		data.status = status;
-		data.input = input;
-		data.ast = NULL;
-		data.other_lines = NULL;
-		here_doc_word('\n', &data);
-		handle_last_pipe(input, status, env); //juste input seul
+		here_doc_word('\n', data);
+		handle_last_pipe(input, data);
 	}
-	if (g_sig_status == 4)
-		add_history(*input);
 }
 
 
