@@ -24,13 +24,16 @@ echo '' '' '' | cat -e (ERROR)
 
 export arg=oui ; export $arg=ok ; echo $arg ; echo $oui (LEAK, ERROR)
 
-exit > out (ERROR)
-exit | sleep 2 (LEAK)
-sleep 2 | exit (LEAK)
-ls | exit (LEAK)
 
-ctrl+C -> echo $? (ERROR, devrait afficher 130)
 
+
+<< ls |
+ls | ... + ctrlC ; ctrlD marche pas
+supprimer exit de !path ? (execcmd)
+lss | ls // ls | lsss : double close dans close_fds()
+expander (extract var name) : une ligne de modifiee
+ft_exit changee (+ handle exit dans le main)
+lexer : handle quotes
 
 --------------------------------------------------------------------------
 

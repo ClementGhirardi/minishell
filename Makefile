@@ -15,7 +15,6 @@ SRCS_BONUS_DIR = srcs/srcs_bonus
 SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/here_doc_word.c \
 	$(SRCS_DIR)/token.c \
-	$(SRCS_DIR)/lexer_handle_last_pipe.c \
 	$(SRCS_DIR)/lexer.c \
 	$(SRCS_DIR)/ast_utils.c \
 	$(SRCS_DIR)/ast.c \
@@ -39,8 +38,6 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/ft_exit.c \
 	$(SRCS_DIR)/builtin.c \
 	$(SRCS_DIR)/executor.c \
-	$(SRCS_DIR)/errors0.c \
-	$(SRCS_DIR)/errors1.c \
 	$(SRCS_DIR)/syntax_analyzer.c \
 	$(SRCS_DIR)/browse_ast_for_heredoc.c \
 	$(SRCS_DIR)/lexer_handle_other_lines.c \
@@ -49,6 +46,19 @@ SRCS = $(SRCS_DIR)/ft_strjoin_and_free.c \
 	$(SRCS_DIR)/parser_cmd_redir.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/space_bracket.c \
+	$(SRCS_DIR)/executor_helper.c \
+	$(SRCS_DIR)/lexer_word_bonus.c \
+	$(SRCS_DIR)/syntax_brackets.c \
+	$(SRCS_DIR)/errors_beginning.c \
+	$(SRCS_DIR)/errors_cmd.c \
+	$(SRCS_DIR)/errors_exit.c \
+	$(SRCS_DIR)/errors.c \
+	$(SRCS_DIR)/handle_signals.c \
+	$(SRCS_DIR)/expander_remove_empty.c \
+	$(SRCS_DIR)/expander_extract.c \
+	$(SRCS_DIR)/ft_realloc.c \
+	$(SRCS_DIR)/here_doc_functions.c \
+	$(SRCS_DIR)/lexer_handle_end_with_pipe.c \
 
 SRCS_BONUS = 
 

@@ -12,6 +12,14 @@
 
 #include "../includes/minishell.h"
 
+int	check_validity(t_token **tokens)
+{
+	if (!tokens || !(*tokens) || (*tokens)->type == TOKEN_PIPE
+		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
+		return (0);
+	return (1);
+}
+
 static int	count_word(t_token *tokens)
 {
 	int		count;

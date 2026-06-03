@@ -18,8 +18,7 @@ static t_ast	*parse_instructions(t_token **tokens, t_data *data)
 	t_ast	*cmd;
 	t_token	*tmp;
 
-	if (!tokens || !(*tokens) || (*tokens)->type == TOKEN_PIPE
-		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
+	if (!check_validity(tokens))
 		return (NULL);
 	if ((*tokens)->type == TOKEN_WORD && (*tokens)->bracket)
 	{

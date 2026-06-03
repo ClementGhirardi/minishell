@@ -49,23 +49,6 @@ t_ast	*ast_new_redir(t_token_type r_type, int *status, char **env,
 	return (node->left = NULL, node->right = NULL, node->args = NULL, node);
 }
 
-// t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
-// {
-// 	t_ast	*node;
-
-// 	node = malloc(sizeof(t_ast));
-// 	if (!node)
-// 		return (NULL);
-// 	node->type = NODE_PIPE;
-// 	node->args = NULL;
-// 	node->file = NULL;
-// 	node->fd = -1;
-// 	node->left = left;
-// 	node->right = right;
-// 	return (node);
-// }
-
-
 t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
 {
 	t_ast	*node;

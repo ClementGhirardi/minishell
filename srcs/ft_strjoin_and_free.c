@@ -56,7 +56,7 @@ int	ft_strcmp(char *s1, char *s2)
 		return (s1[0]);
 	if (!s1)
 		return (-s2[0]);
-	while (s1[i] && s2[i])
+	while (s1[i])
 	{
 		if (s1[i] - s2[i])
 			return (s1[i] - s2[i]);

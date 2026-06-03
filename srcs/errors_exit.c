@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/31 12:48:29 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/31 12:50:46 by cghirard         ###   ########.fr       */
+/*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/01 16:50:51 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_pwd(int fd_out)
+void	error_num(char *arg, int *status)
 {
-	char	*path;
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+	*status = 2;
+}
 
-	path = getcwd(NULL, 0);
-	if (!path)
-		return (ft_putendl_fd("pwd: error retrieving current directory",
-				fd_out), 1);
-	ft_putendl_fd(path, fd_out);
-	free(path);
-	return (0);
+int	error_too_many_args(int *status)
+{
+	ft_putendl_fd("minishell: exit: too many arguments", 2);
+	*status = 1;
+	return (*status);
 }

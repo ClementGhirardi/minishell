@@ -1,16 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   split_bracket.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/17 11:34:47 by adbarth           #+#    #+#             */
+/*   Updated: 2026/04/17 11:34:51 by adbarth          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static int	syntax_after_obracket(t_token *tokens)
-{
-	if (!tokens)
-		return (0);
-	if (tokens->type != TOKEN_WORD
-		&& tokens->type != TOKEN_O_BRACK
-		&& tokens->type != TOKEN_C_BRACK)
-		return (0);
-	return (1);
-}
 
 static int	syntax_after_redir(t_token *tokens)
 {
@@ -58,28 +58,6 @@ static int	dispatch(t_token *tokens)
 		return ((tokens->next && tokens->next->type != TOKEN_O_BRACK)
 			|| !tokens->next);
 	return (1);
-}
-
-static t_token	*check_brackets(t_token	*tokens, int *status)
-{
-	t_token	*tmp;
-	int		o_brack;
-	int		c_brack;
-
-	o_brack = 0;
-	c_brack = 0;
-	tmp = tokens;
-	while (tmp)
-	{
-		if (tmp->type == TOKEN_O_BRACK)
-			o_brack++;
-		if (tmp->type == TOKEN_C_BRACK)
-			c_brack++;
-		if (c_brack > o_brack)
-			return (syntax_error(")", status));
-		tmp = tmp->next;
-	}
-	return (tokens);
 }
 
 static int	syntax_first_token(t_token *tokens, int *status)

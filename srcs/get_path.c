@@ -61,7 +61,7 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp;
 	char	*full;
 
-	if (!cmd) //retirer 2e condiotn
+	if (!cmd)
 		return (NULL);
 	if (existing_path(cmd))
 		return (ft_strdup(cmd));

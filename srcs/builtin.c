@@ -36,8 +36,7 @@ int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
 	if (!ft_strcmp(args[0], "env"))
 		return (ft_env(&data->env, fd_out));
 	if (!ft_strcmp(args[0], "exit"))
-		return (ft_exit(data, *data->status, fd_in, fd_out)); //ast pour free
-		// return (ft_exit(args, env, status)); //ast pour free
+		return (ft_exit(data, data->env, fd_in, fd_out));
 	if (!ft_strcmp(args[0], "echo"))
 		return (ft_echo(args, fd_out));
 	return (1);

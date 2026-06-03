@@ -14,55 +14,26 @@
 
 int	execute_operator(t_ast *ast, t_data *data, int fd_in, int fd_out)
 {
+	static int	fail;
+
 	if (!ast)
 		return (1);
 	*data->status = executor(ast->left, data, fd_in, fd_out);
+	if (ast->left && ast->left->type == NODE_CMD)
+		fail = *data->status;
 	if (ast->type == NODE_AND)
 	{
-		if (!*data->status)
+		if (!*data->status || !fail)
 			*data->status = executor(ast->right, data, fd_in, fd_out);
 	}
-	else
+	else if (ast->type == NODE_OR)
 	{
-		if (*data->status)
+		if (*data->status || fail)
 			*data->status = executor(ast->right, data, fd_in, fd_out);
 	}
+	if (ast->right && ast->right->type == NODE_CMD)
+		fail = *data->status;
 	return (*data->status);
-}
-
-void	close_fds(int fd_in, int fd_out)
-{
-	if (fd_in != STDIN_FILENO && fd_in != -1)
-		close(fd_in);
-	if (fd_out != STDOUT_FILENO && fd_out != -1)
-		close(fd_out);
-}
-
-int	execute_builtin_with_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
-{
-	pid_t	pid;
-	int		code;
-
-	if (!node || !node->args || !node->args[0])
-		return (0);
-	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env))
-		return (*data->status);
-	if (is_builtin(node->args[0]))
-	{
-		pid = fork();
-		if (pid == 0)
-		{
-			code = run_builtin(node->args, data, fd_in, fd_out);
-			if (fd_in != STDIN_FILENO)
-				close(fd_in);
-			if (fd_out != STDOUT_FILENO)
-				close(fd_out);
-			return (free_array(data->env), ast_free(data->ast), exit(code), code);
-		}
-	}
-	else
-		return (1);
-	return (waitpid(pid, data->status, 0), get_status(*data->status));
 }
 
 int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
@@ -72,38 +43,26 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
-	if (node->args[0][0] && error_exec_cmd(node->args[0], data->status, data->env))
+	if (node->args[0][0] && err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node->args, data, fd_in, fd_out));
 	path = get_path(node->args[0], data->env);
 	if (!path)
-		return (close_fds(fd_in, fd_out), error_command(node->args[0]), free_array(data->env),
-			ast_free(data->ast), exit(127), 127);
+		return (error_command(node->args[0]), 127);
 	else
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			if (fd_in != STDIN_FILENO)
-			{
-				dup2(fd_in, STDIN_FILENO);
-				close(fd_in);
-			}
-			if (fd_out != STDOUT_FILENO)
-			{
-				dup2(fd_out, STDOUT_FILENO);
-				close(fd_out);
-			}
+			execute_cmd_child(fd_in, fd_out);
 			execve(path, node->args, data->env);
-			free(path);
-			return (ft_putstr_fd("minishell: ", 2),
-				ft_putstr_fd(node->args[0], 2), ft_putendl_fd(
-					": Permission denied", 2), free_array(data->env), ast_free(data->ast),
-				exit(126), 126);
+			return (free(path), error_perm(node->args[0]),
+				free_array(data->env), ast_free(data->ast), exit(126), 126);
 		}
 	}
-	return (waitpid(pid, data->status, 0), free(path), get_status(*data->status));
+	return (waitpid(pid, data->status, 0),
+		free(path), get_status(*data->status));
 }
 
 int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
@@ -119,18 +78,8 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 		close(fd[0]);
 		if (fd_out != STDOUT_FILENO)
 			close(fd_out);
-		if (node->left && node->left->type == NODE_CMD
-			&& node->left->args && is_builtin(node->left->args[0]))
-			*data->status = execute_builtin_with_pipe(node->left, data, fd_in, fd[1]);
-		else
-			*data->status = executor(node->left, data, fd_in, fd[1]);
-		close(fd[1]);
-		if (fd_in != STDIN_FILENO)
-			close(fd_in);
-		ast_free(data->ast);
-		free_array(data->env);
-		free(*data->input);
-		exit(*data->status);
+		*data->status = handle_pipe_execution(data, node->left, fd_in, fd[1]);
+		close_free_exit(data, fd[1], fd_in);
 	}
 	pid[1] = fork();
 	if (pid[1] == 0)
@@ -138,37 +87,11 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 		close(fd[1]);
 		if (fd_in != STDIN_FILENO)
 			close(fd_in);
-		if (node->right && node->right->type == NODE_CMD
-			&& node->right->args && is_builtin(node->right->args[0]))
-			*data->status = execute_builtin_with_pipe(node->right, data, fd[0], fd_out);
-		else
-			*data->status = executor(node->right, data, fd[0], fd_out);
-		close(fd[0]);
-		if (fd_out != STDOUT_FILENO)
-			close(fd_out);
-		ast_free(data->ast);
-		free_array(data->env);
-		free(*data->input);
-		exit(*data->status);
+		*data->status = handle_pipe_execution(data, node->right, fd[0], fd_out);
+		close_free_exit(data, fd[0], fd_out);
 	}
 	return (close(fd[0]), close(fd[1]), waitpid(pid[0], data->status, 0),
 		waitpid(pid[1], data->status, 0), get_status(*data->status));
-}
-
-static int	open_fd(t_ast *node, char *file)
-{
-	int			fd;
-
-	fd = -1;
-	if (node->type == NODE_REDIR_IN)
-		fd = open(file, O_RDONLY);
-	else if (node->type == NODE_HEREDOC)
-		fd = node->fd;
-	else if (node->type == NODE_REDIR_OUT)
-		fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	else if (node->type == NODE_APPEND)
-		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	return (fd);
 }
 
 static int	execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out)
