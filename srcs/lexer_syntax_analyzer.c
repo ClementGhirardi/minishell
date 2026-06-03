@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_syntax_analyzer.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 16:41:38 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 16:42:32 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/03 12:22:50 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	syntax_first_token(t_token *tokens, int *status)
 		return (0);
 	if (tokens->type == TOKEN_PIPE)
 	{
-		syntax_error(tokens->value, status);
+		error_syntax(tokens->value, status);
 		return (0);
 	}
 	return (1);
@@ -68,9 +68,9 @@ int	syntax_analyzer(t_token *tokens, int *status)
 		if (!dispatch(tokens))
 		{
 			if (tokens->next)
-				syntax_error(tokens->next->value, status);
+				error_syntax(tokens->next->value, status);
 			else
-				syntax_error("newline", status);
+				error_syntax("newline", status);
 			return (1);
 		}
 		tokens = tokens->next;

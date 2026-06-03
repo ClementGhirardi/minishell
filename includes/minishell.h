@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 16:48:03 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/03 13:39:19 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,6 @@ typedef struct s_instrs
 	char	*path;
 }	t_instrs;
 
-// typedef struct s_data
-// {
-// 	t_token	**tokens;
-// 	char	**input;
-// 	char	*limiter;
-// }	t_data;
-
 typedef struct s_data
 {
 	char	**env;
@@ -90,70 +83,7 @@ typedef struct s_data
 	int		update_history;
 }	t_data;
 
-typedef struct s_var
-{
-	t_token	*current;
-	t_token	*previous;
-
-	char	*value;
-	char	*new_value;
-
-	int		len;
-	char	*line;
-}	t_var;
-
 extern volatile sig_atomic_t	g_sig_status;
-
-
-
-void		free_data(t_data *data);
-
-void		*syntax_error(char *str, int *status);
-
-char		*ft_gethole_fd(int fd);
-
-char		*get_path(char *cmd, char **envp);
-int			existing_path(char *cmd);
-
-void		free_array(char **array);
-char		**dup_array(char **array);
-char		**sort_array(char **array);
-
-int			ft_echo(char **args, int fd_out);
-
-int			ft_setenv(char ***env, const char *name, const char *value);
-
-int			ft_cd(char **args, char ***env, int fd_out);
-
-int			ft_pwd(int fd_out);
-
-int			ft_export(char **args, char ***env, int status, int fd_out);
-
-int			ft_unset(char **args, char ***env);
-
-int			ft_env(char ***env, int fd_out);
-
-int			ft_exit(t_data *data, int status, int fd_in, int fd_out);
-
-int			is_builtin(char *cmd);
-int			run_builtin(char **args, t_data *data, int fd_in, int fd_out);
-
-int 		execute_builtin_with_pipe(t_ast *node, t_data *data, int fd_in, int fd_out);
-
-void		error_heredoc(int i, char *limiter);
-int			error_open(char *file);
-void		error_command(char *command);
-void		error_file(char *file);
-int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
-int			error_exec_cmd(char *arg, int *status, char **env);
-int			error_exec_cmd(char *arg, int *status, char **env);
-int			error_creating_env(void);
-
-
-
-
-
-
 
 int			minishell(int *status, char **input, char ***env);
 
@@ -202,6 +132,34 @@ char		*extract_quotevar_name(char *str, int *i, int status, char **env);
 /* EXECUTOR */
 int			executor(t_ast *ast, t_data *data, int fd_in, int fd_out);
 
+int			execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out);
+int			execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out);
+int			execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out);
+
+/* BUILTINS */
+int			is_builtin(char *cmd);
+int			run_builtin(char **args, t_data *data, int fd_out);
+
+int			ft_echo(char **args, int fd_out);
+int			ft_setenv(char ***env, const char *name, const char *value);
+int			ft_cd(char **args, char ***env, int fd_out);
+int			ft_pwd(int fd_out);
+int			ft_export(char **args, char ***env, int status, int fd_out);
+int			ft_unset(char **args, char ***env);
+int			ft_env(char ***env, int fd_out);
+int			ft_exit(char **args, int status);
+
+/* ERROR */
+void		error_heredoc(int i, char *limiter);
+int			error_open(char *file);
+void		error_command(char *command);
+void		error_file(char *file);
+int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
+int			error_exec_cmd(char *arg, int *status, char **env);
+int			error_exec_cmd(char *arg, int *status, char **env);
+int			error_creating_env(void);
+void		*error_syntax(char *str, int *status);
+
 /* UTILS */
 int			ft_isin(char c, char *str);
 char		*ft_strjoin_and_free(char *s1, char *s2);
@@ -210,5 +168,12 @@ int			get_status(int status);
 char		*ft_getenv(char **env, const char *name);
 char		**ft_realloc(void **ptr, size_t size);
 int			ft_strcmp(char *s1, char *s2);
+void		free_data(t_data *data);
+char		*get_path(char *cmd, char **envp);
+int			existing_path(char *cmd);
+
+void		free_array(char **array);
+char		**dup_array(char **array);
+char		**sort_array(char **array);
 
 #endif

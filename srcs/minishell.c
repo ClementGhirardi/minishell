@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 14:06:52 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:03:47 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/03 12:40:03 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
 	if (ast->type == NODE_CMD
 		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
 	{
+		if (ast->args[1])
+			status = ft_atoi(ast->args[1]);
 		free(*input);
 		free_array(*env);
 		ast_free(ast);

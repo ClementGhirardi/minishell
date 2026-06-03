@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/24 10:44:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 16:50:57 by cghirard         ###   ########.fr       */
+/*   Created: 2026/06/03 13:36:03 by clement-ghi       #+#    #+#             */
+/*   Updated: 2026/06/03 13:49:10 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	is_builtin(char *cmd)
 		|| !ft_strcmp(cmd, "exit"));
 }
 
-int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
+int	run_builtin(char **args, t_data *data, int fd_out)
 {
 	if (!ft_strcmp(args[0], "pwd"))
 		return (ft_pwd(fd_out));
@@ -36,7 +36,7 @@ int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
 	if (!ft_strcmp(args[0], "env"))
 		return (ft_env(&data->env, fd_out));
 	if (!ft_strcmp(args[0], "exit"))
-		return (ft_exit(data, *data->status, fd_in, fd_out));
+		return (ft_exit(args, *data->status));
 	if (!ft_strcmp(args[0], "echo"))
 		return (ft_echo(args, fd_out));
 	return (1);

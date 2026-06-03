@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:04:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/03 12:35:42 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int	exit_on_sigquit(int status, char **env)
 {
 	free_array(env);
 	ft_putendl_fd("exit", 1);
-	ft_exit(NULL, status, STDIN_FILENO, STDOUT_FILENO);
+	status = ft_exit(NULL, status);
 	return (status);
 }
 
