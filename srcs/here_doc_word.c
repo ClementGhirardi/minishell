@@ -28,7 +28,7 @@ void	here_doc_word(char limiter, t_data *data)
 	if (!buffer)
 		return ;
 	buffer[0] = '\0';
-	while (!ft_isin(limiter, buffer) && g_sig_status != 4)
+	while (!ft_is_in(limiter, buffer) && g_sig_status != 4)
 	{
 		free(buffer);
 		if (!get_buffer(&buffer, &nb_line, data, NULL))

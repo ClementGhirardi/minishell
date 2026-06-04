@@ -76,7 +76,7 @@ char	*extract_var_name(char *str, int *i, int status, char **env)
 		if (!str_status)
 			return ((*i)++, NULL);
 		tmp = ft_strdup(str_status);
-		while (str[++(*i)] && str[*i] != '$')
+		while (is_var_char(str[++(*i)]))
 			tmp = ft_strjoin_and_free(tmp, ft_substr(str, (*i), 1));
 		return (free(str_status), tmp);
 	}

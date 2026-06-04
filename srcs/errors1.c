@@ -80,7 +80,7 @@ void	error_command(char *command)
 {
 	char	*new_command;
 
-	if (command && ft_isin('\n', command))
+	if (command && ft_is_in('\n', command))
 		new_command = newline_replace(command);
 	else
 		new_command = ft_strdup(command);

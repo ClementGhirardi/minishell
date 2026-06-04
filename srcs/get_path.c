@@ -15,11 +15,7 @@
 int	existing_path(char *cmd)
 {
 	if (!access(cmd, F_OK))
-	{
-		if (access(cmd, X_OK))
-			perror(cmd);
 		return (1);
-	}
 	return (0);
 }
 

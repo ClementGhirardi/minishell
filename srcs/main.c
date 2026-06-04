@@ -40,13 +40,13 @@ static void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
-static int	exit_on_sigquit(int status, char **env)
-{
-	free_array(env);
-	ft_putendl_fd("exit", 1);
-	status = ft_exit(NULL, status);
-	return (status);
-}
+// static int	exit_on_sigquit(int status, char **env)
+// {
+// 	free_array(env);
+// 	ft_putendl_fd("exit", 1);
+// 	status = ft_exit(NULL, status);
+// 	return (status);
+// }
 
 static int	event(void)
 {
@@ -74,6 +74,7 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
+	env = NULL;
 	if (!init_var(&status, &env, envp))
 		return (status);
 	while (1)
@@ -83,12 +84,14 @@ int	main(int ac, char **av, char **envp)
 		if (g_sig_status == 0)
 			status = 130;
 		if (!input)
-			return (exit_on_sigquit(status, env));
+			return (free_array(env), ft_exit(NULL, NULL, -1, 1), status);
+			// return (exit_on_sigquit(status, env));
 		g_sig_status = 1;
 		update_history = minishell(&status, &input, &env);
 		if (update_history)
 			add_history(input);
 		free(input);
 	}
-	return (exit_on_sigquit(status, env));
+	return (free_array(env), ft_exit(NULL, NULL, -1, 1), status);
+	// return (exit_on_sigquit(status, env));
 }

@@ -12,6 +12,32 @@
 
 #include "../includes/minishell.h"
 
+static int	before_pipe(char *input)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (input[i])
+	{
+		j = 0;
+		if (input[i] == '|')
+		{
+			j = i;
+			if (i)
+			{
+				while (--i && input[i] == ' ')
+					;
+				if (!i || ft_is_in(input[i], "|<>"))
+					return (1);
+			}
+			i = j;
+		}
+		i++;
+	}
+	return (0);
+}
+
 static int	consecutive_pipe(char *input)
 {
 	int	consecutive;
@@ -73,7 +99,8 @@ void	handle_end_with_pipe(char **input, t_data *data)
 {
 	if (!input || !(*input) || g_sig_status == 4)
 		return ;
-	if (consecutive_pipe(*input) || only_one_pipe(*input))
+	if (consecutive_pipe(*input) || only_one_pipe(*input)
+		|| before_pipe(*input))
 		return ;
 	if (end_with_pipe(*input))
 	{

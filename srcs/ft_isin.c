@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	ft_isin(char c, char *str)
+int	ft_is_in(char c, char *str)
 {
 	int	i;
 

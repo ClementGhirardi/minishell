@@ -14,26 +14,49 @@
 
 int	handle_quotes(char **input)
 {
-	int	quote[2];
-	int	i;
+	int		i;
+	char	quote;
 
-	if (!(*input))
-		return (1);
-	quote[0] = 0;
-	quote[1] = 0;
 	i = 0;
+	if (!input || !*input || !**input)
+		return (1);
 	while ((*input)[i])
 	{
-		if ((*input)[i] == '\'')
-			quote[0] = (quote[0] + 1) % 2;
-		if ((*input)[i] == '\"')
-			quote[1] = (quote[1] + 1) % 2;
+		if ((*input)[i] == '\'' || (*input)[i] == '"')
+		{
+			quote = (*input)[i++];
+			while ((*input)[i] && (*input)[i] != quote)
+				i++;
+			if (!(*input)[i])
+				return (1);
+		}
 		i++;
 	}
-	if (quote[0] || quote[1])
-		return (1);
 	return (0);
 }
+
+// int	handle_quotes(char **input)
+// {
+// 	int	quote[2];
+// 	int	i;
+
+// 	if (!(*input))
+// 		return (1);
+// 	quote[0] = 0;
+// 	quote[1] = 0;
+// 	i = 0;
+// 	while ((*input)[i])
+// 	{
+// 		if ((*input)[i] == '\'')
+// 			quote[0] = (quote[0] + 1) % 2;
+// 		if ((*input)[i] == '\"')
+// 			quote[1] = (quote[1] + 1) % 2;
+// 		i++;
+// 	}
+// 	if (quote[0] || quote[1])
+// 		return (1);
+// 	return (0);
+// }
 
 void	handle_pipe(t_token **tokens, int *i)
 {
@@ -93,14 +116,14 @@ void	handle_word(char *input, t_token **tokens, int *i)
 	start = *i;
 	if (input[*i] == '&')
 		(*i)++;
-	while (input[*i] && !ft_isin(input[*i], " |<>&()"))
+	while (input[*i] && !ft_is_in(input[*i], " |<>&"))
 	{
 		quote = ' ';
 		while (input[*i] && input[*i] != quote && input[*i] != '\n')
 		{
-			if (quote == ' ' && ft_isin(input[*i], "|<>&()"))
+			if (quote == ' ' && ft_is_in(input[*i], "|<>&"))
 				break ;
-			if (quote == ' ' && ft_isin(input[*i], "\'\""))
+			if (quote == ' ' && ft_is_in(input[*i], "\'\""))
 				quote = input[*i];
 			else if (quote != ' ' && (input[*i] == quote))
 				quote = ' ';

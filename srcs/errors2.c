@@ -12,6 +12,21 @@
 
 #include "../includes/minishell.h"
 
+void	error_num(char *arg, int *status)
+{
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+	*status = 2;
+}
+
+int	error_too_many_args(int *status)
+{
+	ft_putendl_fd("minishell: exit: too many arguments", 2);
+	*status = 1;
+	return (*status);
+}
+
 int	error_open(char *file)
 {
 	if (!file)

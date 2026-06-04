@@ -138,7 +138,7 @@ int			execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out);
 
 /* BUILTINS */
 int			is_builtin(char *cmd);
-int			run_builtin(char **args, t_data *data, int fd_out);
+int			run_builtin(char **args, t_data *data, int fd_in, int fd_out);
 
 int			ft_echo(char **args, int fd_out);
 int			ft_setenv(char ***env, const char *name, const char *value);
@@ -147,7 +147,8 @@ int			ft_pwd(int fd_out);
 int			ft_export(char **args, char ***env, int status, int fd_out);
 int			ft_unset(char **args, char ***env);
 int			ft_env(char ***env, int fd_out);
-int			ft_exit(char **args, int status);
+int			ft_exit(t_data *data, char **env, int fd_in, int fd_out);
+// int			ft_exit(char **args, int status);
 
 /* ERROR */
 void		error_heredoc(int i, char *limiter);
@@ -155,13 +156,16 @@ int			error_open(char *file);
 void		error_command(char *command);
 void		error_file(char *file);
 int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
-int			error_exec_cmd(char *arg, int *status, char **env);
-int			error_exec_cmd(char *arg, int *status, char **env);
+int			err_exe_cmd(char *arg, int *status, char **env);
+// int			error_exec_cmd(char *arg, int *status, char **env);
 int			error_creating_env(void);
 void		*error_syntax(char *str, int *status);
 
+int			error_too_many_args(int *status);
+void		error_num(char *arg, int *status);
+
 /* UTILS */
-int			ft_isin(char c, char *str);
+int			ft_is_in(char c, char *str);
 char		*ft_strjoin_and_free(char *s1, char *s2);
 int			get_buffer(char **buffer, int *nb_line, t_data *data, int *fds);
 int			get_status(int status);

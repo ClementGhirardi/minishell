@@ -58,7 +58,7 @@ int	get_buffer(char **buffer, int *nb_line, t_data *data, int *fds)
 		;
 	if (!(*buffer))
 		return (close(fd[0]), 0);
-	if (!ft_isin('\n', *buffer))
+	if (!ft_is_in('\n', *buffer))
 		return (close(fd[0]), free(*buffer), 0);
 	(*nb_line)++;
 	return (close(fd[0]), 1);

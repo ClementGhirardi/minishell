@@ -12,10 +12,16 @@
 
 #include "../includes/minishell.h"
 
-static int	child(t_ast *node, t_data *data, int fd_in, int fd_out)
+static void	error_perm(char *str)
 {
-	char	*path;
+	ft_putstr_fd("minishell: ", 2);
+	if (str)
+		ft_putstr_fd(str, 2);
+	ft_putstr_fd(": Permission denied\n", 2);
+}
 
+static void	execute_cmd_child(int fd_in, int fd_out)
+{
 	if (fd_in != STDIN_FILENO)
 	{
 		dup2(fd_in, STDIN_FILENO);
@@ -26,33 +32,78 @@ static int	child(t_ast *node, t_data *data, int fd_in, int fd_out)
 		dup2(fd_out, STDOUT_FILENO);
 		close(fd_out);
 	}
-	path = get_path(node->args[0], data->env);
-	if (!path)
-		return (error_command(node->args[0]), free_array(data->env),
-			ast_free(data->ast), exit(127), 127);
-	execve(path, node->args, data->env);
-	free(path);
-	return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(node->args[0], 2),
-		ft_putendl_fd(": Permission denied", 2),
-		free_array(data->env), ast_free(data->ast), exit(126), 126);
 }
 
 int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 {
 	pid_t	pid;
+	char	*path;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
-	if (node->args[0][0]
-		&& error_exec_cmd(node->args[0], data->status, data->env))
+	if (node->args[0][0] && err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node->args, data, fd_out));
+		return (run_builtin(node->args, data, fd_in, fd_out));
+	path = get_path(node->args[0], data->env);
+	if (!path)
+		return (error_command(node->args[0]), 127);
 	else
 	{
 		pid = fork();
 		if (pid == 0)
-			child(node, data, fd_in, fd_out);
+		{
+			execute_cmd_child(fd_in, fd_out);
+			execve(path, node->args, data->env);
+			return (free(path), error_perm(node->args[0]),
+				free_array(data->env), ast_free(data->ast), exit(126), 126);
+		}
 	}
-	return (waitpid(pid, data->status, 0), get_status(*data->status));
+	return (waitpid(pid, data->status, 0),
+		free(path), get_status(*data->status));
 }
+
+// static int	child(t_ast *node, t_data *data, int fd_in, int fd_out)
+// {
+// 	char	*path;
+
+// 	if (fd_in != STDIN_FILENO)
+// 	{
+// 		dup2(fd_in, STDIN_FILENO);
+// 		close(fd_in);
+// 	}
+// 	if (fd_out != STDOUT_FILENO)
+// 	{
+// 		dup2(fd_out, STDOUT_FILENO);
+// 		close(fd_out);
+// 	}
+// 	path = get_path(node->args[0], data->env);
+// 	if (!path)
+// 		return (error_command(node->args[0]), free_array(data->env),
+// 			ast_free(data->ast), exit(127), 127);
+// 	execve(path, node->args, data->env);
+// 	free(path);
+// 	return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(node->args[0], 2),
+// 		ft_putendl_fd(": Permission denied", 2),
+// 		free_array(data->env), ast_free(data->ast), exit(126), 126);
+// }
+
+// int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
+// {
+// 	pid_t	pid;
+
+// 	if (!node || !node->args || !node->args[0])
+// 		return (0);
+// 	if (node->args[0][0]
+// 		&& error_exec_cmd(node->args[0], data->status, data->env))
+// 		return (*data->status);
+// 	if (is_builtin(node->args[0]))
+// 		return (run_builtin(node->args, data, fd_in, fd_out));
+// 	else
+// 	{
+// 		pid = fork();
+// 		if (pid == 0)
+// 			child(node, data, fd_in, fd_out);
+// 	}
+// 	return (waitpid(pid, data->status, 0), get_status(*data->status));
+// }

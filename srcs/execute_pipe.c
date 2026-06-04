@@ -21,14 +21,14 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 	if (!node || !node->args || !node->args[0])
 		return (0);
 	if (node->args[0][0]
-		&& error_exec_cmd(node->args[0], data->status, data->env))
+		&& err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			code = run_builtin(node->args, data, fd_out);
+			code = run_builtin(node->args, data, fd_in, fd_out);
 			if (fd_in != STDIN_FILENO)
 				close(fd_in);
 			if (fd_out != STDOUT_FILENO)

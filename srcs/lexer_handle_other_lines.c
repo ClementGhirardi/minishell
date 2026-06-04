@@ -26,7 +26,7 @@ void	lexer_handle_other_lines(t_token *tokens, t_data *data)
 	{
 		if (current->type == TOKEN_WORD && !current->next)
 		{
-			if (ft_isin('\n', current->value))
+			if (ft_is_in('\n', current->value))
 			{
 				data->other_lines = ft_strdup(current->value);
 				free_token(current);

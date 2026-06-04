@@ -23,29 +23,29 @@ static void	init_data(int *status, char **input, char **env, t_data *data)
 	data->update_history = 1;
 }
 
-static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
-{
-	if (!ast)
-		return ;
-	if (!ast->args)
-		return ;
-	if (!ast->args[0])
-		return ;
-	if (ast->type == NODE_CMD
-		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
-	{
-		if (ast->args[1])
-			status = ft_atoi(ast->args[1]);
-		free(*input);
-		free_array(*env);
-		ast_free(ast);
-		*env = NULL;
-		*input = NULL;
-		ast = NULL;
-		ft_putendl_fd("exit", 1);
-		exit(status);
-	}
-}
+// static void	handle_exit(t_ast *ast, int status, char **input, char ***env)
+// {
+// 	if (!ast)
+// 		return ;
+// 	if (!ast->args)
+// 		return ;
+// 	if (!ast->args[0])
+// 		return ;
+// 	if (ast->type == NODE_CMD
+// 		&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+// 	{
+// 		if (ast->args[1])
+// 			status = ft_atoi(ast->args[1]);
+// 		free(*input);
+// 		free_array(*env);
+// 		ast_free(ast);
+// 		*env = NULL;
+// 		*input = NULL;
+// 		ast = NULL;
+// 		ft_putendl_fd("exit", 1);
+// 		exit(status);
+// 	}
+// }
 
 int	minishell(int *status, char **input, char ***env)
 {
@@ -62,8 +62,12 @@ int	minishell(int *status, char **input, char ***env)
 			return (0);
 		if (ast && g_sig_status != 4)
 		{
-			handle_exit(ast, *status, input, env);
+			if (ast->args && !ft_strcmp(ast->args[0], "exit"))
+				return (*status = ft_exit(&data, *env, -1, 1),
+					data.update_history);
+			// handle_exit(ast, *status, input, env);
 			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
+			*env = data.env;
 			ast_free(ast);
 		}
 	}

@@ -62,7 +62,7 @@ static int	error_exec_cmd_slash(char *arg, int *status, char **env)
 	return (0);
 }
 
-int	error_exec_cmd(char *arg, int *status, char **env)
+int	err_exe_cmd(char *arg, int *status, char **env)
 {
 	DIR	*dir;
 
