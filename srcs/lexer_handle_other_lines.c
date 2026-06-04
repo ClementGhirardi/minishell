@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handle_other_lines.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 14:33:21 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:16:29 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/04 18:26:26 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+void	create_other_lines(char *input, t_token **tokens, int *i, int start)
+{
+	create_word(input, tokens, *i, start);
+	start = *i + 1;
+	*i = ft_strlen(input);
+	create_word(input, tokens, *i, start);
+}
 
 void	lexer_handle_other_lines(t_token *tokens, t_data *data)
 {

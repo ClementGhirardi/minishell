@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 12:27:59 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:53:59 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/04 18:20:11 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	error_here_doc(int *fd, int nb_line, char *limiter, int status)
 {
 	if (status == 130)
 		return (close(fd[1]), close(fd[0]), -1);
-	ft_putstr_fd("\nminishell: warning: here-document at line ", 2);
+	ft_putstr_fd("minishell: warning: here-document at line ", 2);
 	ft_putnbr_fd(nb_line, 2);
 	ft_putstr_fd(" delimited by end-of-file (wanted `", 2);
 	ft_putstr_fd(limiter, 2);

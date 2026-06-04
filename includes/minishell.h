@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:39:19 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/04 18:29:20 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ void		handle_word(char *input, t_token **tokens, int *i);
 
 int			syntax_analyzer(t_token *tokens, int *status);
 
+void		create_other_lines(char *input, t_token **tokens,
+				int *i, int start);
 void		lexer_handle_other_lines(t_token *tokens, t_data *data);
 
 /* PARSER */

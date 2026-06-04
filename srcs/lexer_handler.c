@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 15:06:25 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:14:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/04 18:26:20 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	handle_word(char *input, t_token **tokens, int *i)
 	while (input[*i] && !ft_is_in(input[*i], " |<>&"))
 	{
 		quote = ' ';
-		while (input[*i] && input[*i] != quote && input[*i] != '\n')
+		while (input[*i] && input[*i] != quote)
 		{
 			if (quote == ' ' && ft_is_in(input[*i], "|<>&"))
 				break ;
@@ -127,6 +127,8 @@ void	handle_word(char *input, t_token **tokens, int *i)
 				quote = input[*i];
 			else if (quote != ' ' && (input[*i] == quote))
 				quote = ' ';
+			if (input[*i] == '\n')
+				return (create_other_lines(input, tokens, i, start));
 			(*i)++;
 		}
 		if (input[*i] == quote && quote != ' ')
