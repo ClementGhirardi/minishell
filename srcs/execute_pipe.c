@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 12:48:43 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/06/05 12:18:13 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 12:26:33 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,16 @@ static void	child_left(t_ast *node, t_data *data, int *prev_fd, int *fd)
 
 	fd_in = prev_fd[0];
 	fd_out = prev_fd[1];
-	close(fd[1]);
+	close(fd[0]);
 	if (fd_out != STDOUT_FILENO)
 		close(fd_out);
 	if (node->left && node->left->type == NODE_CMD
 		&& node->left->args && is_builtin(node->left->args[0]))
 		*data->status = execute_builtin_with_pipe(
-				node->left, data, fd_in, fd[0]);
+				node->left, data, fd_in, fd[1]);
 	else
-		*data->status = executor(node->left, data, fd_in, fd[0]);
-	close(fd[0]);
+		*data->status = executor(node->left, data, fd_in, fd[1]);
+	close(fd[1]);
 	if (fd_in != STDIN_FILENO)
 		close(fd_in);
 	ast_free(data->ast);
@@ -74,16 +74,16 @@ static void	child_right(t_ast *node, t_data *data, int *prev_fd, int *fd)
 
 	fd_in = prev_fd[0];
 	fd_out = prev_fd[1];
-	close(fd[0]);
+	close(fd[1]);
 	if (fd_in != STDIN_FILENO)
 		close(fd_in);
 	if (node->right && node->right->type == NODE_CMD
 		&& node->right->args && is_builtin(node->right->args[0]))
 		*data->status = execute_builtin_with_pipe(
-				node->right, data, fd[1], fd_out);
+				node->right, data, fd[0], fd_out);
 	else
-		*data->status = executor(node->right, data, fd[1], fd_out);
-	close(fd[1]);
+		*data->status = executor(node->right, data, fd[0], fd_out);
+	close(fd[0]);
 	if (fd_out != STDOUT_FILENO)
 		close(fd_out);
 	ast_free(data->ast);
