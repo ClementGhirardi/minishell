@@ -37,6 +37,8 @@ static int	ft_is_str_digit(char *str)
 			return (0);
 		i++;
 	}
+	if (i == 0)
+		return (0);
 	return (1);
 }
 
@@ -59,6 +61,7 @@ static int	check_exit_args(t_data *data, int *too_many)
 	len = 0;
 	tmp = 0;
 	ft_putendl_fd("exit", 1);
+	expander(data->ast, *data->status, data->env);
 	if (data && data->ast)
 		len = ft_strslen(data->ast->args);
 	if (data && data->ast && data->ast->args && len >= 2)
@@ -91,6 +94,7 @@ int	ft_exit(t_data *data, char **env, int fd_in, int fd_out)
 		return (free_and_close(data, env, fd_in, fd_out), tmp);
 	free_and_close(data, env, fd_in, fd_out);
 	rl_clear_history();
+	*data->status = tmp;
 	exit(tmp);
 }
 

@@ -37,7 +37,7 @@ static void	ft_display(char **args, int fd_out)
 	i = 0;
 	while (args && args[i])
 	{
-		if (!args[i][0])
+		if (!args[i][0] && i > 0)
 			ft_putstr_fd(" ", fd_out);
 		else
 		{

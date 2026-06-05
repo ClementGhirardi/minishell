@@ -25,6 +25,7 @@
 # include <string.h>
 # include <errno.h>
 # include <dirent.h>
+# include <sys/stat.h>
 
 typedef enum e_token_type
 {

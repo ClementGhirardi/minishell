@@ -19,7 +19,7 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 	int		code;
 
 	if (!node || !node->args || !node->args[0])
-		return (0);
+		return (1);
 	if (node->args[0][0]
 		&& err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
@@ -28,6 +28,7 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 		pid = fork();
 		if (pid == 0)
 		{
+			expander(node, *data->status, data->env);
 			code = run_builtin(node->args, data, fd_in, fd_out);
 			if (fd_in != STDIN_FILENO)
 				close(fd_in);

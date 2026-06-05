@@ -1,24 +1,23 @@
 TESTS QUI ECHOUENT (valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp)
 
 
-export | ''''"" | rien (LEAKS, FD, SIGPIPE)
-	export sans argument et utilise dans un pipe cause ces erreurs
-	si la commande suivante est vide ("") ou une variable vide ($rien)
 
-si on cree un heredoc, qu'on en sort puis qu'on regarde l'historique :
-	si on fait enter pendant que l'historique est affiche, ctrl+D ne marche plus
-
-<< eof | : on devrait arriver a sortir de ce heredoc, or ca n'arrive pas dans minishell
+echo | (LEAK si la cmd entree dans le heredoc n'existe pas)
 
 exit > out (ERROR : devrait sortir)
+ls | exit 4 (ERROR : si $? juste apres alors mauvais exit code)
+exit $rien (ERROR : devrait expand $rien et exit sans message d'erreur)
+exit $int (ERROR : devrait expand la aussi)
 
 
 
 
 
-
-
-A TESTER
+-----------A TESTER--------------------
 
 - ./minishell | ./minishell
 - ulimit
+
+
+
+

@@ -6,7 +6,7 @@
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 20:50:19 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:15 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/05/06 16:22:54 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,27 @@ void	update_pwd(char ***env)
 		ft_setenv(env, "PWD", cwd);
 }
 
+static int	error_cd(char *path, int fd_out, int directory)
+{
+	if (!directory)
+	{
+		ft_putstr_fd("minishell: cd: ", fd_out),
+		ft_putstr_fd(path, fd_out),
+		ft_putendl_fd(": Not a directory", fd_out),
+		free(path);
+		return (1);
+	}
+	ft_putstr_fd("minishell: cd: ", fd_out);
+	ft_putstr_fd(path, fd_out),
+	ft_putendl_fd(": No such file or directory", fd_out),
+	free(path);
+	return (1);
+}
+
 int	ft_cd(char **args, char ***env, int fd_out)
 {
-	char	*path;
+	char		*path;
+	struct stat	buf;
 
 	if (!args[1] || !ft_strncmp(args[1], "~", ft_strlen(args[1])))
 	{
@@ -45,11 +63,10 @@ int	ft_cd(char **args, char ***env, int fd_out)
 	}
 	else
 		path = ft_strdup(args[1]);
+	if (stat(path, &buf) == 0 && !S_ISDIR(buf.st_mode))
+		return (error_cd(path, fd_out, 0));
 	if (chdir(path) == -1)
-		return (ft_putstr_fd("minishell: cd: ", fd_out),
-			ft_putstr_fd(path, fd_out),
-			ft_putendl_fd(": no such file or directory", fd_out),
-			free(path), 1);
+		return (error_cd(path, fd_out, 1));
 	update_pwd(env);
 	return (free(path), 0);
 }
