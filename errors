@@ -5,9 +5,9 @@ TESTS QUI ECHOUENT (valgrind --track-fds=yes --leak-check=full --show-leak-kinds
 echo | (LEAK si la cmd entree dans le heredoc n'existe pas)
 
 exit > out (ERROR : devrait sortir)
+
 ls | exit 4 (ERROR : si $? juste apres alors mauvais exit code)
-exit $rien (ERROR : devrait expand $rien et exit sans message d'erreur)
-exit $int (ERROR : devrait expand la aussi)
+exit 6 4 | ls (ERROR : on devrait afficher un msg d'erreur relatif aux multiples args de exit)
 
 
 
