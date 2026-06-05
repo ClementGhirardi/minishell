@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:29:20 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/05 11:33:14 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ void		here_doc_word(char limiter, t_data *data);
 int			handle_quotes(char **input);
 void		handle_pipe(t_token **tokens, int *i);
 void		handle_redir(char *input, t_token **tokens, int *i, int dir);
+void		create_word(char *input, t_token **tokens, int i, int start);
 void		handle_word(char *input, t_token **tokens, int *i);
 
 int			syntax_analyzer(t_token *tokens, int *status);

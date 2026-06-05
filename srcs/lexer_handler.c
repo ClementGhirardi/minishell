@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 15:06:25 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:26:20 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/05 11:32:56 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	handle_redir(char *input, t_token **tokens, int *i, int dir)
 	}
 }
 
-static void	create_word(char *input, t_token **tokens, int i, int start)
+void	create_word(char *input, t_token **tokens, int i, int start)
 {
 	char	*word;
 
