@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:21:48 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/05 15:48:45 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ static int	last_here_doc(t_data *data, t_ast *current, char *buffer, int *fd)
 		current = current->left;
 	}
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
+	add_history(*data->input);
+	data->update_history = 0;
 	if (g_sig_status == 4)
 		return (free(buffer), close(fd[1]), close(fd[0]), -1);
 	return (free(buffer), close(fd[1]), fd[0]);

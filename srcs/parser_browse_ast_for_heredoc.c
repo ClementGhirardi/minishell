@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 10:48:16 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:38:59 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 15:06:14 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	browse_ast_for_heredoc(t_ast *ast, t_data *data)
 {
 	if (!ast)
 		return ;
-	if (ast->type == NODE_HEREDOC)
+	if (ast->type == NODE_HEREDOC && ast->fd == -1)
 	{
 		ast->file = remove_limiters_quotes(ast->file);
 		if (!ast->file)

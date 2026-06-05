@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 12:26:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:18:09 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 15:54:58 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	here_doc_word(char limiter, t_data *data)
 		return ;
 	if (data->update_history == 1)
 		add_history(*data->input);
-	data->update_history = 0;
-	*data->input = ft_strjoin_and_free(*data->input, ft_strdup(" "));
+	free(*data->input);
+	*data->input = ft_strdup(" ");
 	buffer = malloc(1);
 	if (!buffer)
 		return ;

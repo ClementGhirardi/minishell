@@ -6,112 +6,71 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:44:51 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 16:04:49 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	count_word(t_token *tokens)
+static t_ast	*parser_end_with_pipe(t_data *data)
 {
-	int	count;
-
-	count = 0;
-	while (tokens && tokens->type == TOKEN_WORD)
+	if (data->end_with_pipe)
 	{
-		count++;
-		tokens = tokens->next;
+		free_token(data->tokens);
+		browse_ast_for_heredoc(data->ast, data);
+		if (data->ast && g_sig_status == 4)
+			return (ast_free(data->ast), NULL);
+		here_doc_word('\n', data);
+		data->tokens = lexer(data->input, data);
+		if (!data->tokens)
+			return (ast_free(data->ast), NULL);
+		return (parser(data->tokens, data));
 	}
-	return (count);
+	return (ast_free(data->ast), NULL);
 }
 
-static t_ast	*parse_command(t_token **tokens)
+static int	parse_begin(t_token **tokens, t_data *data)
 {
-	t_ast	*instr;
-	char	**args;
-	int		count;
-	int		i;
+	t_ast	*left;
+	t_ast	*new_ast;
 
-	count = count_word(*tokens);
-	args = malloc((count + 1) * sizeof(char *));
-	if (!args)
-		return (NULL);
-	i = 0;
-	while (*tokens && (*tokens)->type == TOKEN_WORD)
+	left = parse_instructions(tokens, data->status, data->env);
+	if (!left)
+		return (1);
+	if (data->ast)
 	{
-		args[i] = ft_strdup((*tokens)->value);
-		*tokens = (*tokens)->next;
-		i++;
-	}
-	args[i] = NULL;
-	instr = ast_new_cmd(args);
-	if (!instr)
-		return (free_array(args), NULL);
-	return (instr);
-}
-
-static t_ast	*parse_instructions(t_token **tokens, int *status, char **env);
-
-static t_ast	*parse_redirection(t_token **tokens)
-{
-	t_ast			*instr;
-	t_token_type	redir_type;
-
-	redir_type = (*tokens)->type;
-	*tokens = (*tokens)->next;
-	instr = ast_new_redir(redir_type, *tokens);
-	*tokens = (*tokens)->next;
-	return (instr);
-}
-
-static t_ast	*parse_instructions(t_token **tokens, int *status, char **env)
-{
-	t_ast	*instr;
-	t_ast	*cmd;
-
-	if (!(*tokens) || (*tokens)->type == TOKEN_PIPE)
-		return (NULL);
-	if ((*tokens)->type == TOKEN_WORD)
-	{
-		cmd = parse_command(tokens);
-		instr = parse_instructions(tokens, status, env);
-		ast_add_end(&instr, cmd);
+		new_ast = ast_new_pipe(data->ast, left);
+		if (!new_ast)
+			return (free_token(data->tokens), ast_free(data->ast), 1);
+		data->ast = new_ast;
 	}
 	else
-	{
-		instr = parse_redirection(tokens);
-		if (!instr)
-			return (NULL);
-		instr->left = parse_instructions(tokens, status, env);
-	}
-	return (instr);
+		data->ast = left;
+	return (0);
 }
 
 t_ast	*parser(t_token *tokens, t_data *data)
 {
-	t_ast	*left;
 	t_ast	*right;
 	t_ast	*new_ast;
 
-	left = parse_instructions(&tokens, data->status, data->env);
-	if (!left)
+	if (parse_begin(&tokens, data))
 		return (NULL);
 	while (tokens && tokens->type == TOKEN_PIPE)
 	{
 		tokens = tokens->next;
 		right = parse_instructions(&tokens, data->status, data->env);
-		if (left && !right)
-			return (ast_free(left), NULL);
-		new_ast = ast_new_pipe(left, right);
+		if (data->ast && !right)
+			return (parser_end_with_pipe(data));
+		new_ast = ast_new_pipe(data->ast, right);
 		if (!new_ast)
-			return (ast_free(left), ast_free(right), NULL);
-		left = new_ast;
+			return (free_token(data->tokens),
+				ast_free(data->ast), ast_free(right), NULL);
+		data->ast = new_ast;
 	}
 	free_token(data->tokens);
-	data->ast = left;
-	browse_ast_for_heredoc(left, data);
-	if (left && g_sig_status == 4)
-		return (ast_free(left),
-			free(*data->input), *data->input = NULL, NULL);
-	return (left);
+	browse_ast_for_heredoc(data->ast, data);
+	if (data->ast && g_sig_status == 4)
+		return (ast_free(data->ast), NULL);
+	return (data->ast);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:07:59 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/05 14:33:17 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ t_token	*lexer(char **input, t_data *data)
 {
 	t_token	*tokens;
 
-	handle_end_with_pipe(input, data);
+	data->end_with_pipe = end_with_pipe(*input);
+	// handle_end_with_pipe(input, data);
 	if (!input || !*input || !**input)
 		return (NULL);
 	if (handle_quotes(input))

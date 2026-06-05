@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 11:33:14 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 16:05:46 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_data
 	char	**env;
 	int		*status;
 	char	**input;
+	int		end_with_pipe;
 	char	*other_lines;
 	t_token	*tokens;
 	t_ast	*ast;
@@ -94,6 +95,7 @@ t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **tokens, t_token *new);
 void		free_token(t_token *tokens);
 
+int			end_with_pipe(char *input);
 void		handle_end_with_pipe(char **input, t_data *data);
 void		here_doc_word(char limiter, t_data *data);
 
@@ -118,6 +120,7 @@ t_ast		*ast_new_pipe(t_ast *left, t_ast *right);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
+t_ast		*parse_instructions(t_token **tokens, int *status, char **env);
 void		browse_ast_for_heredoc(t_ast *ast, t_data *data);
 int			here_doc(char *limiter, t_data *data, t_ast *current);
 char		*get_one_line(char *lines, int *i);

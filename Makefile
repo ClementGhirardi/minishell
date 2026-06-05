@@ -22,6 +22,7 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/lexer_handle_other_lines.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ast.c \
+	$(SRCS_DIR)/parse_instructions.c \
 	$(SRCS_DIR)/parser_browse_ast_for_heredoc.c \
 	$(SRCS_DIR)/here_doc.c \
 	$(SRCS_DIR)/here_doc_utils.c \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 14:06:52 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:08:05 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/05 14:33:05 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	init_data(int *status, char **input, char **env, t_data *data)
 	data->ast = NULL;
 	data->other_lines = NULL;
 	data->update_history = 1;
+	data->end_with_pipe = 0;
 }
 
 // static void	handle_exit(t_ast *ast, int status, char **input, char ***env)

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:50:20 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/02 15:47:25 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 15:55:14 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,10 +83,12 @@ static int	only_one_pipe(char *input)
 	return (0);
 }
 
-static int	end_with_pipe(char *input)
+int	end_with_pipe(char *input)
 {
 	int		i;
 
+	if (consecutive_pipe(input) || only_one_pipe(input) || before_pipe(input))
+		return (0);
 	i = ft_strlen(input) - 1;
 	while (i >= 0 && input[i] && input[i] == ' ')
 		i--;
@@ -98,9 +100,6 @@ static int	end_with_pipe(char *input)
 void	handle_end_with_pipe(char **input, t_data *data)
 {
 	if (!input || !(*input) || g_sig_status == 4)
-		return ;
-	if (consecutive_pipe(*input) || only_one_pipe(*input)
-		|| before_pipe(*input))
 		return ;
 	if (end_with_pipe(*input))
 	{
