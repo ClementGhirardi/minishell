@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 12:17:55 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 12:45:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int	ft_export(char **args, char ***env, int status, int fd_out)
 	int		i;
 	char	*name;
 	char	*value;
-
+	
 	if (!args[1])
 		return (print_export(sort_array(*env), fd_out));
 	i = 1;

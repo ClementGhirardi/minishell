@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 12:48:43 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/06/05 12:26:33 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 12:43:52 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,6 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 	{
 		child_right(node, data, prev_fd, fd);
 	}
-	return (close(fd[0]), close(fd[1]), waitpid(pid[0], data->status, 0),
+	return (close(fd[1]), waitpid(pid[0], data->status, 0), close(fd[0]),
 		waitpid(pid[1], data->status, 0), get_status(*data->status));
 }
