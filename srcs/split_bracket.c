@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   split_bracket.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adbarth <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/17 11:34:47 by adbarth           #+#    #+#             */
+/*   Updated: 2026/04/17 11:34:51 by adbarth          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-void	ft_tokadd_back(t_token **lst, t_token *new)
+static void	ft_tokadd_back(t_token **lst, t_token *new)
 {
 	t_token	*current;
 
@@ -24,7 +36,7 @@ void	ft_tokadd_back(t_token **lst, t_token *new)
 	return ;
 }
 
-void	add_sublist(t_token **clean_list, t_token *sub_list)
+static void	add_sublist(t_token **clean_list, t_token *sub_list)
 {
 	t_token	*tmp;
 	t_token	*empty;
@@ -40,40 +52,40 @@ void	add_sublist(t_token **clean_list, t_token *sub_list)
 	tmp->bracket = sub_list;
 }
 
-t_token	*create_clean_list(t_token **tokens)
+static void	handle_non_brackets(t_token **tokens, t_token **clean_list)
+{
+	t_token	*node;
+
+	if ((*tokens)->type != TOKEN_O_BRACK
+		&& (*tokens)->type != TOKEN_C_BRACK)
+	{
+		node = new_token((*tokens)->type, (*tokens)->value);
+		ft_tokadd_back(clean_list, node);
+		*tokens = (*tokens)->next;
+	}
+}
+
+static t_token	*create_clean_list(t_token **tokens)
 {
 	t_token	*clean_list;
 	t_token	*sub_list;
-	t_token	*node;
-	int		brack;
 
 	clean_list = NULL;
-	sub_list = NULL;
-	brack = 0;
 	while (*tokens)
 	{
-		if ((*tokens)->type != TOKEN_O_BRACK
-			&& (*tokens)->type != TOKEN_C_BRACK)
+		if ((*tokens)->type == TOKEN_O_BRACK)
 		{
-			node = new_token((*tokens)->type, (*tokens)->value);
-			ft_tokadd_back(&clean_list, node);
-			*tokens = (*tokens)->next;
-		}
-		else if ((*tokens)->type == TOKEN_O_BRACK)
-		{
-			brack++;
 			*tokens = (*tokens)->next;
 			sub_list = create_clean_list(tokens);
 			add_sublist(&clean_list, sub_list);
 		}
-		else
+		else if ((*tokens)->type == TOKEN_C_BRACK)
 		{
-			brack--;
 			*tokens = (*tokens)->next;
-			if (brack == 0)
-				continue ;
 			return (clean_list);
 		}
+		else
+			handle_non_brackets(tokens, &clean_list);
 	}
 	return (clean_list);
 }

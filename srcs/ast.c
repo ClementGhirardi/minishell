@@ -28,51 +28,30 @@ t_ast	*ast_new_cmd(char **args)
 	return (node);
 }
 
-t_ast	*ast_new_redir(t_token_type redir_type, char *file)
-{
-	t_ast		*node;
-
-	node = malloc(1 * sizeof(t_ast));
-	if (!node)
-		return (NULL);
-	if (redir_type == TOKEN_REDIR_IN)
-		node->type = NODE_REDIR_IN;
-	if (redir_type == TOKEN_REDIR_OUT)
-		node->type = NODE_REDIR_OUT;
-	if (redir_type == TOKEN_APPEND)
-		node->type = NODE_APPEND;
-	if (redir_type == TOKEN_HEREDOC)
-	{
-		node->type = NODE_HEREDOC;
-		node->fd = here_doc(file);
-	}
-	else
-		node->fd = -1;
-	node->args = NULL;
-	ft_printf("%d: %s\n", redir_type, file);
-	node->file = file;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
-}
-
-t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
+t_ast	*ast_new_redir(t_token_type r_type, t_token *tokens)
 {
 	t_ast	*node;
 
-	node = malloc(sizeof(t_ast));
+	node = malloc(1 * sizeof(t_ast));
+	node->file = ft_strdup(tokens->value);
+	if (!node->file)
+		return (free(node), NULL);
 	if (!node)
 		return (NULL);
-	node->type = NODE_PIPE;
 	node->args = NULL;
-	node->file = NULL;
+	if (r_type == TOKEN_REDIR_IN)
+		node->type = NODE_REDIR_IN;
+	if (r_type == TOKEN_REDIR_OUT)
+		node->type = NODE_REDIR_OUT;
+	if (r_type == TOKEN_APPEND)
+		node->type = NODE_APPEND;
+	if (r_type == TOKEN_HEREDOC)
+		node->type = NODE_HEREDOC;
 	node->fd = -1;
-	node->left = left;
-	node->right = right;
-	return (node);
+	return (node->left = NULL, node->right = NULL, node->args = NULL, node);
 }
 
-t_ast	*ast_new_operator(t_ast *left, t_ast *right, t_token_type type)
+t_ast	*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type)
 {
 	t_ast	*node;
 
@@ -81,8 +60,10 @@ t_ast	*ast_new_operator(t_ast *left, t_ast *right, t_token_type type)
 		return (NULL);
 	if (type == TOKEN_AND)
 		node->type = NODE_AND;
-	else
+	else if (type == TOKEN_OR)
 		node->type = NODE_OR;
+	else
+		node->type = NODE_PIPE;
 	node->args = NULL;
 	node->file = NULL;
 	node->fd = -1;
@@ -133,6 +114,8 @@ void	ast_free(t_ast *ast)
 		}
 		if (ast->file)
 			free(ast->file);
+		if (ast->type == NODE_HEREDOC && ast->fd != -1)
+			close(ast->fd);
 		ast_free(ast->left);
 		ast_free(ast->right);
 		free(ast);

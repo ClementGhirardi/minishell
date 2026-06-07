@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:39:28 by cghirard          #+#    #+#             */
-/*   Updated: 2026/03/30 15:09:05 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/04/27 11:16:36 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_token	*new_token(t_token_type type, char *value)
 	token->value = ft_strdup(value);
 	if (!token->value)
 		return (free(token), NULL);
+	token->bracket = NULL;
 	token->next = NULL;
 	return (token);
 }
@@ -54,6 +55,8 @@ void	free_token(t_token *tokens)
 	{
 		if (tokens->value)
 			free(tokens->value);
+		if (tokens->bracket)
+			free_token(tokens->bracket);
 		tmp = tokens->next;
 		free(tokens);
 		tokens = tmp;

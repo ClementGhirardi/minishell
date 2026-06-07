@@ -1,0 +1,75 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_cmd_redir.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/17 11:36:24 by adbarth           #+#    #+#             */
+/*   Updated: 2026/05/17 14:14:51 by clement-ghi      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/minishell.h"
+
+int	check_validity(t_token **tokens)
+{
+	if (!tokens || !(*tokens) || (*tokens)->type == TOKEN_PIPE
+		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
+		return (0);
+	return (1);
+}
+
+static int	count_word(t_token *tokens)
+{
+	int		count;
+
+	count = 0;
+	while (tokens && tokens->type == TOKEN_WORD)
+	{
+		count++;
+		tokens = tokens->next;
+	}
+	return (count);
+}
+
+t_ast	*parse_command(t_token **tokens)
+{
+	t_ast	*instr;
+	char	**args;
+	int		count;
+	int		i;
+
+	count = count_word(*tokens);
+	if (count == 0)
+		return (NULL);
+	args = malloc((count + 1) * sizeof(char *));
+	if (!args)
+		return (NULL);
+	i = 0;
+	while (*tokens && (*tokens)->type == TOKEN_WORD)
+	{
+		args[i] = ft_strdup((*tokens)->value);
+		if (!args[i])
+			return (NULL);
+		*tokens = (*tokens)->next;
+		i++;
+	}
+	args[i] = NULL;
+	instr = ast_new_cmd(args);
+	return (instr);
+}
+
+t_ast	*parse_redirection(t_token **tokens, t_data *data)
+{
+	t_ast			*instr;
+	t_token_type	redir_type;
+
+	redir_type = (*tokens)->type;
+	*tokens = (*tokens)->next;
+	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
+		return (ast_new_redir(redir_type, *tokens));
+	instr = ast_new_redir(redir_type, *tokens);
+	*tokens = (*tokens)->next;
+	return (instr);
+}

@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   ft_isin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/01 14:17:53 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:20 by clement-ghi      ###   ########.fr       */
+/*   Created: 2026/06/02 15:14:41 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/03 13:49:40 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_env(char ***env, int fd_out)
+int	ft_is_in(char c, char *str)
 {
-	int		i;
+	int	i;
 
+	if (!str)
+		return (0);
 	i = 0;
-	while ((*env)[i])
+	while (str[i])
 	{
-		ft_putendl_fd((*env)[i], fd_out);
+		if (str[i] == c)
+			return (1);
 		i++;
 	}
 	return (0);

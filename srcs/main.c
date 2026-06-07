@@ -3,145 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/15 13:30:29 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/04 18:08:11 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ast_show(t_ast *ast)
-{
-	int	i;
-
-	if (!ast)
-		return ;
-	if (ast->type == NODE_PIPE)
-		ft_printf("PIPE(");
-	else if (ast->type == NODE_CMD)
-		ft_printf("CMD(");
-	else if (ast->type == NODE_REDIR_IN)
-		ft_printf("REDIR_IN(");
-	else if (ast->type == NODE_REDIR_OUT)
-		ft_printf("REDIR_OUT(");
-	else if (ast->type == NODE_APPEND)
-		ft_printf("APPEND(");
-	else if (ast->type == NODE_HEREDOC)
-		ft_printf("HEREDOC(");
-	else
-		ft_printf("REDIR(");
-	if (ast->args)
-	{
-		i = 0;
-		while (ast->args[i])
-		{
-			ft_printf("|%s|", ast->args[i]);
-			i++;
-			if (ast->args[i])
-				ft_printf(", ");
-		}
-	}
-	if (ast->type == NODE_REDIR_IN)
-	{
-		ft_printf("-%s-: ", ast->file);
-		ast_show(ast->left);
-	}
-	else
-	{
-		ast_show(ast->left);
-		if (ast->right)
-			ft_printf(", ");
-		ast_show(ast->right);
-	}
-	ft_printf(")");
-}
-
-// // BEGIN TESTS
-// // TEST LEXER
-// t_token *tokens = lexer(input);
-// ft_printf("--TEST LEXER--\n");
-// t_token *current = tokens;
-// while (current)
-// {
-// 	ft_printf("%d: |%s|\n", current->type, current->value);
-// 	current = current->next;
-// }
-// ft_printf("\n");
-// // TEST PARSER
-// ft_printf("--TEST PARSER--\n");
-// t_ast *ast = parse(tokens);
-// ast_show(ast);
-// ft_printf("\n\n");
-// // END TESTS
+volatile sig_atomic_t	g_sig_status = 0;
 
 static void	sigint_handler(int sig)
 {
-	(void)sig;
-	write(1, "\n", 1);
+	(void) sig;
+	if (g_sig_status == -1)
+		g_sig_status = 0;
+	if (g_sig_status == 1)
+	{
+		g_sig_status = 2;
+		ft_putchar_fd('\n', 1);
+		return ;
+	}
+	if (g_sig_status == 3)
+	{
+		g_sig_status = 4;
+		rl_replace_line("", 0);
+		rl_done = 1;
+		return ;
+	}
+	if (g_sig_status == 5)
+		return ;
+	ft_putendl_fd("", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
-static void	init_signals(void)
+static int	event(void)
 {
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	return (0);
 }
 
-void	minishell(int status, char **input, char ***env)
+static int	init_var(int *status, char ***env, char **envp)
 {
-	t_token	*tokens;
-	t_ast	*ast;
-
-	tokens = lexer(input);
-	ft_printf("lexer\n");
-	t_token *current = tokens;
-	while (current)
-	{
-		ft_printf("%d: |%s|\n", current->type, current->value);
-		current = current->next;
-	}
-	tokens = split_bracket(&tokens);
-	ft_printf("split_bracket\n");
-	current = tokens;
-	while (current)
-	{
-		ft_printf("%d: |%s|\n", current->type, current->value);
-		current = current->next;
-	}
-	if (tokens)
-	{
-		ast = parse(&tokens);
-		if (ast)
-		{
-			status = executor(ast, status, env);
-			ast_free(ast);
-		}
-		free_token(tokens);
-	}
+	*status = 0;
+	*env = dup_array(envp);
+	if (!(*env))
+		return (*status = error_creating_env(), *status);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	rl_event_hook = event;
+	return (1);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	int		status;
 	char	*input;
 	char	**env;
+	int		status;
+	int		update_history;
 
-	(void)ac;
-	(void)av;
-	env = dup_array(envp);
-	status = 0;
-	init_signals();
+	env = NULL;
+	if (!init_var(&status, &env, envp))
+		return (status);
 	while (1)
 	{
+		g_sig_status = -1;
 		input = readline("minishell$ ");
+		if (g_sig_status == 0)
+			status = 130;
 		if (!input)
-			ft_exit(&env, status);
-		minishell(status, &input, &env);
+			return ((void)ac, (void)av, free_array(env),
+				ft_putendl_fd("exit", 1), ft_exit(NULL, NULL, -1, 1), status);
+		g_sig_status = 1;
+		update_history = minishell(&status, &input, &env);
+		if (update_history)
+			add_history(input);
 		free(input);
 	}
-	ft_exit(&env, status);
+	return ((void)ac, (void)av, free_array(env), ft_putendl_fd("exit", 1),
+		ft_exit(NULL, NULL, -1, 1), status);
 }

@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   data.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/01 14:17:53 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:20 by clement-ghi      ###   ########.fr       */
+/*   Created: 2026/05/27 14:30:17 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/03 13:49:36 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_env(char ***env, int fd_out)
+void	free_data(t_data *data)
 {
-	int		i;
-
-	i = 0;
-	while ((*env)[i])
-	{
-		ft_putendl_fd((*env)[i], fd_out);
-		i++;
-	}
-	return (0);
+	if (data->env)
+		free_array(data->env);
+	if (*data->input)
+		free(*data->input);
+	if (data->other_lines)
+		free(data->other_lines);
+	if (data->ast)
+		ast_free(data->ast);
+	data->env = NULL;
+	*data->input = NULL;
+	data->other_lines = NULL;
+	data->ast = NULL;
 }

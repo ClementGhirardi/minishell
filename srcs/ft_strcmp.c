@@ -1,26 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/01 14:17:53 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:20 by clement-ghi      ###   ########.fr       */
+/*   Created: 2026/06/02 16:46:34 by cghirard          #+#    #+#             */
+/*   Updated: 2026/06/03 13:49:46 by clement-ghi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_env(char ***env, int fd_out)
+int	ft_strcmp(char *s1, char *s2)
 {
-	int		i;
+	int	i;
 
 	i = 0;
-	while ((*env)[i])
+	if (!s1 && !s2)
+		return (0);
+	if (!s2)
+		return (s1[0]);
+	if (!s1)
+		return (-s2[0]);
+	while (s1[i] && s2[i])
 	{
-		ft_putendl_fd((*env)[i], fd_out);
+		if (s1[i] - s2[i])
+			return (s1[i] - s2[i]);
 		i++;
 	}
-	return (0);
+	return (s1[i] - s2[i]);
 }

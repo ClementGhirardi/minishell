@@ -6,51 +6,48 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 12:26:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 12:50:01 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 15:54:58 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	ft_isin(char c, char *str)
+static int	handle_sigint_heredoc_word(t_data *data)
 {
-	int	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
+	if (g_sig_status != 4)
 	{
-		if (str[i] == c)
-			return (1);
-		i++;
+		ft_putendl_fd("minishell: syntax error: unexpected end of file", 1);
+		ft_putendl_fd("exit", 1);
+		free(*data->input);
+		ft_exit(data, NULL, -1, 1);
 	}
-	return (0);
+	return (1);
 }
 
-char	*here_doc_word(char limiter)
+int	here_doc_word(char limiter, t_data *data)
 {
-	char	*word;
 	char	*buffer;
+	int		nb_line;
 
-	word = ft_strdup("");
-	if (!word)
-		return (perror("malloc"), NULL);
-	write(1, "> ", 2);
-	buffer = get_next_line(STDIN_FILENO);
+	nb_line = -1;
+	if (g_sig_status == 4)
+		return (1);
+	if (data->update_history == 1)
+		add_history(*data->input);
+	free(*data->input);
+	*data->input = ft_strdup(" ");
+	buffer = malloc(1);
 	if (!buffer)
-		return (free(word), perror("malloc"), NULL);
-	while (!ft_isin(limiter, buffer))
+		return (1);
+	buffer[0] = '\0';
+	while (*buffer == '\n' || (!ft_is_in(limiter, buffer) && g_sig_status != 4))
 	{
-		word = ft_strjoin_and_free(word, buffer);
-		write(1, "> ", 2);
-		buffer = get_next_line(STDIN_FILENO);
-		if (!buffer)
-			return (free(word), perror("malloc"), NULL);
-	}
-	word = ft_strjoin_and_free(word,
-			ft_substr(buffer, 0, ft_strlen(buffer) - 1));
-	if (buffer)
 		free(buffer);
-	return (word);
+		if (!get_buffer(&buffer, &nb_line, data, NULL))
+			return (handle_sigint_heredoc_word(data));
+		*data->input = ft_strjoin_and_free(*data->input,
+				ft_substr(buffer, 0, ft_strlen(buffer) - 1));
+	}
+	free(buffer);
+	return (1);
 }

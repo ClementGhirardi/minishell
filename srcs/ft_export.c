@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 13:13:26 by cghirard          #+#    #+#             */
-/*   Updated: 2026/04/01 14:20:15 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/05 12:45:40 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,16 @@ static char	*get_name(char *arg)
 	char	*name;
 
 	len = 0;
-	while (arg[len] && arg[len] != '=')
-		len++;
+	if (arg[0] == '=')
+	{
+		while (arg[len])
+			len++;
+	}
+	else
+	{
+		while (arg[len] && arg[len] != '=')
+			len++;
+	}
 	name = ft_substr(arg, 0, len);
 	if (!name)
 		return (NULL);
@@ -72,7 +80,7 @@ static char	*get_value(char *arg)
 	return (value);
 }
 
-static int	print_export(char **env)
+static int	print_export(char **env, int fd_out)
 {
 	int		i;
 	char	*name;
@@ -84,37 +92,37 @@ static int	print_export(char **env)
 		name = get_name(env[i]);
 		if (!name)
 			return (1);
-		ft_putstr_fd("export ", 1);
-		ft_putstr_fd(name, 1);
+		ft_putstr_fd("export ", fd_out);
+		ft_putstr_fd(name, fd_out);
 		value = get_value(env[i]);
 		if (value)
 		{
-			ft_putstr_fd("=\"", 1);
-			ft_putstr_fd(value, 1);
-			ft_putstr_fd("\"", 1);
+			ft_putstr_fd("=\"", fd_out);
+			ft_putstr_fd(value, fd_out);
+			ft_putstr_fd("\"", fd_out);
 			free(value);
 		}
-		ft_putendl_fd("", 1);
+		ft_putendl_fd("", fd_out);
 		free(name);
 		i++;
 	}
 	return (0);
 }
 
-int	ft_export(char **args, char ***env)
+int	ft_export(char **args, char ***env, int status, int fd_out)
 {
 	int		i;
 	char	*name;
 	char	*value;
 
 	if (!args[1])
-		return (print_export(sort_array(*env)));
+		return (print_export(sort_array(*env), fd_out));
 	i = 1;
 	while (args[i])
 	{
 		name = get_name(args[i]);
 		if (!name)
-			return (1);
+			return (status = 1);
 		value = get_value(args[i]);
 		if (ft_setenv(env, name, value))
 		{
@@ -127,5 +135,5 @@ int	ft_export(char **args, char ***env)
 			free(value);
 		i++;
 	}
-	return (0);
+	return (status);
 }
