@@ -27,7 +27,7 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 	if (pid == 0)
 	{
 		expander(node, *data->status, data->env);
-		code = run_builtin(node, data, fd_in, fd_out); //node->args
+		code = run_builtin(node, data, fd_in, fd_out);
 		if (fd_in != STDIN_FILENO)
 			close(fd_in);
 		if (fd_out != STDOUT_FILENO)
@@ -78,12 +78,8 @@ static void	child_right(t_ast *node, t_data *data, int *prev_fd, int *fd)
 		close(fd_in);
 	if (node->right && node->right->type == NODE_CMD
 		&& node->right->args && is_builtin(node->right->args[0]))
-	{
-		// if (node->left && node->left->type != NODE_PIPE)
-		// 	ft_putendl_fd("exit", fd_out);
 		*data->status = execute_builtin_with_pipe(
-			node->right, data, fd[0], fd_out);
-	}
+				node->right, data, fd[0], fd_out);
 	else
 		*data->status = executor(node->right, data, fd[0], fd_out);
 	close(fd[0]);
@@ -101,7 +97,6 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 	int		prev_fd[2];
 	int		fd[2];
 	pid_t	pid[2];
-
 
 	prev_fd[0] = fd_in;
 	prev_fd[1] = fd_out;

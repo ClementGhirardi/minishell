@@ -98,7 +98,7 @@ void		free_token(t_token *tokens);
 
 int			end_with_pipe(char *input);
 void		handle_end_with_pipe(char **input, t_data *data);
-void		here_doc_word(char limiter, t_data *data);
+int			here_doc_word(char limiter, t_data *data);
 
 int			handle_quotes(char **input);
 void		handle_pipe(t_token **tokens, int *i);
@@ -164,7 +164,6 @@ void		error_command(char *command);
 void		error_file(char *file);
 int			error_here_doc(int *fd, int nb_line, char *limiter, int status);
 int			err_exe_cmd(char *arg, int *status, char **env);
-// int			error_exec_cmd(char *arg, int *status, char **env);
 int			error_creating_env(void);
 void		*error_syntax(char *str, int *status);
 

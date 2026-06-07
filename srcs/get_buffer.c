@@ -12,12 +12,6 @@
 
 #include "../includes/minishell.h"
 
-static void	ctrld_heredoc_word(void)
-{
-	ft_putendl_fd("minishell: syntax error: unexpected end of file", 1);
-	ft_putendl_fd("exit", 1);
-}
-
 static int	child(char **buffer, int *fd, t_data *data, int *fds)
 {
 	g_sig_status = 3;
@@ -63,7 +57,7 @@ int	get_buffer(char **buffer, int *nb_line, t_data *data, int *fds)
 	while (get_next_line(fd[0]))
 		;
 	if (!(*buffer))
-		return (close(fd[0]), ctrld_heredoc_word(), 0);
+		return (close(fd[0]), 0);
 	if (!ft_is_in('\n', *buffer))
 		return (close(fd[0]), free(*buffer), 0);
 	(*nb_line)++;

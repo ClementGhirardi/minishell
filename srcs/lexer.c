@@ -42,7 +42,6 @@ t_token	*lexer(char **input, t_data *data)
 	t_token	*tokens;
 
 	data->end_with_pipe = end_with_pipe(*input);
-	// handle_end_with_pipe(input, data);
 	if (!input || !*input || !**input)
 		return (NULL);
 	if (handle_quotes(input))

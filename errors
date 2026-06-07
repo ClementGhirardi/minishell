@@ -1,8 +1,7 @@
 TESTS QUI ECHOUENT (valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp)
 
 
-exit -9 (ou tout autre negatif) devrait etre valide
-exit 
+
 
 -----------A TESTER--------------------
 

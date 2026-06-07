@@ -64,9 +64,9 @@ int	minishell(int *status, char **input, char ***env)
 		if (ast && g_sig_status != 4)
 		{
 			if (ast->args && !ft_strcmp(ast->args[0], "exit"))
-				return (ft_putendl_fd("exit", 1), *status = ft_exit(&data, (&data)->ast, -1, 1),
+				return (ft_putendl_fd("exit", 1),
+					*status = ft_exit(&data, (&data)->ast, -1, 1),
 					data.update_history);
-			// handle_exit(ast, *status, input, env);
 			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
 			*env = data.env;
 			ast_free(ast);

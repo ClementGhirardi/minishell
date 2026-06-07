@@ -114,7 +114,7 @@ int	ft_export(char **args, char ***env, int status, int fd_out)
 	int		i;
 	char	*name;
 	char	*value;
-	
+
 	if (!args[1])
 		return (print_export(sort_array(*env), fd_out));
 	i = 1;
