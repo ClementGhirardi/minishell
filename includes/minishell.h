@@ -145,7 +145,7 @@ int			execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out);
 
 /* BUILTINS */
 int			is_builtin(char *cmd);
-int			run_builtin(char **args, t_data *data, int fd_in, int fd_out);
+int			run_builtin(t_ast *node, t_data *data, int fd_in, int fd_out);
 
 int			ft_echo(char **args, int fd_out);
 int			ft_setenv(char ***env, const char *name, const char *value);
@@ -154,7 +154,7 @@ int			ft_pwd(int fd_out);
 int			ft_export(char **args, char ***env, int status, int fd_out);
 int			ft_unset(char **args, char ***env);
 int			ft_env(char ***env, int fd_out);
-int			ft_exit(t_data *data, char **env, int fd_in, int fd_out);
+int			ft_exit(t_data *data, t_ast *node, int fd_in, int fd_out);
 // int			ft_exit(char **args, int status);
 
 /* ERROR */

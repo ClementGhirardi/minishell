@@ -44,7 +44,8 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 	if (node->args[0][0] && err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
-		return (run_builtin(node->args, data, fd_in, fd_out));
+		return (run_builtin(node, data, fd_in, fd_out));
+		// return (run_builtin(node->args, data, fd_in, fd_out));
 	path = get_path(node->args[0], data->env);
 	if (!path)
 		return (error_command(node->args[0]), 127);

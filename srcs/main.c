@@ -84,7 +84,7 @@ int	main(int ac, char **av, char **envp)
 		if (g_sig_status == 0)
 			status = 130;
 		if (!input)
-			return (free_array(env), ft_exit(NULL, NULL, -1, 1), status);
+			return (free_array(env), ft_putendl_fd("exit", 1), ft_exit(NULL, NULL, -1, 1), status);
 			// return (exit_on_sigquit(status, env));
 		g_sig_status = 1;
 		update_history = minishell(&status, &input, &env);
@@ -92,6 +92,6 @@ int	main(int ac, char **av, char **envp)
 			add_history(input);
 		free(input);
 	}
-	return (free_array(env), ft_exit(NULL, NULL, -1, 1), status);
+	return (free_array(env), ft_putendl_fd("exit", 1), ft_exit(NULL, NULL, -1, 1), status);
 	// return (exit_on_sigquit(status, env));
 }

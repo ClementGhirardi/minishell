@@ -23,23 +23,20 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 	if (node->args[0][0]
 		&& err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
-	if (is_builtin(node->args[0]))
+	pid = fork();
+	if (pid == 0)
 	{
-		pid = fork();
-		if (pid == 0)
-		{
-			expander(node, *data->status, data->env);
-			code = run_builtin(node->args, data, fd_in, fd_out);
-			if (fd_in != STDIN_FILENO)
-				close(fd_in);
-			if (fd_out != STDOUT_FILENO)
-				close(fd_out);
-			return (free_array(data->env), ast_free(data->ast),
-				exit(code), code);
-		}
+		expander(node, *data->status, data->env);
+		code = run_builtin(node, data, fd_in, fd_out); //node->args
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		if (data->input)
+			free(*data->input);
+		return (free_array(data->env), ast_free(data->ast),
+			exit(code), code);
 	}
-	else
-		return (1);
 	return (waitpid(pid, data->status, 0), get_status(*data->status));
 }
 
@@ -64,7 +61,8 @@ static void	child_left(t_ast *node, t_data *data, int *prev_fd, int *fd)
 		close(fd_in);
 	ast_free(data->ast);
 	free_array(data->env);
-	free(*data->input);
+	if (data->input)
+		free(*data->input);
 	exit(*data->status);
 }
 
@@ -80,8 +78,12 @@ static void	child_right(t_ast *node, t_data *data, int *prev_fd, int *fd)
 		close(fd_in);
 	if (node->right && node->right->type == NODE_CMD
 		&& node->right->args && is_builtin(node->right->args[0]))
+	{
+		// if (node->left && node->left->type != NODE_PIPE)
+		// 	ft_putendl_fd("exit", fd_out);
 		*data->status = execute_builtin_with_pipe(
-				node->right, data, fd[0], fd_out);
+			node->right, data, fd[0], fd_out);
+	}
 	else
 		*data->status = executor(node->right, data, fd[0], fd_out);
 	close(fd[0]);
@@ -89,7 +91,8 @@ static void	child_right(t_ast *node, t_data *data, int *prev_fd, int *fd)
 		close(fd_out);
 	ast_free(data->ast);
 	free_array(data->env);
-	free(*data->input);
+	if (data->input)
+		free(*data->input);
 	exit(*data->status);
 }
 
@@ -98,6 +101,7 @@ int	execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out)
 	int		prev_fd[2];
 	int		fd[2];
 	pid_t	pid[2];
+
 
 	prev_fd[0] = fd_in;
 	prev_fd[1] = fd_out;

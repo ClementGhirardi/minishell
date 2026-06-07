@@ -23,21 +23,22 @@ int	is_builtin(char *cmd)
 		|| !ft_strcmp(cmd, "exit"));
 }
 
-int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
+// int	run_builtin(char **args, t_data *data, int fd_in, int fd_out)
+int	run_builtin(t_ast *node, t_data *data, int fd_in, int fd_out)
 {
-	if (!ft_strcmp(args[0], "pwd"))
+	if (!ft_strcmp(node->args[0], "pwd"))
 		return (ft_pwd(fd_out));
-	if (!ft_strcmp(args[0], "cd"))
-		return (ft_cd(args, &data->env, fd_out));
-	if (!ft_strcmp(args[0], "export"))
-		return (ft_export(args, &data->env, *data->status, fd_out));
-	if (!ft_strcmp(args[0], "unset"))
-		return (ft_unset(args, &data->env));
-	if (!ft_strcmp(args[0], "env"))
+	if (!ft_strcmp(node->args[0], "cd"))
+		return (ft_cd(node->args, &data->env, fd_out));
+	if (!ft_strcmp(node->args[0], "export"))
+		return (ft_export(node->args, &data->env, *data->status, fd_out));
+	if (!ft_strcmp(node->args[0], "unset"))
+		return (ft_unset(node->args, &data->env));
+	if (!ft_strcmp(node->args[0], "env"))
 		return (ft_env(&data->env, fd_out));
-	if (!ft_strcmp(args[0], "exit"))
-		return (ft_exit(data, data->env, fd_in, fd_out));
-	if (!ft_strcmp(args[0], "echo"))
-		return (ft_echo(args, fd_out));
+	if (!ft_strcmp(node->args[0], "exit"))
+		return (ft_exit(data, node, fd_in, fd_out));
+	if (!ft_strcmp(node->args[0], "echo"))
+		return (ft_echo(node->args, fd_out));
 	return (1);
 }

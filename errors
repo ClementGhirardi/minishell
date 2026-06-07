@@ -1,17 +1,8 @@
 TESTS QUI ECHOUENT (valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --suppressions=readline.supp)
 
 
-
-echo | (LEAK si la cmd entree dans le heredoc n'existe pas)
-
-exit > out (ERROR : devrait sortir)
-
-ls | exit 4 (ERROR : si $? juste apres alors mauvais exit code)
-exit 6 4 | ls (ERROR : on devrait afficher un msg d'erreur relatif aux multiples args de exit)
-
-
-
-
+exit -9 (ou tout autre negatif) devrait etre valide
+exit 
 
 -----------A TESTER--------------------
 

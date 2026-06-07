@@ -31,6 +31,8 @@ static int	ft_is_str_digit(char *str)
 	if (!str)
 		return (0);
 	i = 0;
+	if (str[0] == '-' || str[0] == '+')
+		i++;
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
@@ -42,59 +44,59 @@ static int	ft_is_str_digit(char *str)
 	return (1);
 }
 
-static void	free_and_close(t_data *data, char **env, int fd_in, int fd_out)
+static void	free_and_close(t_data *data, int fd_in, int fd_out)
 {
 	if (data)
+	{
 		ast_free(data->ast);
+		free_array(data->env);
+	}
 	if (fd_in != STDIN_FILENO && fd_in != -1)
 		close(fd_in);
 	if (fd_out != STDOUT_FILENO && fd_out != -1)
 		close(fd_out);
-	free_array(env);
 }
 
-static int	check_exit_args(t_data *data, int *too_many)
+static int	check_exit_args(t_data *data, t_ast *node, int *too_many)
 {
 	int	len;
 	int	tmp;
 
 	len = 0;
 	tmp = 0;
-	ft_putendl_fd("exit", 1);
-	expander(data->ast, *data->status, data->env);
-	if (data && data->ast)
-		len = ft_strslen(data->ast->args);
-	if (data && data->ast && data->ast->args && len >= 2)
+	if (node && data)
+		expander(node, *data->status, data->env);
+	if (node)
+		len = ft_strslen(node->args);
+	if (node && node->args && len >= 2)
 	{
-		if (!ft_is_str_digit(data->ast->args[1]))
-			error_num(data->ast->args[1], &tmp);
+		if (!ft_is_str_digit(node->args[1]))
+			error_num(node->args[1], &tmp);
 		else if (len > 2)
 			return (*too_many = 1, error_too_many_args(&tmp));
 		else
-			tmp = ft_atoi(data->ast->args[1]);
+			tmp = ft_atoi(node->args[1]);
 	}
 	return (tmp);
 }
 
-int	ft_exit(t_data *data, char **env, int fd_in, int fd_out)
+int	ft_exit(t_data *data, t_ast *node, int fd_in, int fd_out)
 {
 	int	tmp;
 	int	too_many;
 
 	too_many = 0;
-	if (!(data && data->ast && data->ast->type == NODE_CMD
-			&& data->ast->args && !ft_strcmp(data->ast->args[0], "exit")))
-		return (-1);
-	tmp = check_exit_args(data, &too_many);
+	tmp = check_exit_args(data, node, &too_many);
 	if (too_many)
 		return (ast_free(data->ast), data->ast = NULL, 1);
 	if (wait(NULL) != -1)
-		return (free_and_close(data, env, fd_in, fd_out), tmp);
+		return (free_and_close(data, fd_in, fd_out), tmp);
 	if (wait(NULL) != -1)
-		return (free_and_close(data, env, fd_in, fd_out), tmp);
-	free_and_close(data, env, fd_in, fd_out);
+		return (free_and_close(data, fd_in, fd_out), tmp);
+	free_and_close(data, fd_in, fd_out);
 	rl_clear_history();
-	*data->status = tmp;
+	if (data)
+		*data->status = tmp;
 	exit(tmp);
 }
 
