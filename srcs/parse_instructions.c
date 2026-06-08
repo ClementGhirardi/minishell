@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 11:36:24 by adbarth           #+#    #+#             */
-/*   Updated: 2026/06/08 10:56:54 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 13:57:41 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_ast	*parse_instructions(t_token **tokens, t_data *data)
 	{
 		tmp = (*tokens)->bracket;
 		*tokens = (*tokens)->next;
-		instr = parser(&tmp, data);
+		instr = parser(&tmp, data, NULL);
 	}
 	else if ((*tokens)->type == TOKEN_WORD)
 	{

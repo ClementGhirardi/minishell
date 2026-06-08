@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 11:11:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 13:28:19 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ extern volatile sig_atomic_t	g_sig_status;
 int			minishell(int *status, char **input, char ***env);
 
 /* LEXER */
+t_token		*build_tokens(t_data *data, char **input);
 t_token		*lexer(char **input, t_data *data);
 
 t_token		*new_token(t_token_type type, char *value);
@@ -130,7 +131,8 @@ void		lexer_handle_other_lines(t_token *tokens, t_data *data);
 t_token		*split_bracket(t_token **tokens);
 
 /* PARSER */
-t_ast		*parser(t_token **tokens, t_data *data);
+t_ast		*parse_and_browse(t_token **tokens, t_data *data);
+t_ast		*parser(t_token **tokens, t_data *data, t_ast *previous);
 
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, t_token *tokens);

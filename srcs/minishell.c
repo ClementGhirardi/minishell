@@ -6,16 +6,17 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 14:06:52 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 11:47:45 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 13:55:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static t_token	*build_tokens(t_data *data, char **input)
+t_token	*build_tokens(t_data *data, char **input)
 {
 	t_token	*tokens;
 	t_token	*tmp;
+
 	tokens = lexer(input, data);
 	if (!tokens)
 		return (NULL);
@@ -40,17 +41,15 @@ static void	init_data(int *status, char **input, char **env, t_data *data)
 int	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
-	t_token	*tmp;
 	t_ast	*ast;
 	t_data	data;
 
 	init_data(status, input, *env, &data);
 	tokens = build_tokens(&data, input);
-	tmp = tokens;
+	data.tokens = tokens;
 	if (tokens)
 	{
-		ast = parser(&tokens, &data);
-		free_token(tmp);
+		ast = parse_and_browse(&tokens, &data);
 		if (!ast)
 			return (0);
 		if (ast && g_sig_status != 4)

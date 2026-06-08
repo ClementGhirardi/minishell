@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 12:26:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 15:54:58 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 13:55:08 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int	here_doc_word(char limiter, t_data *data)
 	nb_line = -1;
 	if (g_sig_status == 4)
 		return (1);
-	if (data->update_history == 1)
-		add_history(*data->input);
+	// if (data->update_history == 1)
+		// add_history(*data->input);
 	free(*data->input);
 	*data->input = ft_strdup(" ");
 	buffer = malloc(1);

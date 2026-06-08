@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 15:06:25 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 11:12:30 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 12:45:30 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,27 +51,56 @@ void	create_word(char *input, t_token **tokens, int i, int start)
 	free(word);
 }
 
+// void	handle_word(char *input, t_token **tokens, int *i)
+// {
+// 	int		start;
+// 	char	quote;
+
+// 	start = *i;
+// 	while (input[*i] && input[*i] != ' ' && input[*i] != '|'
+// 		&& input[*i] != '<' && input[*i] != '>' && !(input[*i] == '&'
+// 			&& input[*i + 1] == '&') && input[*i] != '(' && input[*i] != ')')
+// 	{
+// 		quote = ' ';
+// 		while (input[*i] && input[*i] != quote && input[*i] != '\n')
+// 		{
+// 			if (quote == ' ' && (input[*i] == '|' || input[*i] == '<'
+// 					|| input[*i] == '>' || (input[*i] == '&' && input[*i + 1]
+// 						== '&') || input[*i] == '(' || input[*i] == ')'))
+// 				break ;
+// 			if (quote == ' ' && (input[*i] == '\'' || input[*i] == '\"'))
+// 				quote = input[*i];
+// 			else if (quote != ' ' && (input[*i] == quote))
+// 				quote = ' ';
+// 			(*i)++;
+// 		}
+// 		if (input[*i] == quote && quote != ' ')
+// 			(*i)++;
+// 	}
+// 	create_word(input, tokens, *i, start);
+// }
+
 void	handle_word(char *input, t_token **tokens, int *i)
 {
 	int		start;
 	char	quote;
 
 	start = *i;
-	while (input[*i] && input[*i] != ' ' && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>' && !(input[*i] == '&'
-			&& input[*i + 1] == '&') && input[*i] != '(' && input[*i] != ')')
+	if (input[*i] == '&')
+		(*i)++;
+	while (input[*i] && !ft_is_in(input[*i], " |<>&"))
 	{
 		quote = ' ';
-		while (input[*i] && input[*i] != quote && input[*i] != '\n')
+		while (input[*i] && input[*i] != quote)
 		{
-			if (quote == ' ' && (input[*i] == '|' || input[*i] == '<'
-					|| input[*i] == '>' || (input[*i] == '&' && input[*i + 1]
-						== '&') || input[*i] == '(' || input[*i] == ')'))
+			if (quote == ' ' && ft_is_in(input[*i], "|<>&"))
 				break ;
-			if (quote == ' ' && (input[*i] == '\'' || input[*i] == '\"'))
+			if (quote == ' ' && ft_is_in(input[*i], "\'\""))
 				quote = input[*i];
 			else if (quote != ' ' && (input[*i] == quote))
 				quote = ' ';
+			if (input[*i] == '\n')
+				return (create_other_lines(input, tokens, i, start));
 			(*i)++;
 		}
 		if (input[*i] == quote && quote != ' ')

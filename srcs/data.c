@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   data.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 14:30:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:36 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/08 13:50:12 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ void	free_data(t_data *data)
 	if (data->env)
 		free_array(data->env);
 	if (*data->input)
+	{
 		free(*data->input);
+	}
 	if (data->other_lines)
 		free(data->other_lines);
 	if (data->ast)
