@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 14:06:52 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 14:33:05 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 11:47:45 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static t_token	*build_tokens(t_data *data, char **input)
 {
 	t_token	*tokens;
 	t_token	*tmp;
-
 	tokens = lexer(input, data);
 	if (!tokens)
 		return (NULL);
