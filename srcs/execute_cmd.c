@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 12:48:59 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/06/05 11:42:17 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 16:52:10 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,19 @@ static void	execute_cmd_child(int fd_in, int fd_out)
 	}
 }
 
+static void	sigquit_handler(int sig)
+{
+	(void)sig;
+	ft_putendl_fd("Quit (core dumped)", 1);
+}
+
 int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 {
 	pid_t	pid;
 	char	*path;
 
-	if (!node || !node->args || !node->args[0])
-		return (0);
-	if (node->args[0][0] && err_exe_cmd(node->args[0], data->status, data->env))
+	if (!node || !node->args || !node->args[0] || (node->args[0][0]
+		&& err_exe_cmd(node->args[0], data->status, data->env)))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node, data, fd_in, fd_out));
@@ -50,6 +55,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 		return (error_command(node->args[0]), 127);
 	else
 	{
+		signal(SIGQUIT, sigquit_handler);
 		pid = fork();
 		if (pid == 0)
 		{
@@ -59,6 +65,6 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 				free_array(data->env), ast_free(data->ast), exit(126), 126);
 		}
 	}
-	return (waitpid(pid, data->status, 0),
+	return (waitpid(pid, data->status, 0), signal(SIGQUIT, SIG_IGN),
 		free(path), get_status(*data->status));
 }

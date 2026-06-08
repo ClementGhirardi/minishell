@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 16:06:48 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 16:48:07 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,6 @@ static void	sigint_handler(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
-
-// static int	exit_on_sigquit(int status, char **env)
-// {
-// 	free_array(env);
-// 	ft_putendl_fd("exit", 1);
-// 	status = ft_exit(NULL, status);
-// 	return (status);
-// }
 
 static int	event(void)
 {
