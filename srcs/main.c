@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 23:54:39 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/04 18:08:11 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/08 16:06:48 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	main(int ac, char **av, char **envp)
 			status = 130;
 		if (!input)
 			return ((void)ac, (void)av, free_array(env),
-				ft_putendl_fd("exit", 1), ft_exit(NULL, NULL, -1, 1), status);
+				ft_putendl_fd("exit", 1), exit(status), status);
 		g_sig_status = 1;
 		update_history = minishell(&status, &input, &env);
 		if (update_history)

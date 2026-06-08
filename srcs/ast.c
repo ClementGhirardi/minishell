@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:17:06 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 15:29:27 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 15:45:47 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,13 @@ void	ast_free(t_ast *ast)
 			}
 			free(ast->args);
 		}
-		if (ast->file)
+		if (ast->type == NODE_HEREDOC && ast->fd != -1)
 		{
-			free(ast->file);
+			close(ast->fd);
 			ast->fd = -1;
 		}
-		if (ast->type == NODE_HEREDOC && ast->fd != -1)
-			close(ast->fd);
+		if (ast->file)
+			free(ast->file);
 		ast_free(ast->left);
 		ast_free(ast->right);
 		free(ast);

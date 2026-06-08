@@ -55,6 +55,7 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/errors0.c \
 	$(SRCS_DIR)/errors1.c \
 	$(SRCS_DIR)/errors2.c \
+	$(SRCS_DIR)/ft_strslen.c \
 
 SRCS_BONUS = 
 

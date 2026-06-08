@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 16:05:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 15:59:50 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,7 @@ int			ft_strcmp(char *s1, char *s2);
 void		free_data(t_data *data);
 char		*get_path(char *cmd, char **envp);
 int			existing_path(char *cmd);
+int			ft_strslen(char **strs);
 
 void		free_array(char **array);
 char		**dup_array(char **array);
