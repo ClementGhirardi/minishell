@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 10:48:16 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 14:19:29 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 14:24:31 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ t_ast	*parse_and_browse(t_token **tokens, t_data *data)
 	browse_ast_for_heredoc(data->ast, data);
 	if (data->ast && g_sig_status == 4)
 		return (ast_free(data->ast), NULL);
-	while ((data->ast->type == NODE_PIPE && !data->ast->right)
+	while ((data->ast->type == NODE_PIPE || data->ast->type == NODE_OR
+		|| data->ast->type == NODE_AND)
+		&& !data->ast->right
 		&& g_sig_status != 4)
 	{
 		here_doc_word('\n', data);

@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 10:51:27 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 13:42:57 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 14:22:02 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	write_buffer(t_data *data, char *buffer, int *fd)
 
 	tmp = ft_strdup(buffer);
 	*data->input = ft_strjoin_and_free(*data->input, tmp);
-	// add_history(*data->input);
+	add_history(*data->input);
 	buffer = expand_only_var(buffer, *data->status, data->env);
 	ft_putstr_fd(buffer, fd[1]);
 	free(buffer);
@@ -90,7 +90,7 @@ int	here_doc(char *limiter, t_data *data, t_ast *current)
 	if (read_previous(limiter, data, fd))
 		return (close(fd[1]), fd[0]);
 	*data->input = ft_strjoin_and_free(*data->input, ft_strdup("\n"));
-	// add_history_noendl(*data->input);
+	add_history_noendl(*data->input);
 	if (!get_buffer(&buffer, &nb_line, data, fd))
 		return (error_here_doc(fd, nb_line, limiter, *data->status));
 	while (condition(limiter, buffer) && ((*limiter) || *buffer != '\n'))
