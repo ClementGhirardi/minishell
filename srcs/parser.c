@@ -6,40 +6,11 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/05/26 17:18:40 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 10:54:49 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static t_ast	*parse_instructions(t_token **tokens, t_data *data)
-{
-	t_ast	*instr;
-	t_ast	*cmd;
-	t_token	*tmp;
-
-	if (!check_validity(tokens))
-		return (NULL);
-	if ((*tokens)->type == TOKEN_WORD && (*tokens)->bracket)
-	{
-		tmp = (*tokens)->bracket;
-		*tokens = (*tokens)->next;
-		instr = parser(&tmp, data);
-	}
-	else if ((*tokens)->type == TOKEN_WORD)
-	{
-		cmd = parse_command(tokens);
-		instr = parse_instructions(tokens, data);
-		ast_add_end(&instr, cmd);
-	}
-	else
-	{
-		instr = parse_redirection(tokens, data);
-		if (g_sig_status != 4)
-			instr->left = parse_instructions(tokens, data);
-	}
-	return (instr);
-}
 
 t_ast	*parse_pipeline(t_token **tokens, t_data *data)
 {

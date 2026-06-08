@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:48:22 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 16:05:46 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 11:11:46 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
 void		ast_add_end(t_ast **ast, t_ast *new);
 void		ast_free(t_ast *ast);
 
-t_ast		*parse_instructions(t_token **tokens, int *status, char **env);
+t_ast		*parse_instructions(t_token **tokens, t_data *data);
 void		browse_ast_for_heredoc(t_ast *ast, t_data *data);
 int			here_doc(char *limiter, t_data *data, t_ast *current);
 char		*get_one_line(char *lines, int *i);

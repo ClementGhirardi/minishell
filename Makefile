@@ -19,6 +19,7 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/here_doc_word.c \
 	$(SRCS_DIR)/lexer_handler.c \
 	$(SRCS_DIR)/lexer_syntax_analyzer.c \
+	$(SRCS_DIR)/lexer_brackets_syntax.c \
 	$(SRCS_DIR)/lexer_handle_other_lines.c \
 	$(SRCS_DIR)/parser.c \
 	$(SRCS_DIR)/ast.c \
@@ -58,7 +59,6 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/space_bracket.c \
 	$(SRCS_DIR)/lexer_bonus.c \
-	$(SRCS_DIR)/parser_cmd_bonus.c \
 
 SRCS_BONUS = 
 
