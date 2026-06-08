@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 14:06:52 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/05 14:33:05 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 15:27:58 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,25 @@ static void	init_data(int *status, char **input, char **env, t_data *data)
 // 	}
 // }
 
+static void	handle_exit(t_ast *ast, t_data *data)
+{
+	if (!ast)
+		return ;
+	if (ast->type == NODE_PIPE)
+		return ;
+	if (ast->type == NODE_CMD)
+	{
+		if (ast->args && ast->args[0]
+			&& !ft_strncmp(ast->args[0], "exit", ft_strlen(ast->args[0])))
+			{
+				free(*data->input);
+				executor(data->ast, data, STDIN_FILENO, STDOUT_FILENO);
+				// ft_exit(data, ast, STDIN_FILENO, STDOUT_FILENO);
+			}
+	}
+	return (handle_exit(ast->left, data), handle_exit(ast->right, data));
+}
+
 int	minishell(int *status, char **input, char ***env)
 {
 	t_token	*tokens;
@@ -63,10 +82,11 @@ int	minishell(int *status, char **input, char ***env)
 			return (0);
 		if (ast && g_sig_status != 4)
 		{
-			if (ast->args && !ft_strcmp(ast->args[0], "exit"))
-				return (ft_putendl_fd("exit", 1),
-					*status = ft_exit(&data, (&data)->ast, -1, 1),
-					data.update_history);
+			handle_exit(ast, &data);
+			// if (ast->args && !ft_strcmp(ast->args[0], "exit"))
+			// 	return (ft_putendl_fd("exit", 1),
+			// 		*status = ft_exit(&data, (&data)->ast, -1, 1),
+			// 		data.update_history);
 			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
 			*env = data.env;
 			ast_free(ast);

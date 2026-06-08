@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/07 15:34:59 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/08 15:23:59 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ int	ft_exit(t_data *data, t_ast *node, int fd_in, int fd_out)
 	rl_clear_history();
 	if (data)
 		*data->status = tmp;
-	free(*data->input);
 	ft_putendl_fd("exit", 1);
 	exit(tmp);
 }
