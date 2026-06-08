@@ -59,6 +59,7 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/split_bracket.c \
 	$(SRCS_DIR)/space_bracket.c \
 	$(SRCS_DIR)/lexer_bonus.c \
+	$(SRCS_DIR)/ft_strslen.c \
 
 SRCS_BONUS = 
 

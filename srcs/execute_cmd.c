@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 12:48:59 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/06/08 17:07:10 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 18:00:15 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 		return (run_builtin(node, data, fd_in, fd_out));
 	path = get_path(node->args[0], data->env);
 	if (!path)
-		return (error_command(node->args[0]), 127);
+		return (free(data->other_lines), error_command(node->args[0]), 127);
 	else
 	{
 		signal(SIGQUIT, sigquit_handler);

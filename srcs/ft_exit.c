@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clement-ghirardi <clement-ghirardi@stud    +#+  +:+       +#+        */
+/*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/03 13:49:23 by clement-ghi      ###   ########.fr       */
+/*   Updated: 2026/06/08 18:07:01 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static int	ft_strslen(char **strs)
-{
-	int	len;
-
-	len = 0;
-	if (!strs)
-		return (len);
-	while (strs[len])
-		len++;
-	return (len);
-}
 
 static int	ft_is_str_digit(char *str)
 {
@@ -44,17 +32,26 @@ static int	ft_is_str_digit(char *str)
 	return (1);
 }
 
+static int	check_fd(t_ast *ast, int fd)
+{
+	if (!ast)
+		return (0);
+	if (ast->fd == fd)
+		return (1);
+	return (check_fd(ast->left, fd) + check_fd(ast->right, fd));
+}
+
 static void	free_and_close(t_data *data, int fd_in, int fd_out)
 {
+	if (fd_in != STDIN_FILENO && fd_in != -1 && !check_fd(data->ast, fd_in))
+		close(fd_in);
+	if (fd_out != STDOUT_FILENO && fd_out != -1 && !check_fd(data->ast, fd_out))
+		close(fd_out);
 	if (data)
 	{
 		ast_free(data->ast);
 		free_array(data->env);
 	}
-	if (fd_in != STDIN_FILENO && fd_in != -1)
-		close(fd_in);
-	if (fd_out != STDOUT_FILENO && fd_out != -1)
-		close(fd_out);
 }
 
 static int	check_exit_args(t_data *data, t_ast *node, int *too_many)
@@ -97,5 +94,7 @@ int	ft_exit(t_data *data, t_ast *node, int fd_in, int fd_out)
 	rl_clear_history();
 	if (data)
 		*data->status = tmp;
+	free(*data->input);
+	ft_putendl_fd("exit", 1);
 	exit(tmp);
 }
