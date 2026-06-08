@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 19:53:34 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 11:41:52 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 14:20:52 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static t_token	*fill_tokens(char **input)
 t_token	*lexer(char **input, t_data *data)
 {
 	t_token	*tokens;
+
 	data->end_with_pipe = end_with_pipe(*input);
 	if (!input || !*input || !**input)
 		return (NULL);

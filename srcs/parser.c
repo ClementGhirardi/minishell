@@ -6,11 +6,24 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 20:59:49 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 13:57:18 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/08 14:20:42 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static t_ast	*begin(t_token **tokens, t_data *data, t_ast *previous)
+{
+	t_ast	*left;
+
+	left = parse_instructions(tokens, data);
+	if (previous)
+	{
+		previous->right = left;
+		left = previous;
+	}
+	return (left);
+}
 
 t_ast	*parse_pipeline(t_token **tokens, t_data *data, t_ast *previous)
 {
@@ -18,9 +31,7 @@ t_ast	*parse_pipeline(t_token **tokens, t_data *data, t_ast *previous)
 	t_ast	*right;
 	t_token	*tmp;
 
-	left = parse_instructions(tokens, data);
-	if (previous)
-		left = ast_new_pipe_op(previous, left, TOKEN_PIPE);
+	left = begin(tokens, data, previous);
 	while (tokens && *tokens && (*tokens)->type == TOKEN_PIPE
 		&& g_sig_status != 4)
 	{
@@ -106,32 +117,4 @@ t_ast	*parser(t_token **tokens, t_data *data, t_ast *previous)
 			left = parse_after_bracket(tokens, left, brack, data);
 	}
 	return (left);
-}
-
-t_ast	*parse_and_browse(t_token **tokens, t_data *data)
-{
-	t_token	*tmp_token;
-	t_ast	*tmp_ast;
-
-	data->ast = parser(tokens, data, NULL);
-	free_token(data->tokens);
-	browse_ast_for_heredoc(data->ast, data);
-	if (data->ast && g_sig_status == 4)
-		return (ast_free(data->ast), NULL);
-	while ((data->ast->type == NODE_PIPE && !data->ast->right)
-		&& g_sig_status != 4)
-	{
-		here_doc_word('\n', data);
-		tmp_token = build_tokens(data, data->input);
-		data->tokens = tmp_token;
-		if (!data->tokens)
-			return (ast_free(data->ast), NULL);
-		tmp_ast = parser(&data->tokens, data, data->ast);
-		data->ast = tmp_ast;
-		free_token(tmp_token);
-		browse_ast_for_heredoc(data->ast, data);
-		if (data->ast && g_sig_status == 4)
-			return (ast_free(data->ast), NULL);
-	}
-	return (data->ast);
 }
