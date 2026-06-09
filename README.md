@@ -54,7 +54,15 @@ execve, dup, dup2, pipe, opendir, readdir, closedir, strerror, perror, isatty, t
 tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
 
 
-The readline function causes unavoidable memory leaks. To have Valgrind suppress them, a readline.supp file has been created. Valgrind takes this file into account when the --suppressions=readline.supp option is used. 
+The readline function causes unavoidable memory leaks. To have Valgrind suppress them, a readline.supp file can be created. Valgrind takes this file into account when the --suppressions=readline.supp option is used.
+
+readline.supp :
+{
+	ignore_libreadline_leaks
+	Memcheck:Leak
+	...
+	obj:*/libreadline.so.*
+}
 
 
 The objectives of this project are to improve students’ low-level knowledge. It allows for significant progress in C. It is also the largest project required by 42 at this stage of the curriculum and the first group project. The goal is to challenge students with a substantial project, as well as to teach them how to work in a group.

@@ -23,7 +23,7 @@ static t_token	*fill_tokens(char **input)
 	i = 0;
 	while ((*input)[i])
 	{
-		if ((*input)[i] == ' ')
+		if ((*input)[i] == ' ' || (*input)[i] == '\t')
 			i++;
 		else if ((*input)[i] == '|')
 			handle_pipe(&tokens, &i);

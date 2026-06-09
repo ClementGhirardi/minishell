@@ -63,8 +63,7 @@ int	check_exit_args(t_data *data, t_ast *node, int *too_many, int *not_digit)
 
 	len = 0;
 	tmp = 0;
-	if (node && data)
-		expander(node, *data->status, data->env);
+	(void)(data);
 	if (node)
 		len = ft_strslen(node->args);
 	if (node && node->args && len >= 2)

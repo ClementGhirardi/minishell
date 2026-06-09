@@ -34,10 +34,20 @@ static void	execute_cmd_child(int fd_in, int fd_out)
 	}
 }
 
-static void	sigquit_handler(int sig)
+static void	close_fds(int fd_in, int fd_out)
 {
-	(void)sig;
-	ft_putendl_fd("Quit (core dumped)", 1);
+	if (fd_in != STDIN_FILENO && fd_in != -1)
+		close(fd_in);
+	if (fd_out != STDOUT_FILENO && fd_out != -1)
+		close(fd_out);
+}
+
+static int	check_node_cmd(t_ast *node, t_data *data)
+{
+	if (!node || !node->args || !node->args[0] || (node->args[0][0]
+		&& err_exe_cmd(node->args[0], data->status, data->env)))
+		return (1);
+	return (0);
 }
 
 int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
@@ -45,8 +55,7 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 	pid_t	pid;
 	char	*path;
 
-	if (!node || !node->args || !node->args[0] || (node->args[0][0]
-		&& err_exe_cmd(node->args[0], data->status, data->env)))
+	if (check_node_cmd(node, data))
 		return (*data->status);
 	if (is_builtin(node->args[0]))
 		return (run_builtin(node, data, fd_in, fd_out));
@@ -59,9 +68,10 @@ int	execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out)
 		pid = fork();
 		if (pid == 0)
 		{
-			execute_cmd_child(fd_in, fd_out);
-			execve(path, node->args, data->env);
-			return (free(path), error_perm(node->args[0]),
+			if (!(access(path, X_OK) == -1))
+				execute_cmd_child(fd_in, fd_out);
+			return (execve(path, node->args, data->env),
+				close_fds(fd_in, fd_out), free(path), error_perm(node->args[0]),
 				free_array(data->env), ast_free(data->ast), exit(126), 126);
 		}
 	}

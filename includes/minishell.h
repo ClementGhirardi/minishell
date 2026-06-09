@@ -143,6 +143,8 @@ int			execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out);
 int			execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out);
 int			execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out);
 
+void		sigquit_handler(int sig);
+
 /* BUILTINS */
 int			is_builtin(char *cmd);
 int			run_builtin(t_ast *node, t_data *data, int fd_in, int fd_out);
