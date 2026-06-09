@@ -6,11 +6,11 @@ CFLAGS = -Wall -Wextra -Werror
 
 NAME = minishell
 
-NAME_BONUS = 
+NAME_BONUS = minishell_bonus
 
 SRCS_DIR = srcs
 
-SRCS_BONUS_DIR = srcs/srcs_bonus
+SRCS_BONUS_DIR = srcs_bonus
 
 SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/lexer.c \
@@ -57,13 +57,62 @@ SRCS = $(SRCS_DIR)/minishell.c \
 	$(SRCS_DIR)/errors2.c \
 	$(SRCS_DIR)/ft_strslen.c \
 
-SRCS_BONUS = 
+SRCS_BONUS = $(SRCS_BONUS_DIR)/minishell.c \
+	$(SRCS_BONUS_DIR)/lexer.c \
+	$(SRCS_BONUS_DIR)/token.c \
+	$(SRCS_BONUS_DIR)/lexer_handle_end_with_pipe.c \
+	$(SRCS_BONUS_DIR)/here_doc_word.c \
+	$(SRCS_BONUS_DIR)/lexer_handler.c \
+	$(SRCS_BONUS_DIR)/lexer_syntax_analyzer.c \
+	$(SRCS_BONUS_DIR)/lexer_brackets_syntax.c \
+	$(SRCS_BONUS_DIR)/lexer_handle_other_lines.c \
+	$(SRCS_BONUS_DIR)/parser.c \
+	$(SRCS_BONUS_DIR)/ast.c \
+	$(SRCS_BONUS_DIR)/parse_instructions.c \
+	$(SRCS_BONUS_DIR)/parser_browse_ast_for_heredoc.c \
+	$(SRCS_BONUS_DIR)/here_doc.c \
+	$(SRCS_BONUS_DIR)/here_doc_utils.c \
+ 	$(SRCS_BONUS_DIR)/expander.c \
+ 	$(SRCS_BONUS_DIR)/expander_remove_empty.c \
+ 	$(SRCS_BONUS_DIR)/expander_extract.c \
+	$(SRCS_BONUS_DIR)/executor.c \
+	$(SRCS_BONUS_DIR)/execute_pipe.c \
+	$(SRCS_BONUS_DIR)/execute_redir.c \
+	$(SRCS_BONUS_DIR)/execute_cmd.c \
+	$(SRCS_BONUS_DIR)/builtin.c \
+	$(SRCS_BONUS_DIR)/ft_echo.c \
+	$(SRCS_BONUS_DIR)/ft_cd.c \
+	$(SRCS_BONUS_DIR)/ft_pwd.c \
+	$(SRCS_BONUS_DIR)/ft_export.c \
+	$(SRCS_BONUS_DIR)/ft_unset.c \
+	$(SRCS_BONUS_DIR)/ft_env.c \
+	$(SRCS_BONUS_DIR)/ft_exit.c \
+	$(SRCS_BONUS_DIR)/data.c \
+	$(SRCS_BONUS_DIR)/ft_getenv.c \
+	$(SRCS_BONUS_DIR)/ft_setenv.c \
+	$(SRCS_BONUS_DIR)/ft_strjoin_and_free.c \
+	$(SRCS_BONUS_DIR)/ft_isin.c \
+	$(SRCS_BONUS_DIR)/ft_realloc.c \
+	$(SRCS_BONUS_DIR)/ft_strcmp.c \
+	$(SRCS_BONUS_DIR)/get_buffer.c \
+	$(SRCS_BONUS_DIR)/get_path.c \
+	$(SRCS_BONUS_DIR)/get_status.c \
+	$(SRCS_BONUS_DIR)/array.c \
+	$(SRCS_BONUS_DIR)/errors0.c \
+	$(SRCS_BONUS_DIR)/errors1.c \
+	$(SRCS_BONUS_DIR)/errors2.c \
+	$(SRCS_BONUS_DIR)/split_bracket.c \
+	$(SRCS_BONUS_DIR)/space_bracket.c \
+	$(SRCS_BONUS_DIR)/lexer_bonus.c \
+	$(SRCS_BONUS_DIR)/ft_strslen.c \
 
 MAIN = $(SRCS_DIR)/main.c
 
-MAIN_BONUS = $(SRCS_BONUS_DIR)/main.o
+MAIN_BONUS = $(SRCS_BONUS_DIR)/main.c
 
 INCLUDES = includes
+
+INCLUDES_BONUS = includes_bonus
 
 LIBFT_DIR = libft
 
@@ -79,7 +128,7 @@ $(NAME): $(OBJS)
 
 bonus: $(OBJS_BONUS)
 	$(MAKE) -C $(LIBFT_DIR)
-	$(CC) $(CFLAGS) -I $(INCLUDES) $^ -Llibft -lft -o $(NAME_BONUS)
+	$(CC) $(CFLAGS) -I $(INCLUDES_BONUS) $^ -Llibft -lft -lreadline -o $(NAME_BONUS)
 
 clean:
 	$(MAKE) -C $(LIBFT_DIR) clean
