@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 14:31:17 by cghirard          #+#    #+#             */
-/*   Updated: 2026/06/08 16:01:20 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/09 10:06:39 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ int	check_exit_args(t_data *data, t_ast *node, int *too_many, int *not_digit)
 		{
 			*not_digit = 1;
 			tmp = 2;
-			//error_num(node->args[1], &tmp);
 		}
 		else if (len > 2)
 			return (*too_many = 1, 1);

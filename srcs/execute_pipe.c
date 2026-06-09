@@ -6,7 +6,7 @@
 /*   By: cghirard <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 12:48:43 by clement-ghi       #+#    #+#             */
-/*   Updated: 2026/06/05 12:43:52 by cghirard         ###   ########.fr       */
+/*   Updated: 2026/06/09 10:06:24 by cghirard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 
 	if (!node || !node->args || !node->args[0])
 		return (1);
-	if (node->args[0][0]
-		&& err_exe_cmd(node->args[0], data->status, data->env))
+	if (node->args[0][0] && err_exe_cmd(node->args[0], data->status, data->env))
 		return (*data->status);
 	pid = fork();
 	if (pid == 0)
