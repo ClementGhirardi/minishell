@@ -83,6 +83,9 @@ The objectives of this project are to improve students’ low-level knowledge. I
 
 It is then used in the same way as any other shell.
 
+To run minishell with valgrind you can use the command 'valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline supp ./minishell' after creating the file 'readline.supp'.
+
+
 
 
 

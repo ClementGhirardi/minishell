@@ -126,7 +126,9 @@ $(NAME): $(OBJS)
 	$(MAKE) -C $(LIBFT_DIR)
 	$(CC) $(CFLAGS) -I $(INCLUDES)  $^ -Llibft -lft -lreadline -o $(NAME)
 
-bonus: $(OBJS_BONUS)
+bonus: $(NAME_BONUS)
+
+$(NAME_BONUS): $(OBJS_BONUS)
 	$(MAKE) -C $(LIBFT_DIR)
 	$(CC) $(CFLAGS) -I $(INCLUDES_BONUS) $^ -Llibft -lft -lreadline -o $(NAME_BONUS)
 
