@@ -20,7 +20,7 @@ static char	**get_new_env(char **env)
 	size = 0;
 	while (env[size])
 		size++;
-	new_env = malloc(size * sizeof(char *));
+	new_env = malloc((size + 1) * sizeof(char *));
 	return (new_env);
 }
 

@@ -134,6 +134,7 @@ t_token		*split_bracket(t_token **tokens);
 t_ast		*parse_and_browse(t_token **tokens, t_data *data);
 t_ast		*parser(t_token **tokens, t_data *data, t_ast *previous);
 
+int			count_word(t_token *tokens);
 t_ast		*ast_new_cmd(char **args);
 t_ast		*ast_new_redir(t_token_type r_type, t_token *tokens);
 t_ast		*ast_new_pipe_op(t_ast *left, t_ast *right, t_token_type type);
@@ -161,6 +162,8 @@ int			executor(t_ast *ast, t_data *data, int fd_in, int fd_out);
 int			execute_pipe(t_ast *node, t_data *data, int fd_in, int fd_out);
 int			execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out);
 int			execute_cmd(t_ast *node, t_data *data, int fd_in, int fd_out);
+
+void		sigquit_handler(int sig);
 
 /* BUILTINS */
 int			is_builtin(char *cmd);

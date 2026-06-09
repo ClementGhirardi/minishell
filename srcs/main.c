@@ -40,6 +40,12 @@ static void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
+void	sigquit_handler(int sig)
+{
+	(void)sig;
+	ft_putendl_fd("Quit (core dumped)", 1);
+}
+
 static int	event(void)
 {
 	return (0);

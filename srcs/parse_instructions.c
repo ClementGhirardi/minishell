@@ -12,20 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static int	count_word(t_token *tokens)
-{
-	int		count;
-
-	count = 0;
-	while (tokens && tokens->type == TOKEN_WORD)
-	{
-		count++;
-		tokens = tokens->next;
-	}
-	return (count);
-}
-
-t_ast	*parse_command(t_token **tokens)
+static t_ast	*parse_command(t_token **tokens)
 {
 	t_ast	*instr;
 	char	**args;
@@ -52,17 +39,29 @@ t_ast	*parse_command(t_token **tokens)
 	return (instr);
 }
 
-t_ast	*parse_redirection(t_token **tokens)
+static t_ast	*parse_redirection(t_token **tokens, t_data *data)
 {
+	t_token			*tmp;
 	t_ast			*instr;
 	t_token_type	redir_type;
 
 	redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
-		return (ast_new_redir(redir_type, *tokens));
-	instr = ast_new_redir(redir_type, *tokens);
-	*tokens = (*tokens)->next;
+	if ((*tokens)->type == TOKEN_WORD && (*tokens)->bracket)
+	{
+		tmp = (*tokens)->bracket;
+		instr = ast_new_redir(redir_type, *tokens);
+		instr->left = parser(&tmp, data, NULL);
+		*tokens = (*tokens)->next;
+		return (instr);
+	}
+	else
+	{
+		if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
+			return (ast_new_redir(redir_type, *tokens));
+		instr = ast_new_redir(redir_type, *tokens);
+		*tokens = (*tokens)->next;
+	}
 	return (instr);
 }
 
@@ -72,6 +71,21 @@ int	check_validity(t_token **tokens)
 		|| (*tokens)->type == TOKEN_OR || (*tokens)->type == TOKEN_AND)
 		return (0);
 	return (1);
+}
+
+t_ast	*ft(t_token **tokens, t_data *data)
+{
+	t_ast	*instr;
+
+	if ((*tokens)->type == TOKEN_REDIR_IN
+		|| (*tokens)->type == TOKEN_REDIR_OUT
+		|| (*tokens)->type == TOKEN_HEREDOC || (*tokens)->type == TOKEN_APPEND)
+	{
+		instr = parse_redirection(tokens, data);
+		if (g_sig_status != 4 && !instr->left)
+			instr->left = parse_instructions(tokens, data);
+	}
+	return (instr);
 }
 
 t_ast	*parse_instructions(t_token **tokens, t_data *data)
@@ -86,7 +100,9 @@ t_ast	*parse_instructions(t_token **tokens, t_data *data)
 	{
 		tmp = (*tokens)->bracket;
 		*tokens = (*tokens)->next;
-		instr = parser(&tmp, data, NULL);
+		cmd = parser(&tmp, data, NULL);
+		instr = parse_instructions(tokens, data);
+		ast_add_end(&instr, cmd);
 	}
 	else if ((*tokens)->type == TOKEN_WORD)
 	{
@@ -95,10 +111,6 @@ t_ast	*parse_instructions(t_token **tokens, t_data *data)
 		ast_add_end(&instr, cmd);
 	}
 	else
-	{
-		instr = parse_redirection(tokens);
-		if (g_sig_status != 4)
-			instr->left = parse_instructions(tokens, data);
-	}
+		instr = ft(tokens, data);
 	return (instr);
 }

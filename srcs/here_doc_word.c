@@ -17,8 +17,8 @@ static int	handle_sigint_heredoc_word(t_data *data)
 	if (g_sig_status != 4)
 	{
 		ft_putendl_fd("minishell: syntax error: unexpected end of file", 1);
-		ft_putendl_fd("exit", 1);
 		free(*data->input);
+		*data->input = NULL;
 		ft_exit(data, NULL, -1, 1);
 	}
 	return (1);

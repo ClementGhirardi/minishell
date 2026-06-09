@@ -12,6 +12,30 @@
 
 #include "../includes/minishell.h"
 
+static int	execute_operator(t_ast *ast, t_data *data, int fd_in, int fd_out)
+{
+	static int	fail;
+
+	if (!ast)
+		return (1);
+	*data->status = executor(ast->left, data, fd_in, fd_out);
+	if (ast->left && ast->left->type == NODE_CMD)
+		fail = *data->status;
+	if (ast->type == NODE_AND)
+	{
+		if (!*data->status || !fail)
+			*data->status = executor(ast->right, data, fd_in, fd_out);
+	}
+	else if (ast->type == NODE_OR)
+	{
+		if (*data->status || fail)
+			*data->status = executor(ast->right, data, fd_in, fd_out);
+	}
+	if (ast->right && ast->right->type == NODE_CMD)
+		fail = *data->status;
+	return (*data->status);
+}
+
 int	executor(t_ast *ast, t_data *data, int fd_in, int fd_out)
 {
 	if (!ast)
@@ -30,5 +54,7 @@ int	executor(t_ast *ast, t_data *data, int fd_in, int fd_out)
 			expander(ast, *data->status, data->env);
 		return (execute_redir(ast, data, fd_in, fd_out));
 	}
+	else if (ast && (ast->type == NODE_AND || ast->type == NODE_OR))
+		return (execute_operator(ast, data, fd_in, fd_out));
 	return (1);
 }

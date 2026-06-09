@@ -41,6 +41,7 @@ static void	error_no_space_bracket(char *input)
 	if (!msg)
 		return ;
 	syntax_error(msg);
+	free(msg);
 	return ;
 }
 

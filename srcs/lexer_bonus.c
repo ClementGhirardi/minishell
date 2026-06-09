@@ -88,12 +88,12 @@ void	handle_word(char *input, t_token **tokens, int *i)
 	start = *i;
 	if (input[*i] == '&')
 		(*i)++;
-	while (input[*i] && !ft_is_in(input[*i], " |<>&"))
+	while (input[*i] && !ft_is_in(input[*i], " |<>&())"))
 	{
 		quote = ' ';
 		while (input[*i] && input[*i] != quote)
 		{
-			if (quote == ' ' && ft_is_in(input[*i], "|<>&"))
+			if (quote == ' ' && ft_is_in(input[*i], "|<>&()"))
 				break ;
 			if (quote == ' ' && ft_is_in(input[*i], "\'\""))
 				quote = input[*i];

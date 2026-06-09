@@ -12,6 +12,19 @@
 
 #include "../includes/minishell.h"
 
+int	count_word(t_token *tokens)
+{
+	int		count;
+
+	count = 0;
+	while (tokens && tokens->type == TOKEN_WORD)
+	{
+		count++;
+		tokens = tokens->next;
+	}
+	return (count);
+}
+
 static char	*remove_limiters_quotes(char *file)
 {
 	char	*new_filename;
