@@ -155,7 +155,11 @@ int			ft_export(char **args, char ***env, int status, int fd_out);
 int			ft_unset(char **args, char ***env);
 int			ft_env(char ***env, int fd_out);
 int			ft_exit(t_data *data, t_ast *node, int fd_in, int fd_out);
-// int			ft_exit(char **args, int status);
+int			check_exit_args(t_data *data, t_ast *node,
+				int *too_many, int *not_digit);
+void		free_and_close(t_data *data, int fd_in, int fd_out);
+int			check_fd(t_ast *ast, int fd);
+int			ft_is_str_digit(char *str);
 
 /* ERROR */
 void		error_heredoc(int i, char *limiter);

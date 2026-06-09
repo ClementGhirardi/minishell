@@ -11,3 +11,14 @@ TESTS QUI ECHOUENT (valgrind --track-fds=yes --leak-check=full --show-leak-kinds
 
 
 
+-----------CHANGEMENTS------------------
+
+- heredoc word handle sigint
+- ft exit (et ses fonctions, d'erreur notamment)
+- ft_exit in pipes
+
+
+ls < exit
+> out exit
+exit > out
+< in exit > out > out > exit

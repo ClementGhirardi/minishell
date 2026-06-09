@@ -47,7 +47,7 @@ int	execute_redir(t_ast *node, t_data *data, int fd_in, int fd_out)
 	{
 		*data->status = executor(node->left, data, fd_in, fd);
 	}
-	if (node->type == NODE_HEREDOC)
+	if (data && data->ast && node && node->type == NODE_HEREDOC)
 		return (*data->status);
 	return (close(fd), *data->status);
 }

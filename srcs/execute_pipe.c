@@ -12,6 +12,30 @@
 
 #include "../includes/minishell.h"
 
+static int	ft_exit_in_pipes(t_data *data, t_ast *node, int fd_in, int fd_out)
+{
+	int	too_many;
+	int	not_digit;
+
+	too_many = 0;
+	not_digit = 0;
+	*data->status = check_exit_args(data, node, &too_many, &not_digit);
+	if (too_many)
+		return (ft_putendl_fd("minishell: exit: too many arguments", 2),
+			ast_free(data->ast), data->ast = NULL, *data->status = 1, 1);
+	if (not_digit)
+		error_num(node->args[1], data->status);
+	if (wait(NULL) != -1)
+		return (free_and_close(data, fd_in, fd_out), *data->status);
+	if (wait(NULL) != -1)
+		return (free_and_close(data, fd_in, fd_out), *data->status);
+	free_and_close(data, fd_in, fd_out);
+	rl_clear_history();
+	if (data && data->input)
+		free(*data->input);
+	exit(*data->status);
+}
+
 static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 			int fd_in, int fd_out)
 {
@@ -27,7 +51,10 @@ static int	execute_builtin_with_pipe(t_ast *node, t_data *data,
 	if (pid == 0)
 	{
 		expander(node, *data->status, data->env);
-		code = run_builtin(node, data, fd_in, fd_out);
+		if (!ft_strcmp(node->args[0], "exit"))
+			code = ft_exit_in_pipes(data, node, fd_in, fd_out);
+		else
+			code = run_builtin(node, data, fd_in, fd_out);
 		if (fd_in != STDIN_FILENO)
 			close(fd_in);
 		if (fd_out != STDOUT_FILENO)

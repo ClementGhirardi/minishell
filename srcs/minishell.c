@@ -59,7 +59,8 @@ int	minishell(int *status, char **input, char ***env)
 		{
 			*status = executor(ast, &data, STDIN_FILENO, STDOUT_FILENO);
 			*env = data.env;
-			ast_free(ast);
+			if (data.ast)
+				ast_free(ast);
 		}
 	}
 	return (data.update_history);
